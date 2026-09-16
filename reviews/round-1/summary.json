@@ -1,0 +1,21 @@
+{
+  "round": 1,
+  "status": "complete",
+  "reviewers": ["domain", "book", "production"],
+  "reviewer_context_ids": {
+    "domain": "v15-r1-domain-fresh-20260825-a",
+    "book": "v15-r1-book-fresh-20260825-b",
+    "production": "v15-r1-production-fresh-20260825-c"
+  },
+  "candidate_sha256": "c8ec4dd3904daeb89e538ba996f881555ac67cbe0dc2c667a9c4f1e657b03086",
+  "closed_artifact_sha256": "d5bfb31b56e88973ae941f93d67a66d94a34ac56f6899640be12d114fba7af8a",
+  "blockers_open": 0,
+  "critical_open": 0,
+  "issues_total": 10,
+  "issues_closed": 10,
+  "residual_risks": [
+    "The teaching skeletons are not a runnable companion repository.",
+    "No live novice comprehension study was performed.",
+    "Production assurance targets screen reading, not a calibrated 300 DPI press proof."
+  ]
+}

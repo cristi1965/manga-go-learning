@@ -1,0 +1,44 @@
+{
+  "status": "pass",
+  "output_sha256": "8a5d1dee4edb1716f49f068af43b74b990860fe86a07e3661c4cc6569bced775",
+  "v14_pdf_sha256": "0daad3c5eccba83a92653c4442e12ffd547aa76abcf9fc6e3a9c2a717302f162",
+  "counts": {
+    "chapters": 24,
+    "supplements": 47,
+    "dialogue_turns": 401,
+    "beginner_sections": 71,
+    "analogy_sections": 71,
+    "technical_sections": 71,
+    "code_blocks": 64,
+    "all_fences": 128
+  },
+  "story_manifest": {
+    "story_layer_sha256": {
+      "story-go.json": "0ca0e9c42f7fc6a03feca48930bc27025d18de36a3a860836d14571c7a8fdf1f",
+      "story-backend.json": "ee6b313b2dceef792486cad25c8ea4af97ce55e7924796bb04dab01f46fd280e",
+      "story-harness.json": "32ae8c43e823d83e8a14ba3ec17843fb8f3ab64438fe559196b4503d608b10ad"
+    },
+    "story_chapters": 24,
+    "story_supplements": 47,
+    "story_dialogue_turns": 401,
+    "story_longest_turn": {
+      "kind": "chapter",
+      "id": "18",
+      "chars": 39,
+      "text": "真正写账的是 ledger.create_bill；Harness 先做门禁。"
+    }
+  },
+  "dense_dialogue_warnings": [
+    {
+      "kind": "supplement",
+      "id": "go-module-diagnostics",
+      "turn": 3,
+      "speaker": "陈平安",
+      "latin_terms": 7,
+      "text": "我用 go mod why -m 和 go mod graph 查路径。"
+    }
+  ],
+  "duplicate_turns": [],
+  "stale_chapter_one_terms": [],
+  "failures": []
+}

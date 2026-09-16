@@ -1,0 +1,3749 @@
+{
+  "status": "pass",
+  "profile": "v15-final",
+  "pdf": "/Users/jingxin/Documents/Codex/2026-08-04/yan/work/book/v15-text-review/output/人间铸剑录_v15_完整图解版.pdf",
+  "dependencies": {
+    "python": "/Users/jingxin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "python_version": "3.12.13",
+    "pypdf": {
+      "available": true,
+      "version": "6.10.0",
+      "required": true
+    },
+    "pdfplumber": {
+      "available": true,
+      "version": "0.11.9",
+      "required": false
+    },
+    "text_extraction_backend": "pypdf"
+  },
+  "failures": [],
+  "pdf_bytes": 11908781,
+  "pdf_sha256": "72cee1f84143f3da139e284a14563967c2038fbbe7e2d83c395d5fe1182ded9e",
+  "encrypted": false,
+  "metadata": {
+    "/Author": "Nemo · 私人学习版编辑",
+    "/CreationDate": "D:20260825170705+08'00'",
+    "/Creator": "人间铸剑录 v10 可复验排版工作流",
+    "/Keywords": "v15.0.0, Go, backend, Harness AI, ELI5, story, chat",
+    "/ModDate": "D:20260825170705+08'00'",
+    "/Producer": "ReportLab PDF Library - (opensource)",
+    "/Subject": "v15.0.0 · 轻小说事故喜剧 · ELI5 完整解释层 · Go 后端与 Harness AI 工程",
+    "/Title": "人间铸剑录：Go 后端与 Harness AI 工程全书图解版 v15",
+    "/Trapped": "/False"
+  },
+  "pages": {
+    "count": 314,
+    "unique_sizes": [
+      {
+        "width": 595.276,
+        "height": 841.89
+      },
+      {
+        "width": 841.89,
+        "height": 595.276
+      }
+    ],
+    "portrait_pages": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79,
+      80,
+      81,
+      82,
+      83,
+      84,
+      85,
+      86,
+      87,
+      88,
+      89,
+      90,
+      91,
+      92,
+      93,
+      94,
+      95,
+      96,
+      97,
+      98,
+      99,
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121,
+      122,
+      123,
+      124,
+      125,
+      126,
+      127,
+      128,
+      129,
+      130,
+      131,
+      132,
+      133,
+      134,
+      135,
+      136,
+      137,
+      138,
+      139,
+      140,
+      141,
+      142,
+      143,
+      144,
+      145,
+      146,
+      147,
+      148,
+      149,
+      150,
+      151,
+      152,
+      153,
+      154,
+      155,
+      156,
+      157,
+      158,
+      159,
+      160,
+      161,
+      162,
+      163,
+      164,
+      165,
+      166,
+      167,
+      168,
+      169,
+      170,
+      171,
+      172,
+      173,
+      174,
+      175,
+      176,
+      177,
+      178,
+      179,
+      180,
+      181,
+      182,
+      183,
+      184,
+      185,
+      186,
+      187,
+      188,
+      189,
+      190,
+      191,
+      192,
+      193,
+      194,
+      195,
+      196,
+      197,
+      198,
+      199,
+      200,
+      201,
+      202,
+      203,
+      204,
+      205,
+      206,
+      207,
+      208,
+      209,
+      210,
+      211,
+      212,
+      213,
+      214,
+      215,
+      216,
+      217,
+      218,
+      219,
+      220,
+      221,
+      222,
+      223,
+      224,
+      225,
+      226,
+      227,
+      228,
+      229,
+      230,
+      231,
+      232,
+      233,
+      234,
+      235,
+      236,
+      237,
+      238,
+      239,
+      240,
+      241,
+      242,
+      243,
+      244,
+      245,
+      246,
+      247,
+      248,
+      249,
+      250,
+      251,
+      252,
+      253,
+      254,
+      255,
+      256,
+      257,
+      258,
+      259,
+      260,
+      261,
+      262,
+      263,
+      264,
+      265,
+      266,
+      267,
+      268,
+      269,
+      270,
+      271,
+      272,
+      273,
+      274,
+      275,
+      276,
+      277,
+      278,
+      279,
+      280,
+      281,
+      282,
+      283,
+      284,
+      285,
+      286,
+      287,
+      288,
+      289,
+      290,
+      291,
+      292,
+      293,
+      294,
+      295,
+      296,
+      297,
+      298,
+      299,
+      300,
+      301,
+      302,
+      303,
+      304,
+      305,
+      306,
+      307,
+      308,
+      309,
+      310,
+      311,
+      312,
+      313,
+      314
+    ],
+    "landscape_pages": [
+      10,
+      69
+    ],
+    "rotated_pages": [],
+    "non_a4_pages": [],
+    "records": [
+      {
+        "page": 1,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 74
+      },
+      {
+        "page": 2,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 358
+      },
+      {
+        "page": 3,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 328
+      },
+      {
+        "page": 4,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 307
+      },
+      {
+        "page": 5,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 347
+      },
+      {
+        "page": 6,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 225
+      },
+      {
+        "page": 7,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 56
+      },
+      {
+        "page": 8,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 379
+      },
+      {
+        "page": 9,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 374
+      },
+      {
+        "page": 10,
+        "width": 841.89,
+        "height": 595.276,
+        "rotation": 0,
+        "orientation": "landscape",
+        "text_chars": 220
+      },
+      {
+        "page": 11,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 174
+      },
+      {
+        "page": 12,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 801
+      },
+      {
+        "page": 13,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 393
+      },
+      {
+        "page": 14,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 352
+      },
+      {
+        "page": 15,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 543
+      },
+      {
+        "page": 16,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 369
+      },
+      {
+        "page": 17,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 376
+      },
+      {
+        "page": 18,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 474
+      },
+      {
+        "page": 19,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1231
+      },
+      {
+        "page": 20,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 330
+      },
+      {
+        "page": 21,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 496
+      },
+      {
+        "page": 22,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 390
+      },
+      {
+        "page": 23,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 282
+      },
+      {
+        "page": 24,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 743
+      },
+      {
+        "page": 25,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 361
+      },
+      {
+        "page": 26,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 311
+      },
+      {
+        "page": 27,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 561
+      },
+      {
+        "page": 28,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 384
+      },
+      {
+        "page": 29,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 380
+      },
+      {
+        "page": 30,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 652
+      },
+      {
+        "page": 31,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1291
+      },
+      {
+        "page": 32,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1151
+      },
+      {
+        "page": 33,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 825
+      },
+      {
+        "page": 34,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 325
+      },
+      {
+        "page": 35,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 451
+      },
+      {
+        "page": 36,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 386
+      },
+      {
+        "page": 37,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 302
+      },
+      {
+        "page": 38,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 177
+      },
+      {
+        "page": 39,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 201
+      },
+      {
+        "page": 40,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 880
+      },
+      {
+        "page": 41,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 385
+      },
+      {
+        "page": 42,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 328
+      },
+      {
+        "page": 43,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 571
+      },
+      {
+        "page": 44,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 334
+      },
+      {
+        "page": 45,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 502
+      },
+      {
+        "page": 46,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 429
+      },
+      {
+        "page": 47,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 240
+      },
+      {
+        "page": 48,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 636
+      },
+      {
+        "page": 49,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 380
+      },
+      {
+        "page": 50,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 378
+      },
+      {
+        "page": 51,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 667
+      },
+      {
+        "page": 52,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 363
+      },
+      {
+        "page": 53,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 310
+      },
+      {
+        "page": 54,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 502
+      },
+      {
+        "page": 55,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 317
+      },
+      {
+        "page": 56,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 517
+      },
+      {
+        "page": 57,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 375
+      },
+      {
+        "page": 58,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 283
+      },
+      {
+        "page": 59,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 676
+      },
+      {
+        "page": 60,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 408
+      },
+      {
+        "page": 61,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 296
+      },
+      {
+        "page": 62,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 517
+      },
+      {
+        "page": 63,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 400
+      },
+      {
+        "page": 64,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 323
+      },
+      {
+        "page": 65,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 449
+      },
+      {
+        "page": 66,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 378
+      },
+      {
+        "page": 67,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 479
+      },
+      {
+        "page": 68,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 383
+      },
+      {
+        "page": 69,
+        "width": 841.89,
+        "height": 595.276,
+        "rotation": 0,
+        "orientation": "landscape",
+        "text_chars": 230
+      },
+      {
+        "page": 70,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1022
+      },
+      {
+        "page": 71,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 303
+      },
+      {
+        "page": 72,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 404
+      },
+      {
+        "page": 73,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 363
+      },
+      {
+        "page": 74,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 561
+      },
+      {
+        "page": 75,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 389
+      },
+      {
+        "page": 76,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 403
+      },
+      {
+        "page": 77,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 614
+      },
+      {
+        "page": 78,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 358
+      },
+      {
+        "page": 79,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 387
+      },
+      {
+        "page": 80,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 690
+      },
+      {
+        "page": 81,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 357
+      },
+      {
+        "page": 82,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 479
+      },
+      {
+        "page": 83,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 519
+      },
+      {
+        "page": 84,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 316
+      },
+      {
+        "page": 85,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 842
+      },
+      {
+        "page": 86,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 386
+      },
+      {
+        "page": 87,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 376
+      },
+      {
+        "page": 88,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 543
+      },
+      {
+        "page": 89,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 391
+      },
+      {
+        "page": 90,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 342
+      },
+      {
+        "page": 91,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 532
+      },
+      {
+        "page": 92,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 325
+      },
+      {
+        "page": 93,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 478
+      },
+      {
+        "page": 94,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 496
+      },
+      {
+        "page": 95,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 274
+      },
+      {
+        "page": 96,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 176
+      },
+      {
+        "page": 97,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 978
+      },
+      {
+        "page": 98,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 398
+      },
+      {
+        "page": 99,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 419
+      },
+      {
+        "page": 100,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 730
+      },
+      {
+        "page": 101,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 343
+      },
+      {
+        "page": 102,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 58
+      },
+      {
+        "page": 103,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 427
+      },
+      {
+        "page": 104,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 439
+      },
+      {
+        "page": 105,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 300
+      },
+      {
+        "page": 106,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 160
+      },
+      {
+        "page": 107,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1058
+      },
+      {
+        "page": 108,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 294
+      },
+      {
+        "page": 109,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 332
+      },
+      {
+        "page": 110,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 395
+      },
+      {
+        "page": 111,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 648
+      },
+      {
+        "page": 112,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 363
+      },
+      {
+        "page": 113,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 431
+      },
+      {
+        "page": 114,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 606
+      },
+      {
+        "page": 115,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1339
+      },
+      {
+        "page": 116,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 441
+      },
+      {
+        "page": 117,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 385
+      },
+      {
+        "page": 118,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 357
+      },
+      {
+        "page": 119,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 747
+      },
+      {
+        "page": 120,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 391
+      },
+      {
+        "page": 121,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 421
+      },
+      {
+        "page": 122,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1257
+      },
+      {
+        "page": 123,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 362
+      },
+      {
+        "page": 124,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 456
+      },
+      {
+        "page": 125,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 848
+      },
+      {
+        "page": 126,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 408
+      },
+      {
+        "page": 127,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 403
+      },
+      {
+        "page": 128,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 772
+      },
+      {
+        "page": 129,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1408
+      },
+      {
+        "page": 130,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 429
+      },
+      {
+        "page": 131,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 491
+      },
+      {
+        "page": 132,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 445
+      },
+      {
+        "page": 133,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 522
+      },
+      {
+        "page": 134,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 311
+      },
+      {
+        "page": 135,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 169
+      },
+      {
+        "page": 136,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1035
+      },
+      {
+        "page": 137,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 398
+      },
+      {
+        "page": 138,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 419
+      },
+      {
+        "page": 139,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 800
+      },
+      {
+        "page": 140,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 488
+      },
+      {
+        "page": 141,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 381
+      },
+      {
+        "page": 142,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 453
+      },
+      {
+        "page": 143,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 439
+      },
+      {
+        "page": 144,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1856
+      },
+      {
+        "page": 145,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 280
+      },
+      {
+        "page": 146,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 381
+      },
+      {
+        "page": 147,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 494
+      },
+      {
+        "page": 148,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1282
+      },
+      {
+        "page": 149,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 388
+      },
+      {
+        "page": 150,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 478
+      },
+      {
+        "page": 151,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1307
+      },
+      {
+        "page": 152,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 333
+      },
+      {
+        "page": 153,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 354
+      },
+      {
+        "page": 154,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 728
+      },
+      {
+        "page": 155,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 376
+      },
+      {
+        "page": 156,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 498
+      },
+      {
+        "page": 157,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1141
+      },
+      {
+        "page": 158,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 411
+      },
+      {
+        "page": 159,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 389
+      },
+      {
+        "page": 160,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 479
+      },
+      {
+        "page": 161,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 473
+      },
+      {
+        "page": 162,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1489
+      },
+      {
+        "page": 163,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 785
+      },
+      {
+        "page": 164,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 351
+      },
+      {
+        "page": 165,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 453
+      },
+      {
+        "page": 166,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 385
+      },
+      {
+        "page": 167,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 394
+      },
+      {
+        "page": 168,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 298
+      },
+      {
+        "page": 169,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1148
+      },
+      {
+        "page": 170,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 360
+      },
+      {
+        "page": 171,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 328
+      },
+      {
+        "page": 172,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 657
+      },
+      {
+        "page": 173,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 368
+      },
+      {
+        "page": 174,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 323
+      },
+      {
+        "page": 175,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 636
+      },
+      {
+        "page": 176,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 384
+      },
+      {
+        "page": 177,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 386
+      },
+      {
+        "page": 178,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 458
+      },
+      {
+        "page": 179,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 310
+      },
+      {
+        "page": 180,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1625
+      },
+      {
+        "page": 181,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 283
+      },
+      {
+        "page": 182,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 380
+      },
+      {
+        "page": 183,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 409
+      },
+      {
+        "page": 184,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 734
+      },
+      {
+        "page": 185,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1383
+      },
+      {
+        "page": 186,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 454
+      },
+      {
+        "page": 187,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 442
+      },
+      {
+        "page": 188,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 543
+      },
+      {
+        "page": 189,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 321
+      },
+      {
+        "page": 190,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 963
+      },
+      {
+        "page": 191,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 378
+      },
+      {
+        "page": 192,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 453
+      },
+      {
+        "page": 193,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 748
+      },
+      {
+        "page": 194,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 368
+      },
+      {
+        "page": 195,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 478
+      },
+      {
+        "page": 196,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 873
+      },
+      {
+        "page": 197,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1246
+      },
+      {
+        "page": 198,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1425
+      },
+      {
+        "page": 199,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 962
+      },
+      {
+        "page": 200,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 465
+      },
+      {
+        "page": 201,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 392
+      },
+      {
+        "page": 202,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 302
+      },
+      {
+        "page": 203,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 300
+      },
+      {
+        "page": 204,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 828
+      },
+      {
+        "page": 205,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 342
+      },
+      {
+        "page": 206,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 310
+      },
+      {
+        "page": 207,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 549
+      },
+      {
+        "page": 208,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 350
+      },
+      {
+        "page": 209,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 400
+      },
+      {
+        "page": 210,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 571
+      },
+      {
+        "page": 211,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1179
+      },
+      {
+        "page": 212,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1213
+      },
+      {
+        "page": 213,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 338
+      },
+      {
+        "page": 214,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 372
+      },
+      {
+        "page": 215,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 799
+      },
+      {
+        "page": 216,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 383
+      },
+      {
+        "page": 217,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 336
+      },
+      {
+        "page": 218,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 636
+      },
+      {
+        "page": 219,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 350
+      },
+      {
+        "page": 220,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 476
+      },
+      {
+        "page": 221,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 787
+      },
+      {
+        "page": 222,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 438
+      },
+      {
+        "page": 223,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 66
+      },
+      {
+        "page": 224,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 400
+      },
+      {
+        "page": 225,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 508
+      },
+      {
+        "page": 226,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 247
+      },
+      {
+        "page": 227,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 897
+      },
+      {
+        "page": 228,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 366
+      },
+      {
+        "page": 229,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 431
+      },
+      {
+        "page": 230,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 528
+      },
+      {
+        "page": 231,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 452
+      },
+      {
+        "page": 232,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 537
+      },
+      {
+        "page": 233,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1038
+      },
+      {
+        "page": 234,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1347
+      },
+      {
+        "page": 235,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 435
+      },
+      {
+        "page": 236,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 169
+      },
+      {
+        "page": 237,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1081
+      },
+      {
+        "page": 238,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 403
+      },
+      {
+        "page": 239,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 438
+      },
+      {
+        "page": 240,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 590
+      },
+      {
+        "page": 241,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 599
+      },
+      {
+        "page": 242,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 826
+      },
+      {
+        "page": 243,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 318
+      },
+      {
+        "page": 244,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 375
+      },
+      {
+        "page": 245,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 644
+      },
+      {
+        "page": 246,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1138
+      },
+      {
+        "page": 247,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1484
+      },
+      {
+        "page": 248,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1503
+      },
+      {
+        "page": 249,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1184
+      },
+      {
+        "page": 250,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 418
+      },
+      {
+        "page": 251,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 645
+      },
+      {
+        "page": 252,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 956
+      },
+      {
+        "page": 253,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1164
+      },
+      {
+        "page": 254,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 484
+      },
+      {
+        "page": 255,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 420
+      },
+      {
+        "page": 256,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 322
+      },
+      {
+        "page": 257,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 252
+      },
+      {
+        "page": 258,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 641
+      },
+      {
+        "page": 259,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 357
+      },
+      {
+        "page": 260,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 470
+      },
+      {
+        "page": 261,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 539
+      },
+      {
+        "page": 262,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 614
+      },
+      {
+        "page": 263,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 200
+      },
+      {
+        "page": 264,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1370
+      },
+      {
+        "page": 265,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1182
+      },
+      {
+        "page": 266,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 350
+      },
+      {
+        "page": 267,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 471
+      },
+      {
+        "page": 268,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 457
+      },
+      {
+        "page": 269,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1227
+      },
+      {
+        "page": 270,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 392
+      },
+      {
+        "page": 271,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 355
+      },
+      {
+        "page": 272,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 770
+      },
+      {
+        "page": 273,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 475
+      },
+      {
+        "page": 274,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 451
+      },
+      {
+        "page": 275,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 422
+      },
+      {
+        "page": 276,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 299
+      },
+      {
+        "page": 277,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 172
+      },
+      {
+        "page": 278,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 847
+      },
+      {
+        "page": 279,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 385
+      },
+      {
+        "page": 280,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 521
+      },
+      {
+        "page": 281,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 887
+      },
+      {
+        "page": 282,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 424
+      },
+      {
+        "page": 283,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 361
+      },
+      {
+        "page": 284,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 783
+      },
+      {
+        "page": 285,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 359
+      },
+      {
+        "page": 286,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 443
+      },
+      {
+        "page": 287,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1257
+      },
+      {
+        "page": 288,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 396
+      },
+      {
+        "page": 289,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 552
+      },
+      {
+        "page": 290,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 932
+      },
+      {
+        "page": 291,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 412
+      },
+      {
+        "page": 292,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 459
+      },
+      {
+        "page": 293,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 395
+      },
+      {
+        "page": 294,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 345
+      },
+      {
+        "page": 295,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 653
+      },
+      {
+        "page": 296,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 430
+      },
+      {
+        "page": 297,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 607
+      },
+      {
+        "page": 298,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 960
+      },
+      {
+        "page": 299,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1124
+      },
+      {
+        "page": 300,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 360
+      },
+      {
+        "page": 301,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 484
+      },
+      {
+        "page": 302,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 579
+      },
+      {
+        "page": 303,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 506
+      },
+      {
+        "page": 304,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 203
+      },
+      {
+        "page": 305,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 179
+      },
+      {
+        "page": 306,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 185
+      },
+      {
+        "page": 307,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1180
+      },
+      {
+        "page": 308,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 341
+      },
+      {
+        "page": 309,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 444
+      },
+      {
+        "page": 310,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 609
+      },
+      {
+        "page": 311,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 1549
+      },
+      {
+        "page": 312,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 446
+      },
+      {
+        "page": 313,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 344
+      },
+      {
+        "page": 314,
+        "width": 595.276,
+        "height": 841.89,
+        "rotation": 0,
+        "orientation": "portrait",
+        "text_chars": 350
+      }
+    ],
+    "extraction_errors": []
+  },
+  "bookmarks": {
+    "count": 82,
+    "top_level_count": 11,
+    "invalid": [],
+    "entries": [
+      {
+        "title": "封面",
+        "page": 1,
+        "depth": 0
+      },
+      {
+        "title": "人物志",
+        "page": 2,
+        "depth": 0
+      },
+      {
+        "title": "目录卷一：Go 从一行走到并发",
+        "page": 3,
+        "depth": 0
+      },
+      {
+        "title": "目录卷二：后端从请求走到上线",
+        "page": 4,
+        "depth": 0
+      },
+      {
+        "title": "目录卷三：Harness 管住模型不确定性",
+        "page": 5,
+        "depth": 0
+      },
+      {
+        "title": "全书能力地图",
+        "page": 6,
+        "depth": 0
+      },
+      {
+        "title": "Go 从一行到并发",
+        "page": 7,
+        "depth": 0
+      },
+      {
+        "title": "第一章  路边茶棚：读懂一段 Go",
+        "page": 8,
+        "depth": 1
+      },
+      {
+        "title": "先把分支走明白",
+        "page": 13,
+        "depth": 2
+      },
+      {
+        "title": "测试要住进 _test.go",
+        "page": 16,
+        "depth": 2
+      },
+      {
+        "title": "第二章  铸出账单剑模：类型、Struct 与 Tag",
+        "page": 21,
+        "depth": 1
+      },
+      {
+        "title": "一个字不一定一个字节",
+        "page": 25,
+        "depth": 2
+      },
+      {
+        "title": "JSON 解码要有边界",
+        "page": 28,
+        "depth": 2
+      },
+      {
+        "title": "第三章  剑匣、窗口与名册：Array、Slice、Map 与指针",
+        "page": 35,
+        "depth": 1
+      },
+      {
+        "title": "容器值也有契约",
+        "page": 41,
+        "depth": 2
+      },
+      {
+        "title": "第四章  谁会这一剑：Method、Interface 与组合",
+        "page": 45,
+        "depth": 1
+      },
+      {
+        "title": "接口里的 nil 有两层",
+        "page": 49,
+        "depth": 2
+      },
+      {
+        "title": "泛型只抽共同算法",
+        "page": 52,
+        "depth": 2
+      },
+      {
+        "title": "第五章  山门与院落：Module、Package 与依赖方向",
+        "page": 56,
+        "depth": 1
+      },
+      {
+        "title": "依赖问题先问模块",
+        "page": 60,
+        "depth": 2
+      },
+      {
+        "title": "工作区不是发布配置",
+        "page": 63,
+        "depth": 2
+      },
+      {
+        "title": "第六章  错误要留因果：Error 与边界测试",
+        "page": 67,
+        "depth": 1
+      },
+      {
+        "title": "错误要能被识别",
+        "page": 72,
+        "depth": 2
+      },
+      {
+        "title": "recover 只守边界",
+        "page": 75,
+        "depth": 2
+      },
+      {
+        "title": "测试从例子走向性质",
+        "page": 78,
+        "depth": 2
+      },
+      {
+        "title": "第七章  众剑齐出：Goroutine、GMP 与 Race",
+        "page": 82,
+        "depth": 1
+      },
+      {
+        "title": "没有同步，就没有顺序",
+        "page": 86,
+        "depth": 2
+      },
+      {
+        "title": "先定所有权，再选同步器",
+        "page": 89,
+        "depth": 2
+      },
+      {
+        "title": "第八章  飞剑须能收：Channel、Select 与 Context",
+        "page": 93,
+        "depth": 1
+      },
+      {
+        "title": "启动 goroutine 时就写退出路",
+        "page": 98,
+        "depth": 2
+      },
+      {
+        "title": "Go 后端从请求到上线",
+        "page": 102,
+        "depth": 0
+      },
+      {
+        "title": "第九章  山门来客：HTTP、Gin 与契约",
+        "page": 103,
+        "depth": 1
+      },
+      {
+        "title": "先学数据怎么流",
+        "page": 109,
+        "depth": 2
+      },
+      {
+        "title": "HTTP 默认值不是生产配置",
+        "page": 112,
+        "depth": 2
+      },
+      {
+        "title": "在进程内测完整 HTTP",
+        "page": 117,
+        "depth": 2
+      },
+      {
+        "title": "补页 9.A 身份从哪里来：JWT 与 OIDC",
+        "page": 120,
+        "depth": 2
+      },
+      {
+        "title": "补页 9.B 过了山门，还要问能不能动这本账",
+        "page": 123,
+        "depth": 2
+      },
+      {
+        "title": "补页 9.C 中间件有顺序，Server 也有收剑时刻",
+        "page": 126,
+        "depth": 2
+      },
+      {
+        "title": "第十章  城中三层：Handler、Service、Repository",
+        "page": 132,
+        "depth": 1
+      },
+      {
+        "title": "补页 10.A 多租户不是一个 Header",
+        "page": 137,
+        "depth": 2
+      },
+      {
+        "title": "第十一章  真账本：SQL、事务与幂等",
+        "page": 141,
+        "depth": 1
+      },
+      {
+        "title": "补页 11.A 事务模板与 Commit 结果不确定",
+        "page": 146,
+        "depth": 2
+      },
+      {
+        "title": "补页 11.B 隔离级别不是越高越好",
+        "page": 149,
+        "depth": 2
+      },
+      {
+        "title": "补页 11.C 连接池是一道总容量预算",
+        "page": 152,
+        "depth": 2
+      },
+      {
+        "title": "补页 11.D 事务外盒：Outbox、Inbox 与至少一次投递",
+        "page": 155,
+        "depth": 2
+      },
+      {
+        "title": "第十二章  两座库房：Redis 与缓存一致性",
+        "page": 159,
+        "depth": 1
+      },
+      {
+        "title": "第十三章  山洪过窄桥：并发闸门与过载拒绝",
+        "page": 166,
+        "depth": 1
+      },
+      {
+        "title": "补页 13.A 真正的有界 Worker Pool",
+        "page": 170,
+        "depth": 2
+      },
+      {
+        "title": "补页 13.B 限流、背压、重试与熔断不是一回事",
+        "page": 173,
+        "depth": 2
+      },
+      {
+        "title": "第十四章  流光传书：SSE、断线与跨层取消",
+        "page": 177,
+        "depth": 1
+      },
+      {
+        "title": "补页 14.A SSE、WebSocket 与慢客户端",
+        "page": 182,
+        "depth": 2
+      },
+      {
+        "title": "第十五章  夜行留灯：Log、Metric 与 Trace",
+        "page": 187,
+        "depth": 1
+      },
+      {
+        "title": "先量，再看 CPU，再看等待",
+        "page": 191,
+        "depth": 2
+      },
+      {
+        "title": "补页 15.A 从三类信号走到 SLO",
+        "page": 194,
+        "depth": 2
+      },
+      {
+        "title": "第十六章  下山之前：配置、Docker、迁移与回滚",
+        "page": 201,
+        "depth": 1
+      },
+      {
+        "title": "把日常门禁固定下来",
+        "page": 205,
+        "depth": 2
+      },
+      {
+        "title": "启动和退出是一份契约",
+        "page": 208,
+        "depth": 2
+      },
+      {
+        "title": "补页 16.A 配置、密钥与容器硬边界",
+        "page": 213,
+        "depth": 2
+      },
+      {
+        "title": "补页 16.B 迁移、灰度（Canary）、回滚与恢复演练",
+        "page": 216,
+        "depth": 2
+      },
+      {
+        "title": "补页 16.C 上线之前，证据要一层层过门",
+        "page": 219,
+        "depth": 2
+      },
+      {
+        "title": "成为 Harness AI 工程师",
+        "page": 223,
+        "depth": 0
+      },
+      {
+        "title": "第十七章  会说不等于会做：LLM、Workflow 与 Tool Calling",
+        "page": 224,
+        "depth": 1
+      },
+      {
+        "title": "第十八章  大脑、招式、驿道与剑匣",
+        "page": 229,
+        "depth": 1
+      },
+      {
+        "title": "工具发现不等于工具可信",
+        "page": 231,
+        "depth": 2
+      },
+      {
+        "title": "第十九章  一次执行的一生：Run、Step 与恢复",
+        "page": 239,
+        "depth": 1
+      },
+      {
+        "title": "审批要先验证，再预留",
+        "page": 244,
+        "depth": 2
+      },
+      {
+        "title": "Run 管目标，Step 管一次动作",
+        "page": 250,
+        "depth": 2
+      },
+      {
+        "title": "第二十章  行囊不能装整座山：Context Engineering",
+        "page": 255,
+        "depth": 1
+      },
+      {
+        "title": "第二十一章  剑有护手：权限、沙箱与人在回路",
+        "page": 260,
+        "depth": 1
+      },
+      {
+        "title": "MCP Adapter 不是信任边界",
+        "page": 267,
+        "depth": 2
+      },
+      {
+        "title": "隔离要管进程，也要管数据",
+        "page": 270,
+        "depth": 2
+      },
+      {
+        "title": "第二十二章  失败要有证词：预算、Trace、重放与 Eval",
+        "page": 274,
+        "depth": 1
+      },
+      {
+        "title": "预算先预留，事实后对账",
+        "page": 279,
+        "depth": 2
+      },
+      {
+        "title": "证据正文与签名分开",
+        "page": 282,
+        "depth": 2
+      },
+      {
+        "title": "三种 Replay，三套承诺",
+        "page": 285,
+        "depth": 2
+      },
+      {
+        "title": "Trace 会丢，事件账本不能丢",
+        "page": 288,
+        "depth": 2
+      },
+      {
+        "title": "第二十三章  AI 写代码也要过剑阵：Coding Harness",
+        "page": 292,
+        "depth": 1
+      },
+      {
+        "title": "候选改动必须离开宿主工作区",
+        "page": 296,
+        "depth": 2
+      },
+      {
+        "title": "第二十四章  最后一炉：可控 Ledger Agent",
+        "page": 301,
+        "depth": 1
+      },
+      {
+        "title": "Handler 只入队，Worker 才执行",
+        "page": 309,
+        "depth": 2
+      },
+      {
+        "title": "九十日练剑路线",
+        "page": 313,
+        "depth": 0
+      },
+      {
+        "title": "九十日阶段门",
+        "page": 314,
+        "depth": 0
+      }
+    ]
+  },
+  "links": {
+    "internal_count": 24,
+    "external_count": 0,
+    "distinct_internal_targets": 24,
+    "invalid": [],
+    "internal": [
+      {
+        "source_page": 3,
+        "target_page": 8
+      },
+      {
+        "source_page": 3,
+        "target_page": 21
+      },
+      {
+        "source_page": 3,
+        "target_page": 35
+      },
+      {
+        "source_page": 3,
+        "target_page": 45
+      },
+      {
+        "source_page": 3,
+        "target_page": 56
+      },
+      {
+        "source_page": 3,
+        "target_page": 67
+      },
+      {
+        "source_page": 3,
+        "target_page": 82
+      },
+      {
+        "source_page": 3,
+        "target_page": 93
+      },
+      {
+        "source_page": 4,
+        "target_page": 103
+      },
+      {
+        "source_page": 4,
+        "target_page": 132
+      },
+      {
+        "source_page": 4,
+        "target_page": 141
+      },
+      {
+        "source_page": 4,
+        "target_page": 159
+      },
+      {
+        "source_page": 4,
+        "target_page": 166
+      },
+      {
+        "source_page": 4,
+        "target_page": 177
+      },
+      {
+        "source_page": 4,
+        "target_page": 187
+      },
+      {
+        "source_page": 4,
+        "target_page": 201
+      },
+      {
+        "source_page": 5,
+        "target_page": 224
+      },
+      {
+        "source_page": 5,
+        "target_page": 229
+      },
+      {
+        "source_page": 5,
+        "target_page": 239
+      },
+      {
+        "source_page": 5,
+        "target_page": 255
+      },
+      {
+        "source_page": 5,
+        "target_page": 260
+      },
+      {
+        "source_page": 5,
+        "target_page": 274
+      },
+      {
+        "source_page": 5,
+        "target_page": 292
+      },
+      {
+        "source_page": 5,
+        "target_page": 301
+      }
+    ]
+  },
+  "fonts": {
+    "seen_count": 8,
+    "seen": [
+      "/AAAAAA+.SFNSMono-Light",
+      "/AAAAAA+STHeitiTC-Medium-0",
+      "/AAAAAB+STHeitiTC-Medium-0",
+      "/AAAAAC+STHeitiTC-Medium-0",
+      "/AAAAAD+STHeitiTC-Medium-0",
+      "/AAAAAE+STHeitiTC-Medium-0",
+      "/AAAAAF+STHeitiTC-Medium-0",
+      "/Helvetica"
+    ],
+    "embedded": [
+      "/AAAAAA+.SFNSMono-Light",
+      "/AAAAAA+STHeitiTC-Medium-0",
+      "/AAAAAB+STHeitiTC-Medium-0",
+      "/AAAAAC+STHeitiTC-Medium-0",
+      "/AAAAAD+STHeitiTC-Medium-0",
+      "/AAAAAE+STHeitiTC-Medium-0",
+      "/AAAAAF+STHeitiTC-Medium-0"
+    ],
+    "portable_base14": [
+      "/Helvetica"
+    ],
+    "missing_or_nonportable": []
+  },
+  "text_anomalies": {
+    "empty_pages": [],
+    "nul_pages": [],
+    "replacement_character_pages": [],
+    "unexpected_ellipsis_pages": [],
+    "placeholder_hits": [],
+    "ellipsis_policy": "U+2026 is rejected; three ASCII dots remain valid Go variadic syntax."
+  },
+  "v15_content": {
+    "contract": {
+      "manuscript": "work/book/v15-text-review/output/人间铸剑录_v15_幼稚化ELI5_完整文字审稿版.md",
+      "manuscript_sha256": "8a5d1dee4edb1716f49f068af43b74b990860fe86a07e3661c4cc6569bced775",
+      "story_file_sha256": {
+        "story-go.json": "0ca0e9c42f7fc6a03feca48930bc27025d18de36a3a860836d14571c7a8fdf1f",
+        "story-backend.json": "ee6b313b2dceef792486cad25c8ea4af97ce55e7924796bb04dab01f46fd280e",
+        "story-harness.json": "32ae8c43e823d83e8a14ba3ec17843fb8f3ab64438fe559196b4503d608b10ad"
+      }
+    },
+    "anchor_groups": {
+      "chapter_1_settle_example": {
+        "hits": {
+          "路边茶棚": [
+            3,
+            8,
+            9
+          ],
+          "一碗面七文": [
+            8
+          ],
+          "ErrInvalidPrice": [
+            12,
+            18,
+            19
+          ],
+          "ErrInsufficientPayment": [
+            12,
+            18,
+            19
+          ]
+        },
+        "missing": []
+      },
+      "chapter_14_sse_boundary": {
+        "hits": {
+          "SSE 断线只停订阅": [
+            178,
+            179,
+            180
+          ],
+          "业务取消要显式发出": [
+            178,
+            179,
+            180
+          ],
+          "bill_id": [
+            137,
+            177,
+            178,
+            179,
+            180,
+            181,
+            182,
+            184,
+            185,
+            186,
+            187,
+            200
+          ]
+        },
+        "missing": []
+      },
+      "run_step_recovery_identity": {
+        "hits": {
+          "Run": [
+            5,
+            6,
+            18,
+            19,
+            27,
+            188,
+            190,
+            195,
+            196,
+            200,
+            239,
+            240,
+            241,
+            242,
+            245,
+            246,
+            247,
+            248,
+            250,
+            251,
+            252,
+            253,
+            254,
+            267,
+            268,
+            269,
+            274,
+            275,
+            277,
+            278,
+            279,
+            280,
+            281,
+            282,
+            283,
+            284,
+            286,
+            287,
+            288,
+            289,
+            290,
+            291,
+            295,
+            296,
+            297,
+            298,
+            299,
+            301,
+            302,
+            303,
+            307,
+            309,
+            310,
+            311,
+            313
+          ],
+          "Step": [
+            5,
+            232,
+            233,
+            234,
+            239,
+            240,
+            241,
+            242,
+            245,
+            246,
+            247,
+            250,
+            251,
+            252,
+            253,
+            254,
+            255,
+            262,
+            263,
+            264,
+            274,
+            279,
+            280,
+            281,
+            289,
+            290,
+            297,
+            298,
+            299,
+            302,
+            309,
+            310,
+            311
+          ],
+          "CallID": [
+            230,
+            232,
+            233,
+            235,
+            237,
+            239,
+            240,
+            241,
+            242,
+            243,
+            244,
+            245,
+            246,
+            247,
+            248,
+            250,
+            251,
+            252,
+            253,
+            254,
+            262,
+            263,
+            264,
+            265,
+            266,
+            290,
+            301,
+            302,
+            308,
+            309,
+            310,
+            311
+          ],
+          "receipt": [
+            232,
+            233,
+            239,
+            240,
+            241,
+            244,
+            245,
+            246,
+            247,
+            248,
+            251,
+            252,
+            253,
+            254,
+            262,
+            263,
+            301,
+            302,
+            303,
+            308,
+            310,
+            311,
+            312
+          ],
+          "Unknown": [
+            31,
+            146,
+            148,
+            173,
+            194,
+            195,
+            197,
+            199,
+            220,
+            239,
+            240,
+            243,
+            244,
+            245,
+            247,
+            248,
+            249,
+            250,
+            251,
+            266,
+            274,
+            279,
+            280,
+            281,
+            302,
+            309
+          ]
+        },
+        "missing": []
+      },
+      "chapter_24_entry_scope": {
+        "hits": {
+          "tenant_id": [
+            131,
+            137,
+            139,
+            237,
+            303
+          ],
+          "authenticated owner_id": [
+            303
+          ],
+          "entry_key": [
+            303
+          ],
+          "CreateQueuedOnce": [
+            307,
+            309,
+            311
+          ]
+        },
+        "missing": []
+      },
+      "chapter_24_worker_closure": {
+        "hits": {
+          "Handler 只创建持久 queued Run": [
+            310
+          ],
+          "lease Worker": [
+            310
+          ],
+          "receipt-req-0827": [
+            301,
+            303,
+            311
+          ]
+        },
+        "missing": []
+      }
+    },
+    "forbidden_anchor_hits": {
+      "splitAmount": [],
+      "水断在上游": []
+    },
+    "story_coverage": {
+      "expected": 71,
+      "contract_units": 71,
+      "covered": 71,
+      "missing": []
+    },
+    "explanation_coverage": {
+      "expected": 71,
+      "contract_units": 71,
+      "covered": 71,
+      "missing": []
+    },
+    "code_block_coverage": {
+      "expected": 64,
+      "contract_blocks": 64,
+      "covered": 64,
+      "missing": [],
+      "method": "three longest whitespace-normalized nontrivial source lines per code block"
+    }
+  }
+}

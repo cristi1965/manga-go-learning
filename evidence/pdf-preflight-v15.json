@@ -1,0 +1,13 @@
+{
+  "version": "15.0.0",
+  "mode": "full",
+  "chapters": 24,
+  "supplements": 47,
+  "story_dialogue_turns": 401,
+  "image_api_calls": 0,
+  "asset_master_rebuilds": 0,
+  "avatar_crop_default": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+  "zhou_mili_source": "output/imagegen/v5/zhoumili-v5.png",
+  "zhou_mili_crop": "square-512-face-0.50-0.34-zoom-1.33-circle-v1",
+  "output": "work/book/v15-text-review/output/人间铸剑录_v15_完整图解版.pdf"
+}

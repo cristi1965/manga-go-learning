@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f1e9">
+  <title>漫画Go学习 · Go 后端与 Harness AI 互动学堂</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css?v=18.7.0">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="回到首页"><span class="brand-mark">Go</span><span><strong>漫画Go学习</strong><small>Go 后端与 Harness AI</small></span></a>
+    <div class="top-actions">
+      <button class="icon-button menu-button" id="menuToggle" title="打开目录" aria-label="打开目录" aria-controls="chapterSidebar" aria-expanded="false">☰</button>
+      <button class="icon-button" id="searchToggle" title="搜索章节" aria-label="搜索章节">⌕</button>
+      <button class="icon-button" id="themeToggle" title="切换主题" aria-label="切换主题">◐</button>
+      <button class="progress-button" id="progressButton" title="学习进度"><span id="progressLabel">0%</span><span class="progress-ring"><i id="progressRing"></i></span></button>
+    </div>
+  </header>
+
+  <div class="app-shell" id="top">
+    <aside class="sidebar" id="chapterSidebar" aria-label="章节导航">
+      <div class="sidebar-head"><span>修行目录</span><button class="sidebar-collapse" id="sidebarCollapse" title="收起目录" aria-label="收起目录">‹</button></div>
+      <div id="chapterNav" class="chapter-nav"></div>
+      <div class="sidebar-foot"><span class="status-dot"></span><span id="savedStatus">进度保存在本机</span></div>
+    </aside>
+    <button class="sidebar-overlay" id="sidebarOverlay" aria-label="关闭目录"></button>
+
+    <main class="main-content">
+      <section class="welcome" id="welcome">
+        <div class="welcome-copy">
+          <p class="eyebrow">互动学堂</p>
+          <h1>漫画Go学习<br><em>从看懂到会做</em></h1>
+          <p class="lead">不是翻页背术语，而是跟着一场场事故，观察边界、改代码、验收结果。</p>
+          <div class="welcome-actions"><button class="primary-button" id="startButton">从第一章开始 <span>→</span></button><button class="text-button" id="continueButton">继续上次进度</button></div>
+          <div class="learning-paths" aria-label="选择学习路线"><button data-start-chapter="1"><b>Go 零基础</b><span>第 1–8 章</span></button><button data-start-chapter="9"><b>后端实战</b><span>第 9–16 章</span></button><button data-start-unit="supplement-go-ai-01"><b>Go + AI 企业项目</b><span>8 个必修里程碑</span></button><button data-start-chapter="17"><b>Harness AI</b><span>完成企业项目后进入</span></button></div>
+          <div class="stat-strip"><span><strong id="statChapters">24</strong> 章</span><span><strong id="statSupplements">47</strong> 个选修补页</span><span><strong id="statDialogues">424</strong> 句对话</span></div>
+        </div>
+        <div class="welcome-scene" aria-hidden="true"><div class="mountain mountain-one"></div><div class="mountain mountain-two"></div><div class="scene-table"></div><div class="scene-figure figure-al"></div><div class="scene-figure figure-chen"></div><div class="scene-dog">◡</div><div class="scene-note">小白先懂<br><b>再到工程</b></div></div>
+      </section>
+
+      <section class="unit-view hidden" id="unitView">
+        <div class="unit-header"><div><p class="eyebrow" id="unitVolume"></p><h1 id="unitTitle"></h1><div class="unit-meta" id="unitMeta"></div><p id="lkj" class="transition-in"></p><p id="unitGoal" class="unit-goal"></p></div><div class="unit-actions"><button class="icon-button" id="prevButton" title="上一章" aria-label="上一章">←</button><button class="icon-button" id="nextButton" title="下一章" aria-label="下一章">→</button></div></div>
+        <div class="learning-ribbon" aria-label="学习难度"><button class="ribbon-step active" data-stage="understand"><b>1 先懂</b><small>故事和一句话</small></button><button class="ribbon-step" data-stage="read"><b>2 会读</b><small>路线和代码</small></button><button class="ribbon-step" data-stage="practice"><b>3 会做</b><small>练习和验收</small></button></div>
+        <section class="incident-card stage-understand" id="incidentCard"></section>
+        <section class="chat-card stage-understand" id="chatCard"></section>
+        <div class="two-column stage-understand">
+          <section class="memory-card" id="memoryCard"></section>
+          <section class="glossary-card" id="glossaryCard"></section>
+        </div>
+        <section class="flow-card stage-read" id="flowCard"></section>
+        <section class="technical-card stage-read" id="technicalCard"></section>
+        <section class="code-card stage-read" id="codeCard"></section>
+        <section class="exercise-card stage-practice" id="exerciseCard"></section>
+        <section class="supplement-list stage-practice" id="supplementList"></section>
+        <p class="transition-out stage-practice" id="transitionOut"></p>
+        <div class="unit-footer"><button class="secondary-button" id="stageButton">下一步：会读 <span>→</span></button><button class="secondary-button hidden" id="completeButton">标记本章完成 <span>✓</span></button><button class="secondary-button hidden" id="continueUnitButton">下一单元 <span>→</span></button><button class="text-button" id="backToTop">回到顶部</button></div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="searchDialog" class="search-dialog" aria-labelledby="dialogTitle"><form method="dialog" class="search-box"><h2 class="sr-only" id="dialogTitle">搜索教材</h2><div class="search-line"><span>⌕</span><input id="searchInput" autocomplete="off" placeholder="搜索 Go、事务、CallID、某句对话…"><button value="cancel" class="icon-button" aria-label="关闭">×</button></div><div id="searchResults" class="search-results"><p class="muted">输入关键词开始搜索</p></div></form></dialog>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="app.js?v=18.7.0" type="module"></script>
+</body>
+</html>

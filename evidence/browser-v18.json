@@ -1,0 +1,4163 @@
+{
+  "status": "pass",
+  "version": "18.7.0",
+  "generatedAt": "2026-09-16T09:23:21.917Z",
+  "url": "http://127.0.0.1:49359",
+  "units": 79,
+  "artifactSha256": {
+    "VERSION": "64c531a67b4c54a664e1e868e90e3c605a700d0547b9962affe2c404b95f6883",
+    "interactive/index.html": "c4a9a0e6db089f1b8e7b1431843479709e67b794a0a386f44bb034253a0438f0",
+    "interactive/app.js": "2a4543ef6b240b311392250d8aa9d21fd3c50ab7d65a8a09ecc2aa6f19bc8d48",
+    "interactive/styles.css": "d2b925208aeb84e3ab1ac4eaaa37e0938336be620bef1e64cc73f9931de21142",
+    "interactive/data/book.json": "6252eb0c8368938ba6d9a1502b0cf08356b4640f78823e15d1a754426b7e5c71",
+    "runner/main.go": "225763ca5ee4e317cfc19d17cd44a426f8c93091764fcff6e3d2832286549eb9",
+    "browser_audit.mjs": "fdaa4f3e9a80db2be13db7c1aa1dbf728899694dc084e09f9a594cbb2364343c",
+    "package.json": "6b997a3796f666524be37d2570530cc5c6d94b6a0ffe5a2fe42bad448d13b60e",
+    "package-lock.json": "0b376a2316f008098e032047b02934b859523f3e12bec466f4e15f488011a562"
+  },
+  "desktop": {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "units": [
+      {
+        "id": "chapter-1",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-control-flow-declarations",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-real-test-file",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-2",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-utf8-string-byte-rune",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-strict-json-contract",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-3",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-container-contracts",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-4",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-interface-typed-nil",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-generics-when-useful",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-5",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-module-diagnostics",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-workspace-boundaries",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-6",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-error-chain",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-defer-panic-recover",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-testing-fuzz-cleanup",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-7",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-memory-model-race",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-sync-tool-choice",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-8",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-goroutine-lifecycle",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-9",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-io-boundaries",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-http-client-server",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-httptest-contract",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-09-authn-oidc",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-09-object-authz",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-09-http-boundary",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-10",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-10-tenant-defense",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-11",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-11-transaction-helper",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-11-isolation-locks",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-11-connection-pool",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-11-outbox-inbox",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-12",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-13",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-13-worker-pool",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-13-resilience",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-14",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-14-stream-slow-client",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-15",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-benchmark-profile-trace",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-15-observability-slo",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-16",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-daily-tooling-gate",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-lifecycle-graceful-shutdown",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-16-config-container",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-16-deploy-restore",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-16-release-gates",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-01",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-02",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-03",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-04",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-05",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-06",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-07",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-08",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-17",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-18",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-tool-contract-gate",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-19",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-approval-reservation",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-run-step-checkpoint",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-20",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-21",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-mcp-untrusted-adapter",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-sandbox-data-policy",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-22",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-budget-ledger",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-signed-manifest-envelope",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-replay-eval-matrix",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-durable-event-spine",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-23",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-candidate-lifecycle",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-24",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-handler-worker-skeleton",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      }
+    ]
+  },
+  "mobile": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "units": [
+      {
+        "id": "chapter-1",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-control-flow-declarations",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-real-test-file",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-2",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-utf8-string-byte-rune",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-strict-json-contract",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-3",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-container-contracts",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-4",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-interface-typed-nil",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-generics-when-useful",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-5",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-module-diagnostics",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-workspace-boundaries",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-6",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-error-chain",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-defer-panic-recover",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-testing-fuzz-cleanup",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-7",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-memory-model-race",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-sync-tool-choice",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-8",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-goroutine-lifecycle",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-9",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-io-boundaries",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-http-client-server",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-httptest-contract",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-09-authn-oidc",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-09-object-authz",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-09-http-boundary",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-10",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-10-tenant-defense",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-11",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-11-transaction-helper",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-11-isolation-locks",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-11-connection-pool",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-11-outbox-inbox",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-12",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-13",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-13-worker-pool",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-13-resilience",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-14",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-14-stream-slow-client",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-15",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-benchmark-profile-trace",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-15-observability-slo",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-16",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-daily-tooling-gate",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-lifecycle-graceful-shutdown",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-16-config-container",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-16-deploy-restore",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-16-release-gates",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-01",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-02",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-03",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-04",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-05",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-06",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-07",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-08",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-17",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-18",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-tool-contract-gate",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-19",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-approval-reservation",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-run-step-checkpoint",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-20",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-21",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-mcp-untrusted-adapter",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-sandbox-data-policy",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-22",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-budget-ledger",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-signed-manifest-envelope",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-replay-eval-matrix",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-durable-event-spine",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-23",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-candidate-lifecycle",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-24",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-handler-worker-skeleton",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      }
+    ]
+  },
+  "darkMobile": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "units": [
+      {
+        "id": "chapter-1",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-control-flow-declarations",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-real-test-file",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-2",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-utf8-string-byte-rune",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-strict-json-contract",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-3",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-container-contracts",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-4",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-interface-typed-nil",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-generics-when-useful",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-5",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-module-diagnostics",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-workspace-boundaries",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-6",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-error-chain",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-defer-panic-recover",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-testing-fuzz-cleanup",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-7",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-memory-model-race",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-sync-tool-choice",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-8",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-goroutine-lifecycle",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-9",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-io-boundaries",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-http-client-server",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-httptest-contract",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-09-authn-oidc",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-09-object-authz",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-09-http-boundary",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-10",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-10-tenant-defense",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-11",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-11-transaction-helper",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-11-isolation-locks",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-11-connection-pool",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-11-outbox-inbox",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-12",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-13",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-13-worker-pool",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-13-resilience",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-14",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-14-stream-slow-client",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-15",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-benchmark-profile-trace",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-15-observability-slo",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-16",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-daily-tooling-gate",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-lifecycle-graceful-shutdown",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-16-config-container",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-16-deploy-restore",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-backend-16-release-gates",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-01",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-02",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-03",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-04",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-05",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-06",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-07",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-go-ai-08",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-17",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-18",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-tool-contract-gate",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-19",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-approval-reservation",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-run-step-checkpoint",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-20",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-21",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-mcp-untrusted-adapter",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-sandbox-data-policy",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-22",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-budget-ledger",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-signed-manifest-envelope",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-replay-eval-matrix",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-durable-event-spine",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-23",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-candidate-lifecycle",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "chapter-24",
+        "kind": "chapter",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 1,
+        "codeExercises": 1,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      },
+      {
+        "id": "supplement-harness-handler-worker-skeleton",
+        "kind": "supplement",
+        "overflow": 0,
+        "badControls": 0,
+        "minControl": 44,
+        "badImages": 0,
+        "duplicateIds": 0,
+        "workshops": 0,
+        "codeExercises": 0,
+        "axeViolations": [],
+        "axeExecuted": true,
+        "axeStages": [
+          "understand",
+          "practice"
+        ]
+      }
+    ]
+  },
+  "accessibility": {
+    "axeViolations": [],
+    "darkAxeViolations": [],
+    "reflow200Percent": {
+      "overflow": 0,
+      "menuVisible": true
+    },
+    "keyboard": {
+      "sidebarOpen": true,
+      "escapeFocus": "menuToggle",
+      "dialogOpen": true,
+      "dialogClosed": true,
+      "learningPath": [
+        {
+          "name": "stage-read",
+          "focusVisible": true
+        },
+        {
+          "name": "flow-node",
+          "focusVisible": true
+        },
+        {
+          "name": "technical-details",
+          "focusVisible": true
+        },
+        {
+          "name": "stage-practice",
+          "focusVisible": true
+        },
+        {
+          "name": "code-editor",
+          "focusVisible": true
+        },
+        {
+          "name": "run-code",
+          "focusVisible": true
+        },
+        {
+          "name": "quiz-choice",
+          "focusVisible": true
+        },
+        {
+          "name": "workshop-field",
+          "focusVisible": true
+        },
+        {
+          "name": "complete",
+          "focusVisible": true
+        }
+      ]
+    },
+    "reducedMotion": true,
+    "programmaticHeadingOutline": "none"
+  },
+  "interactions": {
+    "structuredWorkshop": {
+      "wrongRejected": true,
+      "validAccepted": true,
+      "chapter9CodeAccepted": true,
+      "reloadPersisted": true,
+      "keywordListRejected": true
+    },
+    "staleResponse": {
+      "editorLockedDuringRun": true,
+      "editorUnlockedAfterRun": true,
+      "starterFailed": true
+    },
+    "forgedLocalStorage": {
+      "forgedCompletionCleared": true,
+      "forgedStorageCleared": true
+    }
+  },
+  "runtime": {
+    "browserVersion": "153.0.8010.36"
+  },
+  "expectedConsoleErrors": [
+    "Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)",
+    "Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)"
+  ],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "requestFailures": [],
+  "screenshots": {
+    "desktop": {
+      "path": "evidence/browser-v18-desktop.png",
+      "sha256": "60d0119d053a46ff895bd4298425296239c17060243623dab5c67dc3bdab92c6"
+    },
+    "mobile": {
+      "path": "evidence/browser-v18-mobile.png",
+      "sha256": "da7a3ae66b0dc78f799f1f859eb311a8412bd9ecf66fc1a07d9bb46d2ea56830"
+    }
+  }
+}

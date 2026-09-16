@@ -1,0 +1,70 @@
+{
+  "generatedAt": "2026-09-11T04:32:53.364970+00:00",
+  "python": "3.12.14",
+  "go": "go version go1.25.5 darwin/arm64",
+  "files": {
+    "interactive/index.html": "d3ea341bd41aae428b02bac19dd4368127fb9345fc5e02397beb2de51726fbc5",
+    "interactive/app.js": "45f1fc6a12359e51aa371fb62a29c5950900c16d7f80f94e5506a72afd7a6df5",
+    "interactive/styles.css": "cba50f823f01a48a55db93dd738e2f883e4b21c3af7b5de2274b465b45df3f5d",
+    "interactive/data/book.json": "c5af35b29b526b47b61ab51d41cf2a0908c13e35c4c7262d03d4a8a42ff6ed13",
+    "labs/harness-lab/harness.go": "07807ad2e04d20227a4c1ef17c37943b80b16300113c59b13bfb4fbf0fa654ec",
+    "labs/harness-lab/harness_test.go": "7a5f4153d52e3840b2d263229f2b058a267aaa1984bc6a65d61cb697ff818dae"
+  },
+  "contentStats": {
+    "chapters": 24,
+    "supplements": 47,
+    "renderedDialogueTurns": 496,
+    "sourceDialogueTurns": 424,
+    "machineScoredChecks": 119,
+    "syntaxCheckedCodeBlocks": 64,
+    "runtimeVerifiedUnits": 4
+  },
+  "checks": [
+    {
+      "command": "go test -race -count=20 ./...",
+      "cwd": "/Users/jingxin/Documents/Codex/2026-08-04/yan/work/book/v15-text-review/labs/harness-lab",
+      "status": "pass",
+      "exitCode": 0,
+      "output": "ok  \tmanga-go/harness-lab\t1.174s"
+    },
+    {
+      "command": "node --check interactive/app.js",
+      "cwd": "/Users/jingxin/Documents/Codex/2026-08-04/yan/work/book/v15-text-review",
+      "status": "pass",
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "command": "/Users/jingxin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 verify_dialogue_quality.py",
+      "cwd": "/Users/jingxin/Documents/Codex/2026-08-04/yan/work/book/v15-text-review",
+      "status": "pass",
+      "exitCode": 0,
+      "output": "{\"status\": \"pass\", \"units\": 71, \"turns\": 424, \"starts\": {\"阿良\": 24, \"李宝瓶\": 6, \"阮秀\": 4, \"陈平安\": 11, \"周米粒\": 17, \"宁姚\": 5, \"左右\": 3, \"陆沉\": 1}, \"ends\": {\"阿良\": 6, \"周米粒\": 12, \"李宝瓶\": 13, \"阮秀\": 10, \"宁姚\": 16, \"左右\": 11, \"陆沉\": 2, \"陈平安\": 1}, \"speakers\": {\"阿良\": 67, \"陈平安\": 126, \"宁姚\": 55, \"周米粒\": 40, \"李宝瓶\": 68, \"阮秀\": 51, \"左右\": 14, \"陆沉\": 3}, \"fixed_template_units\": [\"story-backend.json:chapter:14\", \"story-backend.json:supplement:backend-11-transaction-helper\", \"story-backend.json:supplement:backend-13-worker-pool\"], \"consecutive_chen\": [], \"duplicate_lines\": [], \"malformed_units\": [], \"failures\": []}"
+    }
+  ],
+  "browser": {
+    "url": "http://127.0.0.1:4173/?v=17.1#chapter-1",
+    "mobileViewport": "390x844",
+    "unitsTraversed": 71,
+    "failures": [],
+    "assertions": [
+      "all 71 hashes render a visible title",
+      "all 71 units start at understand stage",
+      "all 71 mobile pages have zero horizontal overflow",
+      "mobile sidebar opens, closes, becomes inert, and returns focus on Escape",
+      "wrong choice shows explanation and enters review queue",
+      "three track entry buttons open chapters 1, 9, and 17",
+      "console error count is zero"
+    ],
+    "screenshots": {
+      "mobile": {
+        "path": "output/browser-v17/mobile-final.png",
+        "sha256": "1b794e43656a6237c43fd8f34e547c776bcb7f060f23494250061d9c5b10686e"
+      },
+      "desktop": {
+        "path": "output/browser-v17/desktop.png",
+        "sha256": "8a57aafde81f16368f13a0e1989d9af4e331ad5db24c37f660aae6e702fc3e0d"
+      }
+    }
+  }
+}

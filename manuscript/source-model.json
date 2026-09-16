@@ -1,0 +1,3255 @@
+{
+  "chapters": [
+    {
+      "title": "第一章  第一记走桩：读懂一段 Go",
+      "goal": "掌握 package、main、func、变量、分支、循环、返回值和表驱动测试，建立最基本的代码阅读顺序。",
+      "scene": "顾璨把 func、参数和返回值写成三张小纸条，怎么摆都差一张。李宝瓶摊开笔记，宁姚把非法输入圈了出来。",
+      "dialogue": [
+        [
+          "陈平安",
+          "十文分成三份，账上只剩三个三文，最后一文不见了。"
+        ],
+        [
+          "李宝瓶",
+          "你只拿了商。先补函数签名：它还该交回什么？"
+        ],
+        [
+          "陈平安",
+          "那我让 splitAmount 交回商、余数和 error。"
+        ],
+        [
+          "宁姚",
+          "再守边界。total 和 parts 都须大于零。"
+        ],
+        [
+          "阿良",
+          "余下那一文揣回账里。测试只认这招，别拿酒钱糊弄。"
+        ]
+      ],
+      "principles": [
+        "文件从 `package` 开始；可执行程序必须属于 package main，并提供 func main。",
+        "函数签名的阅读顺序是 func -> 名称 -> 参数 -> 返回值；多返回值常用于结果与 error。",
+        "`:=` 只能在函数内部声明至少一个新变量；`var` 可表达零值；`const` 表达编译期常量。",
+        "Go 只有 for 一个循环关键字；if/switch 不要求括号，但要求清晰的作用域。",
+        "表驱动测试把输入、期望和名称放进切片，逐项运行并覆盖正常与失败分支。"
+      ],
+      "code": "var ErrInvalidSplit = errors.New(\"invalid split\")\n\nfunc splitAmount(total, parts int64) (int64, int64, error) {\n    if total <= 0 || parts <= 0 {\n        return 0, 0, fmt.Errorf(\"%w: total=%d parts=%d\",\n            ErrInvalidSplit, total, parts)\n    }\n    quotient, remainder := total/parts, total%parts\n    return quotient, remainder, nil\n}",
+      "pitfalls": [
+        "只会照抄 main，不会沿调用链阅读",
+        "把 := 用在包级作用域",
+        "只测成功路径，不测零值和错误"
+      ],
+      "task": "为 splitAmount 写表驱动测试，覆盖整除、不能整除、零份数和负数金额。",
+      "accept": "测试断言 quotient*parts+remainder == total；非法输入返回可识别错误，任何金额都不静默丢失。",
+      "diagrams": [
+        "go-function-anatomy",
+        "book-learning-map"
+      ],
+      "mnemonic": "小白先懂：func + 招名 + 入手 + 回招。",
+      "self_check": [
+        "main 为什么不会被其他包自动调用？",
+        "`var x int` 的 x 是什么值？",
+        "什么时候不能使用 `:=`？"
+      ],
+      "transition_in": "第一笔账要按人数拆分，陈平安先从 splitAmount 的函数签名起手。",
+      "transition_out": "splitAmount 的签名、正值边界和余数都被测试守住后，拆出的金额进入 CreateBillRequest，下一处事故落在 JSON 字段名上。",
+      "self_check_answers": [
+        "main 只由 Go 运行时作为可执行程序入口调用，import 不会自动执行它。",
+        "var x int 的零值是 0。",
+        ":= 不能用于包级作用域，也不能在当前作用域没有新变量时使用。"
+      ]
+    },
+    {
+      "title": "第二章  铸出账单剑模：类型、Struct 与 Tag",
+      "goal": "理解基本类型、零值、struct、字段可见性、JSON tag，以及 DTO、领域模型和持久化模型的边界。",
+      "scene": "同一张账单在终端里有值，到了 JSON 里却少了字段。陈平安以为编码器偷了东西，阿良让他先看字段首字母。",
+      "dialogue": [
+        [
+          "陈平安",
+          "账单里的 Message 不见了，我还当反引号里只是注释。"
+        ],
+        [
+          "李宝瓶",
+          "Tag 写着 msg_content，编码后的 key 会听谁的？"
+        ],
+        [
+          "陈平安",
+          "听 Tag 的。我先按 msg_content 查，再把字段改回导出。"
+        ],
+        [
+          "李宝瓶",
+          "那张小纸条不是注释。编码器真按它给字段挂牌。"
+        ],
+        [
+          "宁姚",
+          "小写 message 包外不可见。编码器没偷，是你没把门打开。"
+        ]
+      ],
+      "principles": [
+        "导出标识符以大写开头；encoding/json 默认只处理可导出字段。",
+        "tag 是元数据，不是运行时魔法；`json`、`binding`、`db` 各服务于不同边界。",
+        "零值让对象可被创建，但零值未必业务合法，金额、分类和租户仍需领域校验。",
+        "请求 DTO 不应直接等同于数据库模型，避免客户端控制内部 ID、user_id 和审计字段。"
+      ],
+      "code": "type CreateBillRequest struct {\n    AmountCents *int64 `json:\"amount_cents\"`\n    Category    string `json:\"category\"`\n}\n\nfunc (r CreateBillRequest) Validate() error {\n    if r.AmountCents == nil || *r.AmountCents <= 0 {\n        return ErrInvalidAmount\n    }\n    if r.Category == \"\" {\n        return ErrCategoryRequired\n    }\n    return nil\n}",
+      "pitfalls": [
+        "金额使用 float64",
+        "把数据库模型直接暴露给客户端",
+        "以为 binding 通过就代表业务合法"
+      ],
+      "task": "把 CreateBillRequest 映射为 Bill，并测试字段缺失、金额非法和成功三种情况。",
+      "accept": "能说明 JSON 校验与领域校验分别归谁负责。",
+      "diagrams": [
+        "struct-json-pipeline"
+      ],
+      "mnemonic": "小白先懂：Struct 是剑模，Tag 是模具刻字，规则决定能否出炉。",
+      "self_check": [
+        "为什么小写字段不会出现在 JSON？",
+        "零值有什么好处和风险？",
+        "为什么 user_id 不信任请求体？"
+      ],
+      "transition_in": "splitAmount 交回商与余数后，第一笔账单从 CreateBillRequest 进入程序，却在 JSON 字段名上卡住了。",
+      "transition_out": "字段导出、未知字段和中文备注的边界都收紧后，一张账单终于能稳定进入程序；多笔账单随即带来容器的所有权问题。",
+      "self_check_answers": [
+        "小写字段未导出，encoding/json 在包外看不见它。",
+        "零值便于直接创建对象，但 0 金额等零值可能不满足业务规则。",
+        "user_id 必须来自服务端认证结果，不能信任请求体自报。"
+      ]
+    },
+    {
+      "title": "第三章  剑匣、窗口与名册：Array、Slice、Map 与指针",
+      "goal": "分清 array、slice、map、指针、复制与共享，并能用 race detector 发现并发读写问题。",
+      "scene": "山路边摊着一卷长布。顾璨只剪下一角，剩下的整卷却仍被线头牵住；阮秀又在名册旁放下一把锁。",
+      "dialogue": [
+        [
+          "陈平安",
+          "调用方 append 一笔，账本原数据也变了。slice 不是副本吗？"
+        ],
+        [
+          "阮秀",
+          "只复制了指针、长度和容量，两边仍可能看同一底层数组。"
+        ],
+        [
+          "陈平安",
+          "那我复制元素再交出去；map 输出前先把 key 排好。"
+        ],
+        [
+          "宁姚",
+          "还要记住：nil map 能读不能写，并发读写必须收口。"
+        ],
+        [
+          "阿良",
+          "账本别让两桌人共改。数据归谁管，先把话说死。"
+        ]
+      ],
+      "principles": [
+        "array 长度属于类型；slice 是包含指针、长度和容量的描述符，复制描述符不等于复制底层数组。",
+        "append 未超容量时可能修改共享底层数组；扩容后返回的新 slice 才可能指向新数组。",
+        "map 必须初始化后写入；并发读写需要锁、所有权隔离或并发安全结构。",
+        "含 mutex 的值首次使用后不得复制，通常通过构造函数返回指针并使用指针 receiver。"
+      ],
+      "code": "type SafeIndex struct {\n    mu sync.RWMutex\n    m  map[string]int\n}\n\nfunc NewSafeIndex() *SafeIndex {\n    return &SafeIndex{m: make(map[string]int)}\n}\nfunc (s *SafeIndex) Set(k string, v int) {\n    s.mu.Lock(); defer s.mu.Unlock(); s.m[k] = v\n}\nfunc (s *SafeIndex) Get(k string) (int, bool) {\n    s.mu.RLock(); defer s.mu.RUnlock()\n    v, ok := s.m[k]; return v, ok\n}",
+      "pitfalls": [
+        "把 slice 叫作不复制的引用类型",
+        "保留小切片导致大数组无法释放",
+        "多个 goroutine 直接写普通 map"
+      ],
+      "task": "实现 NewSafeIndex、Get、Set，并用多个 goroutine 并发读写。",
+      "accept": "go test -race 通过；空构造不会发生 nil map panic；测试说明含锁对象不被复制。",
+      "diagrams": [
+        "go-value-copy",
+        "go-pointer-copy",
+        "go-slice-copy"
+      ],
+      "mnemonic": "小白先懂：Array 是固定柜，Slice 是窗口，Map 是名册，指针是门牌地址。",
+      "self_check": [
+        "append 何时更换底层数组？",
+        "为什么小切片可能留住大内存？",
+        "map 并发读写如何收口？"
+      ],
+      "transition_in": "第二章接住了一笔账单；现在账本要保存多笔账单，array、slice 和 map 第一次进入同一段代码。",
+      "transition_out": "账单容器的所有权明确后，汇总逻辑不该依赖具体存储；下一章让 Service 只向 Repository 要它真正需要的能力。",
+      "self_check_answers": [
+        "append 超过容量时通常分配新数组；未超过时仍可能写入共享底层数组。",
+        "小切片仍引用原 backing array，因此可能阻止整块大内存回收。",
+        "并发读写 map 要用锁、单一 owner 或并发安全结构收口。"
+      ]
+    },
+    {
+      "title": "第四章  谁会这一剑：Method、Interface 与组合",
+      "goal": "掌握 receiver、隐式接口满足、依赖倒置、组合和泛型的适用边界。",
+      "scene": "陈平安想给每种 repository 建一套庞大父类。阿良问得更简单：你不必告诉我是谁，只要告诉我会不会保存账单。",
+      "dialogue": [
+        [
+          "陈平安",
+          "我没写 implements，MemoryBillRepo 怎么就能交给 Service？"
+        ],
+        [
+          "李宝瓶",
+          "编译器只查方法集。Service 真需要哪两个动作？"
+        ],
+        [
+          "陈平安",
+          "只要 Find 和 Save。我把小接口放在 Service 这边试编译。"
+        ],
+        [
+          "宁姚",
+          "别照抄实现全套本事。值与指针的方法集也不同。"
+        ],
+        [
+          "阿良",
+          "不用报名，招式够就上桌。可零件还得去 main 里接起来。"
+        ]
+      ],
+      "principles": [
+        "接口由使用方按最小能力定义，具体类型通过方法集隐式满足。",
+        "值 receiver 的方法属于 T 与 *T 的方法集；指针 receiver 的方法只属于 *T。",
+        "组合复用行为而非模拟继承；嵌入会提升方法，但不自动建立 is-a 关系。",
+        "泛型适合数据结构和算法复用，不应用于隐藏领域差异或制造抽象层。"
+      ],
+      "code": "type Repository interface {\n    Save(context.Context, Bill) (Bill, error)\n    Get(context.Context, string) (Bill, error)\n}\n\ntype Service struct { repo Repository }\nfunc NewService(repo Repository) *Service { return &Service{repo: repo} }",
+      "pitfalls": [
+        "接口由实现方定义成巨型清单",
+        "所有 struct 都用指针 receiver",
+        "为了一处重复就引入泛型"
+      ],
+      "task": "实现 SQLRepository 与 FakeRepository，让同一个 Service 测试无需真实数据库。",
+      "accept": "测试能注入 fake，并验证 repository 错误如何影响业务结果。",
+      "diagrams": [
+        "interface-capability-contract"
+      ],
+      "mnemonic": "小白先懂：接口按能力立约，不按身份封爵。",
+      "self_check": [
+        "接口应该由谁定义？",
+        "值与指针 receiver 的方法集有何差异？",
+        "组合为何不等于继承？"
+      ],
+      "transition_in": "账单列表不再泄露内部存储后，Service 开始依赖 Repository；陈平安却没找到任何 implements 声明。",
+      "transition_out": "Repository 的能力边界立住了，可它和 Service、Handler 仍只是散落的零件；下一章回到 main 完成模块与依赖装配。",
+      "self_check_answers": [
+        "接口通常由使用方按所需的最小能力定义。",
+        "值 receiver 属于 T 和 *T 的方法集；指针 receiver 只属于 *T。",
+        "组合复用行为，但不自动建立 is-a 继承关系。"
+      ]
+    },
+    {
+      "title": "第五章  山门与院落：Module、Package 与依赖方向",
+      "scene": "陈平安把所有代码堆进 main.go。接口能跑，却没有人敢改。阿良说，铁能砸人，剑却要有脊、有锋、有柄。",
+      "dialogue": [
+        [
+          "陈平安",
+          "我删掉 Service 的装配，Handler 一启动就摸了个空。"
+        ],
+        [
+          "齐静春",
+          "数据库先坐稳，Repo 才能带 Service 去见 Handler。路由最后开门。"
+        ],
+        [
+          "陈平安",
+          "原来不会自动发现。我把缺的依赖接回去再编译。"
+        ],
+        [
+          "宁姚",
+          "main 只装配和启动。go.mod 管依赖图，外部包也能进来。"
+        ],
+        [
+          "阿良",
+          "零件刚接稳，ErrMissing 又掉出来了。别转手就丢了来路。"
+        ]
+      ],
+      "principles": [
+        "module 由 go.mod 定义主模块路径和依赖图；import 可来自主模块、标准库或依赖图中的外部模块。",
+        "package 是编译与封装边界；internal 的可见性由目录位置决定，不等同于 module 边界。",
+        "internal/x 只允许 internal 上一级目录树内的代码导入；main 仍只负责选择实现、注入依赖和启动。"
+      ],
+      "code": "ledger-agent/\n  go.mod\n  cmd/server/main.go\n  internal/bill/handler.go\n  internal/bill/service.go\n  internal/bill/repository.go\n  internal/platform/config/config.go\n  internal/platform/database/database.go",
+      "pitfalls": [
+        "把 go.mod 误解成只准导入本模块",
+        "忽略 internal 的父目录树限制",
+        "业务层反向依赖 Gin 或 SQL 行"
+      ],
+      "task": "建立示例目录，再分别从允许与不允许的父目录树导入 internal/bill；同时引入一个 go.mod 声明的外部依赖并运行 go test ./...。",
+      "accept": "能区分 module 依赖图、package 封装与 internal 父目录树限制，并说明 main 为何是 composition root。",
+      "goal": "理解 module、package、internal、目录边界和 composition root。",
+      "diagrams": [
+        "go-project-architecture"
+      ],
+      "mnemonic": "小白先懂：Module 是山界，Package 是院落，main 只负责组装。",
+      "self_check": [
+        "module 与 package 的边界有何不同？",
+        "业务为什么不应依赖 Gin？",
+        "main 为什么是 composition root？"
+      ],
+      "transition_in": "Service 已经只依赖最小 Repository 接口，但数据库、Repo、Service 和 Handler 还没有被谁真正连起来。",
+      "transition_out": "main 完成装配并开始监听后，一笔不存在的账单穿过 Repo、Service 和 Handler；它的错误链成为下一章入口。",
+      "self_check_answers": [
+        "module 定义版本、主模块路径与依赖图；package 定义编译和封装；internal 另受父目录树限制。",
+        "业务层不依赖 Gin，才能独立测试并替换传输协议。",
+        "main 负责选择实现、注入依赖并启动进程，所以是 composition root。"
+      ]
+    },
+    {
+      "title": "第六章  错误要留因果：Error 与边界测试",
+      "scene": "数据库找不到账单，接口却回了 500。陈平安说反正都是 error。阿良摇头：江湖上失约、迷路和拔剑伤人，能是同一桩罪吗？",
+      "dialogue": [
+        [
+          "陈平安",
+          "ErrMissing 每层都打印，我还处处 recover，日志反倒乱了。"
+        ],
+        [
+          "宁姚",
+          "普通失败返回 error；只在增加业务语义时用 %w 包装。"
+        ],
+        [
+          "陈平安",
+          "Service 包成 load bill，Handler 用 errors.Is 判断。"
+        ],
+        [
+          "阿良",
+          "recover 只守请求边界和自建 goroutine 顶层，记堆栈并返回稳定错误。"
+        ],
+        [
+          "阿良",
+          "护甲别穿十层。已知错误收住，再让 fuzz 去撞未知输入。"
+        ]
+      ],
+      "principles": [
+        "使用 %w 保留错误因果，用 errors.Is/As 分类，不比较 err.Error()。",
+        "客户端取消、服务自身 deadline 和上游 timeout 是不同事件，不能全部翻成 500 或 504。",
+        "连接已断时不要继续写响应；日志记录 cancelled，并让下游协作式收口。",
+        "表驱动测试覆盖公开错误契约，内部 cause 只进入受控日志与 trace。"
+      ],
+      "code": "type HTTPDecision struct {\n    Status int\n    Code   string\n    Write  bool\n}\n\nfunc mapError(err error) HTTPDecision {\n    switch {\n    case err == nil:\n        return HTTPDecision{200, \"ok\", true}\n    case errors.Is(err, context.Canceled):\n        return HTTPDecision{0, \"request_cancelled\", false}\n    case errors.Is(err, ErrUpstreamTimeout):\n        return HTTPDecision{504, \"upstream_timeout\", true}\n    case errors.Is(err, context.DeadlineExceeded):\n        return HTTPDecision{504, \"deadline_exceeded\", true}\n    case errors.Is(err, ErrInvalidBill):\n        return HTTPDecision{422, \"invalid_bill\", true}\n    default:\n        return HTTPDecision{500, \"internal_error\", true}\n    }\n}",
+      "pitfalls": [
+        "比较 `err.Error()`",
+        "既记录错误又层层重复记录",
+        "把 panic 当普通错误处理"
+      ],
+      "task": "为 mapError 写表驱动测试，覆盖包装错误、客户端取消、服务 deadline、上游超时和未知错误。",
+      "accept": "公开 code 稳定；取消不写响应且不计 500；deadline 不落入 500；内部 cause 不进入 body。",
+      "goal": "掌握错误包装、分类、取消与超时的边界翻译，以及表驱动测试。",
+      "diagrams": [
+        "error-contract-flow"
+      ],
+      "mnemonic": "小白先懂：内部留因果，边界翻契约。",
+      "self_check": [
+        "为什么不用 err.Error() 比较？",
+        "panic 适合普通业务错误吗？",
+        "500 响应为什么不能带内部 cause？"
+      ],
+      "transition_in": "第五章让服务真正启动；第一笔查询却返回 ErrMissing，陈平安准备在每一层打印并 recover。",
+      "transition_out": "错误类别、panic 边界和测试职责都分开后，账本开始并行汇总多笔账单；共享总额第一次暴露数据竞争。",
+      "self_check_answers": [
+        "错误文本会变化；分类应使用 errors.Is 或 errors.As。",
+        "普通业务失败应返回 error，panic 留给当前调用无法继续的异常状态。",
+        "500 响应只暴露稳定错误码，内部 cause 留在受控日志和 trace。"
+      ]
+    },
+    {
+      "title": "第七章  众剑齐出：Goroutine、GMP 与 Race",
+      "scene": "剑灵挥出成群纸剑，风声骤紧。阿良扶着斗笠看热闹，黄狗趴在脚边，宁姚只问谁来收剑。",
+      "dialogue": [
+        [
+          "陈平安",
+          "两个 goroutine 都写 total，多跑几次，账就对不上了。"
+        ],
+        [
+          "李宝瓶",
+          "同一位置并发读写，没有同步，就没有可信的先后。"
+        ],
+        [
+          "陈平安",
+          "我让它们各发小计，再由一个 owner 汇总并等待结束。"
+        ],
+        [
+          "宁姚",
+          "channel 收发能同步。共享一组不变量，就用 Mutex 一起护住。"
+        ],
+        [
+          "阿良",
+          "别靠 sleep 猜出手顺序。total 收住了，还得管谁能退场。"
+        ]
+      ],
+      "principles": [
+        "goroutine 是并发执行单元；GMP 是运行时调度模型。P 数量由 GOMAXPROCS 控制，不等同于物理核心定律。",
+        "channel 提供通信与同步，但 channel 外共享变量仍可能 data race。互斥锁保护共享状态，channel 适合传递所有权或事件。",
+        "`select` 在多个 ready case 中选择，但不承诺业务公平或无饥饿；带 default 的循环可能忙轮询。"
+      ],
+      "code": "func fetchAll(ctx context.Context, urls []string, limit int) error {\n    if limit <= 0 {\n        return fmt.Errorf(\"limit must be positive: %d\", limit)\n    }\n    g, ctx := errgroup.WithContext(ctx)\n    g.SetLimit(limit)\n    for _, url := range urls {\n        url := url\n        g.Go(func() error { return fetch(ctx, url) })\n    }\n    return g.Wait()\n}",
+      "pitfalls": [
+        "fire-and-forget goroutine",
+        "关闭由接收方控制的 channel",
+        "用 Sleep 协调并发"
+      ],
+      "task": "实现 fetchAll，并测试 limit=0、limit<0、子任务失败和父 context 取消。",
+      "accept": "非法 limit 立即返回；并发峰值不超过上限；失败与取消都能让所有 goroutine 收口，race 检测通过。",
+      "goal": "理解 goroutine 调度、WaitGroup、mutex、共享状态与 race detector。",
+      "diagrams": [
+        "goroutine-channel-runtime"
+      ],
+      "mnemonic": "小白先懂：G 等事，M 干活，P 给资格；并发先定主人。",
+      "self_check": [
+        "P 等于物理 CPU 核吗？",
+        "Channel 外共享变量会竞态吗？",
+        "race detector 能证明无竞态吗？"
+      ],
+      "transition_in": "错误处理稳定后，账本开始并行汇总；两个 goroutine 同时更新 total，本机偶尔正确，race 检查却报警。",
+      "transition_out": "共享总额改成单一 owner 后，计算结果不再竞态；但请求提前取消时，生产账单的 goroutine 仍在阻塞发送。",
+      "self_check_answers": [
+        "P 是调度资源，不等同于某一颗物理 CPU 核。",
+        "会；channel 不会自动保护它之外的共享变量。",
+        "不能；race detector 只检查本次执行实际覆盖到的并发路径。"
+      ]
+    },
+    {
+      "title": "第八章  飞剑须能收：Channel、Select 与 Context",
+      "scene": "几封飞信同时落在桌上。崔东山伸手乱抓，陆沉笑而不答，宁姚把取消、关闭和公平三列写得清清楚楚。",
+      "dialogue": [
+        [
+          "陈平安",
+          "请求取消了，生产者还堵在发送口。是 select 顺序写错了吗？"
+        ],
+        [
+          "阿良",
+          "都能出手时才挑一剑。阿良可以随心所欲，账房可别当它公平。"
+        ],
+        [
+          "陈平安",
+          "我发送时也听 ctx.Done()；消费者先 cancel，再等它退出。"
+        ],
+        [
+          "宁姚",
+          "Context 不能强杀任务。每层都要主动监听并返回。"
+        ],
+        [
+          "李宝瓶",
+          "发送方关门，取消向下传，等待方收尾。三步缺一不可。"
+        ]
+      ],
+      "principles": [
+        "能保证不再发送的唯一 owner/协调者负责关闭 channel；接收方使用 range 直到关闭。",
+        "select 在多个 case 同时就绪时伪随机选择，不承诺绝对公平。",
+        "context 只广播取消意图，不能强杀 goroutine、解锁 mutex 或保证驱动立即停止。",
+        "每个 goroutine 都要定义等待对象、取消来源、错误归属与退出证据。"
+      ],
+      "code": "func stream(ctx context.Context, values []int) <-chan int {\n    out := make(chan int)\n    go func() {\n        defer close(out)\n        for _, value := range values {\n            select {\n            case <-ctx.Done():\n                return\n            case out <- value:\n            }\n        }\n    }()\n    return out\n}\n\nfunc consumeStream(ctx context.Context, values []int) {\n    for value := range stream(ctx, values) {\n        consume(value)\n    }\n}",
+      "pitfalls": [
+        "把 context 放进 struct 长期保存",
+        "把业务参数塞进 context",
+        "忽略 ctx.Err"
+      ],
+      "task": "实现可取消 producer/consumer，记录 goroutine 启动和退出，并覆盖消费者提前停止。",
+      "accept": "发送方唯一关闭 channel；取消后所有 goroutine 在期限内退出；go test -race 与泄漏检查通过。",
+      "goal": "掌握 channel 关闭、select 语义、context 取消、超时和 goroutine 泄漏收口。",
+      "diagrams": [
+        "context-cancellation-sequence",
+        "goroutine-lifecycle-closure"
+      ],
+      "mnemonic": "小白先懂：谁等待、谁取消、错归谁、上限多少。",
+      "self_check": [
+        "谁应该关闭 channel？",
+        "select 是否保证绝对公平？",
+        "context 能强杀 goroutine 吗？"
+      ],
+      "transition_in": "第七章消除了共享写竞态，可客户端取消请求后，生产账单的 goroutine 仍卡在发送；现在必须同时等待结果与取消。",
+      "transition_out": "Go 卷的账本代码已有函数、类型、容器、接口、模块、错误、并发与取消边界；第九章让同一笔账单进入 HTTP Handler。",
+      "self_check_answers": [
+        "能保证不再发送的唯一发送方或协调者负责关闭 channel。",
+        "不保证；多个 case 同时就绪时伪随机选择，不是业务公平策略。",
+        "不能；context 只广播取消意图，goroutine 必须主动监听并返回。"
+      ]
+    },
+    {
+      "title": "第九章  山门来客：HTTP、Gin 与契约",
+      "scene": "第一个真实请求进山，JSON 少了字段。陈平安只检查了解析是否成功，却忘了业务合法性。",
+      "dialogue": [
+        [
+          "陈平安",
+          "我把回信写好，1500 分的奶茶账就算收进来了吧？"
+        ],
+        [
+          "李宝瓶",
+          "只顾回信，谁来拆来客递进门的账单？"
+        ],
+        [
+          "陈平安",
+          "那我先读请求并校验；字段不合规，就在门口退回。"
+        ],
+        [
+          "宁姚",
+          "创建回 201，输入错回 400，错误码要稳定。"
+        ],
+        [
+          "李宝瓶",
+          "账单收稳了。先把数据库钥匙从 Handler 手里拿走。"
+        ]
+      ],
+      "principles": [
+        "认证中间件生成 typed Principal；Handler 显式把 TenantID/UserID 传给 Service 做授权。",
+        "请求 body 有大小上限，JSON 拒绝未知字段；解码后显式执行字段校验，再进入领域校验。",
+        "context 传递 deadline、取消和 trace，不隐藏必须参与授权与落库的业务身份。",
+        "稳定错误 code 属于 HTTP 契约，内部 cause 不对客户端泄露。"
+      ],
+      "code": "type Principal struct { TenantID, UserID string }\n\nfunc (h *Handler) Create(c *gin.Context) {\n    principal, ok := PrincipalFrom(c)\n    if !ok {\n        writeError(c, 401, \"unauthorized\"); return\n    }\n    var req CreateBillRequest\n    if err := decodeStrictJSON(c, &req, 1<<20); err != nil {\n        writeError(c, 400, \"invalid_request\"); return\n    }\n    if err := h.requestValidator.Struct(req); err != nil {\n        writeError(c, 422, \"invalid_request_fields\"); return\n    }\n    cmd := CreateBill{\n        AmountCents: req.AmountCents, Category: req.Category,\n    }\n    bill, err := h.service.Create(\n        c.Request.Context(), principal, cmd)\n    writeResult(c, bill, err)\n}",
+      "pitfalls": [
+        "直接 bind 到数据库模型",
+        "状态码永远 200",
+        "信任客户端传来的 user_id"
+      ],
+      "task": "实现创建账单 Handler，覆盖缺少 Principal、未知 JSON 字段、超大 body 和越权租户。",
+      "accept": "TenantID/UserID 从服务端认证上下文生成并显式入参；Service 完成授权；响应状态与错误 code 稳定。",
+      "goal": "掌握请求生命周期、路由、中间件、DTO、校验、认证上下文与状态码。",
+      "diagrams": [
+        "go-project-architecture",
+        "struct-json-pipeline"
+      ],
+      "mnemonic": "小白先懂：能读来信，不等于应承来客。",
+      "self_check": [
+        "binding 与业务校验如何分工？",
+        "user_id 应从哪里来？",
+        "为何不把所有响应都写成 200？"
+      ],
+      "transition_in": "第 8 章刚把取消信号接回请求链，陈平安便把同一笔奶茶账单送到 HTTP 门口：tenant-7 的 bill-0827，金额 1500 分。",
+      "transition_out": "bill-0827 已通过 HTTP 边界，但 Handler 手里还握着业务判断和存取动作；这正好把问题推到第 10 章的分层。",
+      "self_check_answers": [
+        "陈平安：binding 只检查 HTTP 输入的形状、类型和基础约束，Service 再检查 1500 分奶茶账的业务规则与权限；宁姚：对，门口验包裹，城内判能不能办。",
+        "陈平安：user_id 和 tenant_id 来自验证 JWT/OIDC 后生成的 typed Principal，不能相信 body、path 或任意 header；宁姚：答对，身份必须从可信边界进入。",
+        "陈平安：HTTP 状态表达传输结果，稳定 error code 表达业务原因，失败全回 200 会让客户端、代理和监控误判；宁姚：闭合，201、400、401、404/403 与 409 各守自己的语义。"
+      ]
+    },
+    {
+      "title": "第十章  城中三层：Handler、Service、Repository",
+      "scene": "配置、日志、数据库、路由相互引用，启动顺序像打结的剑穗。阿良让陈平安只在一个地方组装全局依赖。",
+      "dialogue": [
+        [
+          "陈平安",
+          "Handler 拿到 1500 分，直接写 PostgreSQL 最省路吧？"
+        ],
+        [
+          "阮秀",
+          "那规则变一次，门房也跟着翻修吗？"
+        ],
+        [
+          "陈平安",
+          "我只组 CreateBillCmd，让 Service 按 tenant-7 规则校验后再存账。"
+        ],
+        [
+          "宁姚",
+          "Principal 和 context 也要沿这条调用链传下去。"
+        ],
+        [
+          "李宝瓶",
+          "钥匙各归其主。手机没回信，req-0827 又敲门了。"
+        ]
+      ],
+      "principles": [
+        "Handler 负责协议、认证结果提取和 HTTP 错误翻译，不把 Gin Context 传入业务层。",
+        "Service/use case 负责授权、业务规则和事务编排。",
+        "Repository 只暴露当前用例需要的最小能力，并返回领域或持久化错误。",
+        "composition root 负责注入 SQLRepository 或 FakeRepository，不把依赖选择藏在业务代码里。"
+      ],
+      "code": "type BillRepository interface {\n    Save(context.Context, Bill) (Bill, error)\n}\n\ntype Service struct { repo BillRepository }\nfunc (s *Service) Create(\n    ctx context.Context, p Principal, cmd CreateBill,\n) (Bill, error) {\n    if !p.CanWriteBills() { return Bill{}, ErrForbidden }\n    bill, err := NewBill(p.TenantID, p.UserID, cmd)\n    if err != nil { return Bill{}, err }\n    return s.repo.Save(ctx, bill)\n}\n\ntype Handler struct {\n    service *Service\n}\n// Only Handler translates domain errors to HTTP.",
+      "pitfalls": [
+        "init 中连数据库",
+        "依赖由业务包偷偷创建",
+        "readiness 永远返回 200"
+      ],
+      "task": "用 FakeRepository 测试 Service 的授权失败、领域校验失败和持久化失败。",
+      "accept": "测试不启动 HTTP/数据库即可证明分层；Repository 错误只在 Handler 边界翻译为状态码。",
+      "goal": "分清协议、业务与持久化职责，能通过构造函数注入替换依赖。",
+      "diagrams": [
+        "handler-service-repository-flow",
+        "request-dependency-sequence"
+      ],
+      "mnemonic": "小白先懂：协议在门外，规矩在城中，存取在库房。",
+      "self_check": [
+        "Repository 可以返回 HTTP 状态吗？",
+        "Service 为什么不接 Gin Context？",
+        "分层价值如何用测试证明？"
+      ],
+      "transition_in": "第 9 章的 Handler 已收下 bill-0827；现在不换业务，只追这笔账从通信层进入业务层和存取层。",
+      "transition_out": "bill-0827 已按 Handler -> Service -> Repository 落到数据库边缘；重复的 req-0827 随即把事务与幂等问题暴露出来。",
+      "self_check_answers": [
+        "陈平安：Repository 只返回数据结果和可识别领域/存储错误，不返回 HTTP 状态；宁姚：对，由 Handler 在协议边界统一映射状态码和错误体。",
+        "陈平安：Service 可以接标准 context.Context，却不接 gin.Context，否则业务会被 Gin 绑住；宁姚：准确，这样 HTTP、Worker 和测试都能复用同一业务层。",
+        "陈平安：给 Service 注入 fake Repository，给 Handler 注入 fake Service，分别验证业务与协议，不启动无关依赖；宁姚：这就用可替换测试证明了分层价值。"
+      ]
+    },
+    {
+      "title": "第十一章  真账本：SQL、事务与幂等",
+      "scene": "0.1 加 0.2 的结果让账本多出细小尾数。阿良说，称钱的秤若会漂，账本迟早要出大事。",
+      "dialogue": [
+        [
+          "陈平安",
+          "保存有事务，req-0827 重来应该不会多记一笔吧？"
+        ],
+        [
+          "阮秀",
+          "事务认得这一趟，认得门外来过几趟吗？"
+        ],
+        [
+          "陈平安",
+          "我用 req-0827 占唯一位置，再同事务写 bill-0827 和事件。"
+        ],
+        [
+          "宁姚",
+          "重复请求必须取回第一次结果，金额仍用整数分。"
+        ],
+        [
+          "李宝瓶",
+          "账没分身，可旧缓存还藏着 bill-0827 的空座。"
+        ]
+      ],
+      "principles": [
+        "幂等键绑定 tenant、动作 scope 与规范化请求指纹；同 key 不同 payload 稳定返回 409。",
+        "原子 Claim 先落 processing；完成后只保存稳定 result ref，不复制副作用结果。",
+        "命中 completed 旧记录时仍按当前 Principal 和当前 Bill 状态重新授权，不能把幂等键当读取凭证。",
+        "owner/visibility、保留期与清理策略必须明确；跨主体和跨租户碰撞统一隐藏对象存在性。"
+      ],
+      "code": "type IdempotencyRecord struct {\n    Scope, Key, RequestHash string\n    Status, ResultRef       string\n}\n\nfunc (s *Service) Create(\n    ctx context.Context, p Principal, cmd CreateBill,\n) (Bill, error) {\n    if !p.CanWriteBills() { return Bill{}, ErrForbidden }\n    hash := canonicalHash(cmd)\n    scope := p.TenantID + \":bill:create\"\n    record, claimed, err := s.idem.Claim(ctx, scope, cmd.Key, hash)\n    if err != nil { return Bill{}, err }\n    if !claimed {\n        if record.RequestHash != hash {\n            return Bill{}, ErrIdempotencyConflict\n        }\n        if record.Status == \"processing\" {\n            return Bill{}, ErrIdempotencyInProgress\n        }\n        if record.Status != \"completed\" {\n            return Bill{}, ErrIdempotencyRetryable\n        }\n        bill, err := s.bills.GetByRef(ctx, p.TenantID, record.ResultRef)\n        if err != nil { return Bill{}, err }\n        if !s.policy.CanRead(p, bill) { return Bill{}, ErrNotFound }\n        return bill, nil\n    }\n    return s.createAndComplete(ctx, p, record, cmd)\n}",
+      "pitfalls": [
+        "金额用浮点",
+        "把事务当成跨服务万能锁",
+        "只在应用层做重复检查"
+      ],
+      "task": "并发提交同 key 同 payload、同 key 不同 payload、同租户不同主体和跨租户碰撞，再模拟 Commit 回包丢失。",
+      "accept": "同摘要只写一次；不同摘要返回 409；旧结果按当前权限重新鉴权；未授权主体不能借 key 读取 bill-0827。",
+      "goal": "掌握金额表示、schema、事务、唯一约束、幂等和兼容迁移。",
+      "diagrams": [
+        "idempotency-sequence"
+      ],
+      "mnemonic": "小白先懂：钱不用浮萍称，去重靠最后一道铁门。",
+      "self_check": [
+        "为何先查再写不能防并发重复？",
+        "事务与幂等有何不同？",
+        "金额字段为何带单位？"
+      ],
+      "transition_in": "bill-0827 第一次写库后，手机因超时重发 req-0827；两次请求都穿过了同一套分层。",
+      "transition_out": "req-0827 的重复写已被幂等记录和唯一约束收住，bill-0827 与 BillCreated 同事务落地；随后出现的是缓存旧值。",
+      "self_check_answers": [
+        "陈平安：先查再写之间仍有并发窗口，两个 req-0827 都可能查到不存在；宁姚：对，必须靠同事务幂等占位和数据库唯一约束作最后裁决。",
+        "陈平安：事务保证单次尝试原子，幂等识别多次尝试是否同一请求；宁姚：答对，所以 Commit unknown 不能盲重放，要拿 req-0827 查稳定结果。",
+        "陈平安：amount_cents 明写最小整数单位，1500 就是 15 元，既避开浮点误差也避免单位歧义；宁姚：正确，跨 API、库表和事件都保持同一口径。"
+      ]
+    },
+    {
+      "title": "第十二章  两座库房：Redis 与缓存一致性",
+      "scene": "驿站一边挂着‘无此货’，另一边冒着黑烟。阿良牵着狗堵住涌向库房的人群，宁姚逐一登记 miss、timeout 和 failure。",
+      "dialogue": [
+        [
+          "陈平安",
+          "真账已有 bill-0827，刷新不见，等缓存过期就行吧？"
+        ],
+        [
+          "阮秀",
+          "若热点键一起过期，谁拦住众人撞向数据库？"
+        ],
+        [
+          "陈平安",
+          "我在 Commit 后删 tenant-7 的缓存，重建时只放一个请求进去。"
+        ],
+        [
+          "宁姚",
+          "锁用唯一 token；释放时原子核对 owner，不能直接 Del。"
+        ],
+        [
+          "李宝瓶",
+          "旧抄本撕掉了，BillCreated 却在桥头排起长队。"
+        ]
+      ],
+      "principles": [
+        "缓存命中必须对 entry.Bill 执行 policy.CanRead(p, bill)，tenant key 不能替代对象级授权。",
+        "数据库回源也先得到 Bill，再执行同一 policy.CanRead；两条路径统一按既定 403/404 策略拒绝。",
+        "缓存条目绑定 membership、policy、object ACL 与 Bill data version；任一版本变化都使旧条目失效。",
+        "写事务原子递增 data/authz version 并写 outbox；SetIfCurrent 用 durable version ledger 做 CAS，拒绝迟到旧回填。",
+        "跨租户拒绝不得泄露 bill-0827 是否存在，日志只记录 audit_id 与版本信息。"
+      ],
+      "code": "type CacheVersions struct {\n    Membership, Policy, ObjectACL, Data uint64\n}\n\ntype CachedBill struct {\n    Bill Bill\n    Versions CacheVersions\n}\n\nfunc (s *Service) GetBill(\n    ctx context.Context, p Principal, id string,\n) (Bill, error) {\n    key := \"bill:\" + p.TenantID + \":\" + id\n    if entry, ok := s.cache.Get(ctx, key); ok {\n        current, err := s.versions.Current(ctx, p, id)\n        if err != nil { return Bill{}, err }\n        if entry.Versions == current {\n            if !s.policy.CanRead(p, entry.Bill) {\n                return Bill{}, ErrNotFound\n            }\n            return entry.Bill, nil\n        }\n        s.cache.Delete(ctx, key)\n    }\n\n    bill, err := s.repo.Get(ctx, p.TenantID, id)\n    if err != nil { return Bill{}, err }\n    if !s.policy.CanRead(p, bill) { return Bill{}, ErrNotFound }\n    snapshot, err := s.versions.Current(ctx, p, bill.ID)\n    if err != nil { return Bill{}, err }\n    snapshot.Data = bill.Version\n    // CAS compares all four versions with the durable ledger.\n    // A stale reader cannot refill after a newer commit.\n    if err := s.cache.SetIfCurrent(\n        ctx, key, CachedBill{bill, snapshot},\n    ); err != nil { s.metrics.CacheFillError(err) }\n    return bill, nil\n}",
+      "pitfalls": [
+        "把 Redis 当唯一事实源",
+        "缓存 miss 与网络故障混为一谈",
+        "静态锁值配合直接 DEL"
+      ],
+      "task": "先为 tenant-7 预热 bill-0827 缓存，再依次注入角色降权、成员移除、对象转移和 policy/object ACL version 更新，并强制覆盖缓存命中与 DB 回源。",
+      "accept": "四类权限变更与一次 Commit/旧读交错后，旧主体被拒、旧数据不能复活；缓存与 DB 路径一致，测试不依赖 TTL。",
+      "goal": "掌握 cache-aside、TTL、singleflight、穿透/击穿和分布式锁边界。",
+      "diagrams": [
+        "cache-aside-sequence"
+      ],
+      "mnemonic": "小白先懂：真本只有一个，缓存只是拓印。",
+      "self_check": [
+        "缓存 miss 与 Redis 故障如何区分？",
+        "为何先提交数据库再失效缓存？",
+        "锁为什么要唯一 token？"
+      ],
+      "transition_in": "事务保证 bill-0827 只落一次，查询端却仍从 Redis 返回创建前的 tenant-7 账单列表。",
+      "transition_out": "bill-0827 的缓存旧值和击穿路径已闭合；同一事件接下来进入 Worker 队列，压力从读路径转到异步消费。",
+      "self_check_answers": [
+        "陈平安：cache miss 是明确的 key 不存在，Redis 故障是超时或连接错误，前者可回源，后者要按降级与容量契约处理；宁姚：对，不能把故障伪装成普通 miss 去撞库。",
+        "陈平安：若先删缓存再提交，别的请求可能回源旧数据并重新填回；宁姚：答对，先 Commit 真账，再失效抄本，并让失败可重试可观测。",
+        "陈平安：唯一 token 证明锁的 owner，释放时原子 compare-and-delete，才不会删掉过期后别人刚拿到的锁；宁姚：闭合，固定 value 加直接 Del 不能过关。"
+      ]
+    },
+    {
+      "title": "第十三章  山洪过窄桥：并发闸门与过载拒绝",
+      "scene": "一百个请求同时解析小票，模型配额先被打穿。阿良问：山洪来了，是让每滴水都进门，还是先修窄桥？",
+      "dialogue": [
+        [
+          "陈平安",
+          "消费慢，我把 channel 扩大，总能先把事件装下吧？"
+        ],
+        [
+          "阮秀",
+          "桶再大，水一直进来就不会满吗？"
+        ],
+        [
+          "陈平安",
+          "我固定 worker 和队列上限，队满就按契约拒绝。"
+        ],
+        [
+          "宁姚",
+          "只重试安全的暂态错误，并受总时限和预算约束。"
+        ],
+        [
+          "李宝瓶",
+          "桥头不再疯长，bill-0827 从排队走到了完成。"
+        ]
+      ],
+      "principles": [
+        "semaphore/gate 只限制同时执行数；它不是 jobs queue，也没有常驻 worker 生命周期。",
+        "容量已满时立即拒绝并返回稳定 overload 错误，调用方据 Retry-After 或预算决定是否重试。",
+        "取得 slot 后的复检定义准入点；准入后若再取消，由 fn 继续协作收口。",
+        "真正 Worker Pool 还需要有界队列、关闭所有权、等待策略和 worker 收口证据。"
+      ],
+      "code": "type Gate struct { slots chan struct{} }\n\nfunc NewGate(limit int) (*Gate, error) {\n    if limit <= 0 { return nil, ErrInvalidLimit }\n    return &Gate{slots: make(chan struct{}, limit)}, nil\n}\nfunc (g *Gate) Do(\n    ctx context.Context, fn func(context.Context) error,\n) error {\n    select {\n    case <-ctx.Done(): return ctx.Err()\n    case g.slots <- struct{}{}: defer func(){ <-g.slots }()\n    default:\n        if err := ctx.Err(); err != nil { return err }\n        return ErrOverloaded\n    }\n    if err := ctx.Err(); err != nil { return err }\n    return fn(ctx)\n}",
+      "pitfalls": [
+        "无界 channel 充当队列",
+        "所有错误都重试",
+        "多个服务层叠重试造成放大"
+      ],
+      "task": "实现 non-blocking concurrency gate，记录 active/rejected，并注入容量满与取消竞态。",
+      "accept": "active 不超上限；准入时已取消则不启动；准入后取消由 fn 收口；过载与取消可区分。",
+      "goal": "掌握并发上限、非阻塞拒绝、取消竞态和过载证据；明确它与真正 Worker Pool 的差异。",
+      "diagrams": [
+        "bounded-concurrency-flow"
+      ],
+      "mnemonic": "小白先懂：闸门限制同时出剑，队列才负责排队等候。",
+      "self_check": [
+        "队满时有哪些明确策略？",
+        "哪些错误不应重试？",
+        "为什么多层重试会放大流量？"
+      ],
+      "transition_in": "BillCreated 已可靠离开 outbox，但月度汇总消费者变慢，bill-0827 和后续事件开始在进程前排队。",
+      "transition_out": "有界 Worker 已把 BillCreated 的吞吐和失败收住；同一处理状态需要通过 SSE 持续回到客户端。",
+      "self_check_answers": [
+        "陈平安：队满可在 deadline 内阻塞、明确拒绝，或按业务约定 drop/coalesce；宁姚：对，策略可选，但无界排队不在选项里。",
+        "陈平安：校验、权限、永久业务拒绝和结果 unknown 的非幂等写都不能随手重试；宁姚：准确，只给已分类、可恢复且满足幂等语义的错误预算。",
+        "陈平安：入口和下游若各重试 n 次，总调用会相乘而不是相加；宁姚：答对，重试预算必须由外层统一，避免山门口越救越堵。"
+      ]
+    },
+    {
+      "title": "第十四章  流光传书：SSE、断线与跨层取消",
+      "scene": "用户已经关掉页面，模型还在吐字，数据库连接也迟迟不归还。陈平安这才明白，流式体验的另一半，是断线后的收口。",
+      "dialogue": [
+        [
+          "陈平安",
+          "我关掉 SSE，bill-0827 的后台处理也会停吧？"
+        ],
+        [
+          "李宝瓶",
+          "听客走了，账本也该跟着烧掉吗？"
+        ],
+        [
+          "陈平安",
+          "断线只停订阅；真要停止，我按 bill_id 显式取消。"
+        ],
+        [
+          "宁姚",
+          "状态要持久化；事件有 ID 和游标，慢连接必须有界。"
+        ],
+        [
+          "李宝瓶",
+          "耳筒放下，账照走；水桶若满，就合并消息或请慢客下线。"
+        ]
+      ],
+      "principles": [
+        "本章只讨论 Bill 事件；路由、授权、事件存储、游标和取消契约都以 bill_id 为键。",
+        "连接前执行对象级授权；连接后订阅授权版本变化，降权、移除或对象转移时立即重验并断开。",
+        "断线只结束订阅，不取消 Bill 后台推进；改变业务状态必须调用显式 bill_id API。",
+        "SSE 需要稳定 event ID、Last-Event-ID、心跳、Flush、代理禁缓冲和慢客户端上限。"
+      ],
+      "code": "func (h *BillEventHandler) Stream(c *gin.Context) {\n    p, ok := PrincipalFrom(c)\n    if !ok { h.writeError(c, ErrUnauthorized); return }\n    ctx, billID := c.Request.Context(), c.Param(\"bill_id\")\n\n    // WatchBill atomically returns the current authz version and\n    // reports every later change; then revalidate before subscribe.\n    access, err := h.authz.WatchBill(ctx, p, billID)\n    if err != nil { h.writeError(c, err); return }\n    defer access.Close()\n    allowed, err := access.Revalidate(ctx)\n    if err != nil || !allowed { h.writeError(c, ErrNotFound); return }\n\n    events, err := h.events.SubscribeBill(\n        ctx, p.TenantID, billID, c.GetHeader(\"Last-Event-ID\"))\n    if err != nil { h.writeError(c, err); return }\n    defer events.Close()\n    for {\n        select {\n        case <-ctx.Done(): return\n        case <-access.Changed():\n            allowed, err := access.Revalidate(ctx)\n            if err != nil || !allowed { return }\n        case event, open := <-events.C():\n            if !open || h.writeBillSSE(c.Writer, event) != nil { return }\n        }\n    }\n}",
+      "pitfalls": [
+        "把 context 放进 struct 长期保存",
+        "把业务参数塞进 context",
+        "忽略 ctx.Err"
+      ],
+      "task": "测试 bill-0827 的授权、重连、游标过期、慢读和连接中途降权，并把另一账单的游标提交给它。",
+      "accept": "全章只用 Bill/bill_id；跨账单游标被拒；权限撤销后连接及时断开；网络断线不改变 Bill 状态。",
+      "goal": "理解流式响应、连接生命周期、deadline 和浏览器断线后的资源回收。",
+      "diagrams": [
+        "context-cancellation-sequence"
+      ],
+      "mnemonic": "小白先懂：SSE 断线只停订阅；业务取消要显式发出，再沿调用链收口。",
+      "self_check": [
+        "SSE 断线后模型调用如何停止？",
+        "数据库驱动一定支持取消吗？",
+        "取消状态在哪里持久化？"
+      ],
+      "transition_in": "Worker 正在处理 bill-0827，客户端订阅 `/bills/bill-0827/events`，等待 queued、processing、completed 依次到达。",
+      "transition_out": "bill-0827 的事件订阅与后台状态推进已经分离，SSE 可按 bill_id 续传且不会无限积压；下一步把整条 Bill 链路串成可查证的因果。",
+      "self_check_answers": [
+        "陈平安：本章只有 Bill 事件流；`/bills/{bill_id}/events` 断线只结束订阅，不自动取消 bill-0827 的后台状态推进；宁姚：对，停止处理必须走显式的 bill_id 取消契约。",
+        "陈平安：数据库驱动不一定响应 context 取消，必须用真实驱动测试 deadline 后连接是否归还；宁姚：准确，传了 ctx 不等于下游真的听见。",
+        "陈平安：取消请求和 Bill 处理状态按 bill_id 持久化，不能只放在 SSE 连接内存里；宁姚：闭合，重连游标也只能续同一个 bill_id 的事件序列。"
+      ]
+    },
+    {
+      "title": "第十五章  夜行留灯：Log、Metric 与 Trace",
+      "scene": "夜色里城灯万点。李宝瓶看日志，崔东山数指标，宁姚用一根细线把 request、run 与 trace 的因果串起来。",
+      "dialogue": [
+        [
+          "陈平安",
+          "我搜 access log 里的 bill-0827，就能找到慢处吧？"
+        ],
+        [
+          "李宝瓶",
+          "散在各处的脚印，会自己连成一条路吗？"
+        ],
+        [
+          "陈平安",
+          "我把 request_id 和 trace context 随请求、数据库和事件一路传。"
+        ],
+        [
+          "宁姚",
+          "异步链用正确 parent 或 Span Link；指标别塞账单号。"
+        ],
+        [
+          "李宝瓶",
+          "线索照见 Worker 卡住，发布闸门也亮起了红灯。"
+        ]
+      ],
+      "principles": [
+        "日志记离散事件，指标看趋势，Trace 串同步因果；三者通过 request_id/run_id 关联。",
+        "HTTP 边界提取/注入 trace context，各层创建 span 并记录 error/status。",
+        "跨审批恢复不是原请求的同步子调用，用 Span Link 连接旧 trace 与新 attempt。",
+        "run_id 可作受控属性，不作为高基数 metric label；敏感 prompt 保存引用或脱敏摘要。"
+      ],
+      "code": "func (s *Service) Create(ctx context.Context, cmd Command) (Bill, error) {\n    ctx, span := tracer.Start(ctx, \"bill.create\")\n    defer span.End()\n    span.SetAttributes(attribute.String(\"run.id\", cmd.RunID))\n    bill, err := s.repo.Save(ctx, cmd.Bill)\n    if err != nil {\n        span.RecordError(err)\n        span.SetStatus(codes.Error, \"save failed\")\n    }\n    return bill, err\n}\n\n// After an approval pause, start a new trace.\n// Add a Span Link to the saved run trace.",
+      "pitfalls": [
+        "只看 goroutine 数上涨就断言泄漏",
+        "高基数字段直接做 metric label",
+        "每层重复打印同一错误"
+      ],
+      "task": "为请求、数据库和工具调用建立 span；模拟审批暂停后恢复，并通过 Span Link 关联。",
+      "accept": "Trace 展示同步父子关系与异步 link；错误状态正确；指标 label 不含 run_id/用户输入。",
+      "goal": "建立 request_id、run_id、trace_id 的区分和日志、指标、trace 三件套。",
+      "diagrams": [
+        "observability-trace-architecture"
+      ],
+      "mnemonic": "小白先懂：日志记事，指标看势，Trace 串因果。",
+      "self_check": [
+        "三个 ID 各解决什么问题？",
+        "高基数字段能做 metric label 吗？",
+        "敏感 prompt 应如何记录？"
+      ],
+      "transition_in": "bill-0827 最终显示 completed，却比平时慢了数秒；HTTP、数据库、outbox、Worker 和 SSE 都说自己没有问题。",
+      "transition_out": "同一条 trace 已定位 bill-0827 的 Worker 延迟，并把单次事故提升为可衡量的服务信号；证据随即进入上线决策。",
+      "self_check_answers": [
+        "陈平安：request_id 标识一次 HTTP 来回，Run ID 标识可跨请求恢复的异步执行，trace_id 串起一次被采样的因果路径；宁姚：对，bill_id 仍是领域对象 ID，四者不能互换。",
+        "陈平安：user_id、bill_id、run_id 这类高基数字段不能做 metric label，应放日志、trace 或可查询账本；宁姚：正确，指标只保留受控维度。",
+        "陈平安：敏感输入不记原文，只留脱敏摘要、引用和访问审计，token、cookie 与 PII 统一遮蔽；宁姚：答对，排障证据不能变成第二处泄露。"
+      ]
+    },
+    {
+      "title": "第十六章  下山之前：配置、Docker、迁移与回滚",
+      "scene": "本地一切顺利，镜像里却没有时区数据，配置还写死在代码。阿良说，能在自己院里舞剑，不等于能下山。",
+      "dialogue": [
+        [
+          "陈平安",
+          "换回旧二进制，bill-0827 就算完整回滚了吧？"
+        ],
+        [
+          "宁姚",
+          "新数据已经写下，旧代码还能读吗？"
+        ],
+        [
+          "陈平安",
+          "我先查迁移兼容，再让 Canary 对照 SLO 和账单不变量。"
+        ],
+        [
+          "阮秀",
+          "越界后按迁移状态选回滚或前滚，备份要真恢复。"
+        ],
+        [
+          "李宝瓶",
+          "1500 分奶茶账恢复如初，城门便交给下一卷。"
+        ]
+      ],
+      "principles": [
+        "配置与密钥分离；镜像使用多阶段构建并 pin digest，记录 toolchain、依赖、SBOM 与构建参数。",
+        "readiness 表示能否接流量，liveness 只判断是否需要重启，二者不能互相替代。",
+        "迁移先 expand 后 contract；破坏性 contract 前有备份、校验、稳定窗口和恢复演练。",
+        "回滚策略可能是镜像回滚、可逆迁移或 roll-forward；不能承诺镜像能恢复已删除数据。"
+      ],
+      "code": "# CI passes verified image references in name@sha256 form.\nARG GO_IMAGE\nARG RUN_IMAGE\n\nFROM ${GO_IMAGE} AS build\nWORKDIR /src\nCOPY go.mod go.sum ./\nRUN go mod download\nCOPY . .\nRUN CGO_ENABLED=0 go build -trimpath -o /out/server ./cmd/server\n\nFROM ${RUN_IMAGE}\nCOPY --from=build /out/server /server\nUSER nonroot:nonroot\nENTRYPOINT [\"/server\"]",
+      "pitfalls": [
+        "latest 标签不可追溯",
+        "把 .env 打进镜像",
+        "readiness 通过却依赖尚未就绪"
+      ],
+      "task": "构建 pin digest 的镜像，设计 expand/contract 迁移并演练镜像回滚与数据库恢复。",
+      "accept": "同一源码可追溯 toolchain/SBOM；探针语义正确；破坏性迁移有恢复证据或明确 roll-forward。",
+      "goal": "掌握配置与密钥、探针、多阶段镜像、CI、数据库迁移、灰度和回滚证据。",
+      "diagrams": [
+        "deployment-migration-flow"
+      ],
+      "mnemonic": "小白先懂：下山六件：配、密、迁、探、镜、退。",
+      "self_check": [
+        "readiness 与 liveness 有何区别？",
+        "为何先 expand 再 contract？",
+        "镜像回滚能恢复破坏性迁移吗？"
+      ],
+      "transition_in": "观测证据确认新版本让 Worker 延迟越过 SLO；团队准备修复并重新发布，但 bill-0827 所在的数据已经经过迁移。",
+      "transition_out": "同一笔 bill-0827 已完成 HTTP、分层、事务、缓存、Worker、SSE、可观测与上线闭环；卷三将把这条可靠后端交给受控 Ledger Agent。",
+      "self_check_answers": [
+        "陈平安：readiness 决定实例是否继续接流量，liveness 判断进程是否需要重启；宁姚：对，依赖短抖动不该让 liveness 制造重启风暴。",
+        "陈平安：先 expand 保持旧新版本都能读写，再回填校验，最后才 contract；宁姚：正确，这样 Canary 越界时旧版本仍有路可退。",
+        "陈平安：镜像回滚只退代码，删列、坏数据和已执行副作用不会跟着复原；宁姚：闭合，必须依据迁移状态选择前滚或回滚，并用 restore drill 证明恢复。"
+      ]
+    },
+    {
+      "title": "第十七章  会说不等于会做：LLM、Workflow 与 Tool Calling",
+      "scene": "模型把‘昨晚面馆花了三十八’说得头头是道，却直接写进了数据库。陈平安觉得省事，阿良却按住了他的手。",
+      "dialogue": [
+        [
+          "陈平安",
+          "模型刚把 bill-0827 写进草稿，账本也跟着多了一笔吗？"
+        ],
+        [
+          "李宝瓶",
+          "先观察草稿，别急着输出。金额校验和去重仍按固定步骤走，能立刻写库吗？"
+        ],
+        [
+          "陈平安",
+          "不能。我先核对候选字段；缺一项就追问，不调用 create_bill。"
+        ],
+        [
+          "宁姚",
+          "模型只提候选，Workflow 决定校验和停点。"
+        ],
+        [
+          "阿良",
+          "草稿还在桌上，账没多一文。真正动账的那只手，下一页再认。"
+        ]
+      ],
+      "principles": [
+        "LLM 生成文本；workflow 按确定步骤编排；Agent 在约束内选择动作。不要为了时髦把确定流程改成开放循环。",
+        "自然语言解析的输出必须进入 typed draft，不能直接产生不可逆副作用。",
+        "模型输出是不可信输入：校验 schema、枚举、金额、日期、租户与权限。"
+      ],
+      "code": "type DraftTool interface {\n    Draft(\n        context.Context, NaturalLanguageInput,\n    ) (BillDraft, error)\n}\n\nfunc PrepareBill(\n    ctx context.Context,\n    tool DraftTool,\n    input NaturalLanguageInput,\n) (BillDraft, error) {\n    draft, err := tool.Draft(ctx, input)\n    if err != nil { return BillDraft{}, err }\n    if err := ValidateDraft(draft); err != nil {\n        return BillDraft{}, err\n    }\n    return draft, nil // policy and approval still follow\n}",
+      "pitfalls": [
+        "模型自由生成 SQL",
+        "输出能解析就视为正确",
+        "把低置信度结果静默写库"
+      ],
+      "task": "设计 parse -> validate -> confirm -> execute 四步接口。",
+      "accept": "未经确认的请求不会产生账单副作用。",
+      "goal": "理解模型不确定性、结构化输出、确定性工作流与受限 Agent 的边界。",
+      "diagrams": [
+        "llm-workflow-agent-compare"
+      ],
+      "mnemonic": "小白先懂：模型只拟剑谱，系统决定能否出剑。",
+      "self_check": [
+        "固定流程何时不该用 Agent？",
+        "模型输出为何属于不可信输入？",
+        "草稿模式阻断了什么风险？"
+      ],
+      "transition_in": "上一卷已经验证 tenant-7 创建 1500 分奶茶账单 bill-0827 的后端契约。现在把同一次 operation=create_bill 的发起端交给 Ledger Agent，但先别让模型直接碰账本。",
+      "transition_out": "Ledger Agent 已经不会把推理当执行；下一章沿着 bill-0827 只认真正产生副作用的 Tool。",
+      "self_check_answers": [
+        "陈平安：步骤和分支都能预先写清时用 Workflow，不让 Agent 临场发挥。宁姚：对，不确定判断只放在真正含糊的节点。",
+        "陈平安：模型输出只是候选输入，仍要过 schema、业务规则和权限校验。宁姚：对，流畅表达不等于可信参数。",
+        "陈平安：草稿模式阻断 ledger.create_bill 的真实副作用。宁姚：答对，确认和门禁通过前只生成候选。"
+      ]
+    },
+    {
+      "title": "第十八章  大脑、招式、驿道与剑匣",
+      "scene": "案上摆着大脑、手、驿道与剑匣四块木牌。陆沉故意调换位置，崔东山越看越迷糊，宁姚把职责一块块放回原位。",
+      "dialogue": [
+        [
+          "陈平安",
+          "流程刚排好，我却分不清是谁碰了奶茶账本。"
+        ],
+        [
+          "李宝瓶",
+          "先看动作：Workflow 排步骤，真正写账的是哪一个？"
+        ],
+        [
+          "陈平安",
+          "是 ledger.create_bill。整理草稿和确认字段都不会落账。"
+        ],
+        [
+          "宁姚",
+          "模型不能自批执行。外层先查 Tool 契约与权限，再准它动手。"
+        ],
+        [
+          "阿良",
+          "手认对了，护手还没戴。Skill、MCP 和 Harness 去补页分清。"
+        ]
+      ],
+      "principles": [
+        "Agent 决策下一步；Tool 执行具体动作；Harness 提供边界、状态、预算和证据。",
+        "Skill 是 Host 加载的工作流/知识包，不是 MCP 标准原语。",
+        "Skill 可以调用经 MCP 发现的 tool/resource/prompt；经 MCP 暴露后只表现为标准 primitive。",
+        "MCP 统一连接与发现，不自动提供最小权限、沙箱、审批或业务幂等。"
+      ],
+      "code": "{\n  \"name\": \"create_bill_draft\",\n  \"description\": \"Parse text into a draft; does not write data\",\n  \"inputSchema\": {\n    \"type\": \"object\",\n    \"properties\": {\"text\": {\"type\": \"string\", \"maxLength\": 500}},\n    \"required\": [\"text\"], \"additionalProperties\": false\n  }\n}",
+      "pitfalls": [
+        "Skill 等同于 MCP Tool",
+        "工具说明只写一句模糊自然语言",
+        "把账号密码作为普通参数交给模型"
+      ],
+      "task": "为 parse、confirm 两个工具分别写 schema，并标注 side_effect。",
+      "accept": "团队任何人看到契约都能判断动作是否写数据、是否需要审批。",
+      "goal": "本页只认清真正执行副作用的 Tool。",
+      "diagrams": [
+        "agent-tool-skill-mcp-harness",
+        "harness-seven-domains"
+      ],
+      "mnemonic": "小白先懂：Tool 动手；模型只提议，外层才放行。",
+      "self_check": [
+        "Skill 是 MCP 标准原语吗？",
+        "MCP 是否自动解决权限？",
+        "Harness 与 Agent 有何区别？"
+      ],
+      "transition_in": "bill-0827 的候选草稿已经生成。Ledger Agent 接下来只认一个新对象：真正可能写入账本的 ledger.create_bill Tool。",
+      "transition_out": "Tool 已从流程中单独认出；补页再接 Skill、MCP 与控制层边界，随后让 ledger.create_bill 经历一次真实的崩溃恢复。",
+      "self_check_answers": [
+        "陈平安：Skill 是宿主加载的流程资产，不是 MCP 标准原语。宁姚：对，经 MCP 暴露时它只表现为协议支持的 primitive。",
+        "陈平安：MCP 负责发现与互通，不自动提供权限、审批或沙箱。宁姚：对，授信仍由宿主 Harness 决定。",
+        "陈平安：Agent 选择，Tool 动手，Harness 做确定性的契约 preflight 和控制。宁姚：对，preflight 本身绝不执行 Tool。"
+      ]
+    },
+    {
+      "title": "第十九章  一次执行的一生：Run、Step 与恢复",
+      "scene": "模型解析出‘转账三千八’，置信度却只有 0.61。陈平安把执行按钮收起，先让用户看见草稿。",
+      "dialogue": [
+        [
+          "陈平安",
+          "Worker 重启了，我把那张奶茶账再写一次，不就接上了吗？"
+        ],
+        [
+          "李宝瓶",
+          "第一次也许写成了，只丢了回信。你再写，会多出什么？"
+        ],
+        [
+          "陈平安",
+          "多一笔。我先标 Unknown，不重发，用固定 CallID 查 receipt。"
+        ],
+        [
+          "宁姚",
+          "只换 AttemptID，不换 CallID。重启先对账。"
+        ],
+        [
+          "宁姚",
+          "账没查清，approval 和预算都先压着。别拿重启当橡皮擦。"
+        ]
+      ],
+      "principles": [
+        "Run 只保存目标与聚合生命周期；Step 保存逻辑动作、稳定 effect CallID、状态、fence 和 receipt 关联。",
+        "AttemptID 标识一次物理尝试，可以变化；所有 Attempt 都引用同一个 Step CallID，不能借新 Attempt 绕过 unknown。",
+        "Approval 只走 active -> reserved -> dispatched -> consumed/released/manual_terminal；仅 proven-unsent 才 released，unknown 不释放。",
+        "取消使用独立 cancel_requested 事件并保留 action/approval：queued、waiting_approval、backoff 阻止新 dispatch；executing、unknown、reconciling 继续对账后再进终态；终态幂等返回且不改写既有结论。",
+        "Fence 是单调 uint64 命名类型；Lease、Step、Attempt、Checkpoint 与下游条件写统一比较，旧 fence 永远拒绝写回。"
+      ],
+      "code": "type Fence uint64\n\ntype Run struct {\n    ID, TenantID, OwnerID, State string\n    Version int64\n}\ntype Step struct {\n    ID, RunID, Operation, CallID, State string\n    ApprovalID, CapabilityID, ReceiptID string\n    Fence Fence\n    Version int64\n}\ntype Attempt struct {\n    ID, StepID, State string\n    Fence Fence\n    Version int64\n}\ntype Approval struct {\n    ID, StepID, PrincipalID, TenantID string\n    CommandDigest, SnapshotDigest, Audience string\n    Nonce, State string\n    ExpiresAt time.Time\n    Version int64\n}",
+      "pitfalls": [
+        "审批只存在前端内存",
+        "任何登录用户都能批准",
+        "批准后重复点击产生多次副作用"
+      ],
+      "task": "对 run-0827 的 queued、waiting_approval、executing、backoff、unknown、reconciling 与终态逐态注入 cancel、崩溃与 lease takeover。",
+      "accept": "四类版本化记录可独立追溯；CallID 固定而 AttemptID 可变；unknown 先 reconcile 且不释放 approval；取消不清空 action/approval，终态不改写；旧 fence 写回失败。",
+      "goal": "掌握 run/step、状态机、checkpoint、恢复、幂等、取消和审批过期。",
+      "diagrams": [
+        "run-approval-state-machine"
+      ],
+      "mnemonic": "小白先懂：每一步先记账，再迈步；副作用只认一次。",
+      "self_check": [
+        "waiting_approval 需要保存哪些数据？",
+        "为何批准要校验 action_hash？",
+        "进程重启后如何避免重复写？"
+      ],
+      "transition_in": "ledger.create_bill 的契约没有变化，但 Worker 在 step-create-bill-0827 发出请求后崩溃了。只看 Run=running，谁也说不清 bill-0827 是否已经写入。",
+      "transition_out": "run-0827 与 step-create-bill-0827 已能分开恢复；下一章只给恢复中的 Ledger Agent 装入完成当前 Step 所需的 Context。",
+      "self_check_answers": [
+        "陈平安：waiting_approval 要保存 StepID、command digest、contract/policy digest、expiry 和 approval ID。宁姚：对，不能只在 Run 上留一个布尔值。",
+        "陈平安：批准必须绑定当时的 canonical command，参数或契约变化就重新审批。宁姚：对，旧 approval 不能替新动作开门。",
+        "陈平安：重启先读 Step；executing、unknown、reconciling 都用原 CallID 查 receipt。宁姚：对，只有证明未发送或下游幂等时才允许再试。"
+      ]
+    },
+    {
+      "title": "第二十章  行囊不能装整座山：Context Engineering",
+      "scene": "上下文越塞越长，模型反而忘了关键规矩。阿良说，行囊装得下整座山，赶路的人也背不动。",
+      "dialogue": [
+        [
+          "陈平安",
+          "我把全仓规则、旧对话和别的租户案例都塞进 Context，够稳吧？"
+        ],
+        [
+          "陆沉",
+          "像打车去买一包盐。当前 Step 只核对奶茶分类，你先拿什么？"
+        ],
+        [
+          "陈平安",
+          "我只拿总纲、分类规则和 Step 摘要，再留原始证据引用。"
+        ],
+        [
+          "宁姚",
+          "按作用域装规则，先裁历史。缓存、摘要和 artifact 只准留在 tenant-7。"
+        ],
+        [
+          "阿良",
+          "盐买回来了，车费也省了。Context 只供取证，不替下一页发权限。"
+        ]
+      ],
+      "principles": [
+        "只有系统/平台策略拥有最高信任；用户输入、检索结果、工具输出默认不可信。",
+        "第三方仓库或未审 PR 中的 AGENTS.md 也可能被攻击者修改，需要来源、评审状态、路径作用域和优先级。",
+        "Injection Scan 只能辅助检测，不能把不可信文本升级为可信指令。",
+        "权限、凭证、网络、文件与审批都在模型外由确定性策略执行。"
+      ],
+      "code": "type ContextItem struct {\n    Source       SourceKind\n    Trust        TrustLevel\n    RepoRevision string\n    ReviewState  ReviewState\n    PathScope    string\n    Priority     int\n    TenantScope  string\n    ContentRef   string\n}\n\n// Deterministic assembly resolves precedence before model input.",
+      "pitfalls": [
+        "把工具输出当系统指令",
+        "RAG 文档中的 prompt injection 被执行",
+        "跨用户共享语义缓存"
+      ],
+      "task": "为受信系统规则、已审项目规则和未知仓库内容建立来源标签与优先级，注入冲突指令。",
+      "accept": "未知仓库规则不能覆盖平台策略；扫描漏报时外部权限闸门仍阻止越权；审计记录保留来源。",
+      "goal": "掌握规则分层、上下文装配、RAG、裁剪、摘要、来源信任和 Token 预算。",
+      "diagrams": [
+        "context-security-gates"
+      ],
+      "mnemonic": "小白先懂：总纲常带，细则按需，证据标来源。",
+      "self_check": [
+        "检索文档为何仍不可信？",
+        "摘要丢失了什么？",
+        "语义缓存如何隔离租户？"
+      ],
+      "transition_in": "run-0827 从 step-create-bill-0827 的 checkpoint 恢复。它只需核对奶茶分类，却把全仓规则、旧对话和别的租户案例都装进了 Context。",
+      "transition_out": "Context 已按 Run、Step 和 tenant 收窄；下一章继续沿同一次调用收权限，检查 MCP 自述、凭证、网络与执行环境。",
+      "self_check_answers": [
+        "陈平安：检索文档带来的只是相关内容，来源仍可能未审或被注入。宁姚：对，检索不能提升信任等级。",
+        "陈平安：摘要会丢细节、时间顺序和例外，所以要写明损失并保留原始 artifact ref。宁姚：对，需要时才能回查证据。",
+        "陈平安：语义缓存的 key、索引和 artifact 都要绑定 tenant-7 与规则版本。宁姚：对，不能让跨租户相似文本命中同一结果。"
+      ]
+    },
+    {
+      "title": "第二十一章  剑有护手：权限、沙箱与人在回路",
+      "scene": "模型请求读取整个文件系统，只为找一张账单模板。陈平安准备点允许。阿良问：一件小事，为何要交出整座山门的钥匙？",
+      "dialogue": [
+        [
+          "陈平安",
+          "MCP 把 Tool 标成 readOnly，我就让它直接写账了。"
+        ],
+        [
+          "宁姚",
+          "木牌是它自己写的，也能当官府路引？"
+        ],
+        [
+          "陈平安",
+          "不能。我只给 tenant-7 的 owner 一张短票，票上只准 create_bill。"
+        ],
+        [
+          "剑灵",
+          "票还要认准 audience，把 command 和 contract 一并盖上。"
+        ],
+        [
+          "剑灵",
+          "policy 或 approval 对不上，门不开。长钥匙别递给模型。"
+        ]
+      ],
+      "principles": [
+        "Harness.Preflight 只生成 canonical command；Executor 是全书唯一副作用入口。",
+        "ReserveAndAuthorize 先校验 caller 的 lease owner、fence、Step/approval version 与 cancel 状态，再核对 handle 全部绑定并原子预留预算/outbox。",
+        "Step.CallID=call-create-bill-0827 固定，Attempt.ID 每次物理尝试变化；恢复 executing/unknown 先 reconcile。",
+        "sandbox 只接收 server-held capability 与 canonical command，不接受客户端自带的 approval 或下游凭证。",
+        "receipt 驱动 settle；无 receipt 进入 unknown，坏 output 隔离后仍返回 typed error，不能发布 artifact。"
+      ],
+      "code": "type CapabilityHandle string // opaque; payload remains server-side\n\ntype Grant struct {\n    ID, ApprovalID, StepID, PrincipalID, TenantID string\n    Nonce, Audience, ServerIdentity string\n    CommandDigest, SnapshotDigest string\n    ExpiresAt time.Time\n    Version int64\n}\n\ntype ExecutionClaim struct {\n    LeaseOwner string\n    Fence Fence\n    StepVersion, ApprovalVersion int64\n}\n\nfunc (x *Executor) Execute(\n    ctx context.Context, p Principal, claim ExecutionClaim,\n    handle CapabilityHandle, cmd CanonicalCommand,\n) (ArtifactRef, error) {\n    expected := ExpectedState{\n        LeaseOwner: claim.LeaseOwner, Fence: claim.Fence,\n        StepVersion: claim.StepVersion,\n        GrantVersion: claim.ApprovalVersion,\n        CancelRequested: false,\n    }\n    grant, step, reserved, err := x.store.ReserveAndAuthorize(\n        ctx, p, handle, cmd, expected)\n    if err != nil { return ArtifactRef{}, err }\n    if step.State.NeedsReconcile() {\n        return x.Reconcile(ctx, step.ID, step.CallID, reserved)\n    }\n    attempt, err := x.store.BeginAttempt(ctx, step.ID, reserved)\n    if err != nil { return ArtifactRef{}, err }\n    return x.dispatchAndSettle(ctx, grant, step, attempt, cmd)\n}",
+      "pitfalls": [
+        "验证码失败后自动绕过",
+        "日志记录完整 Authorization",
+        "允许模型拼接任意 shell"
+      ],
+      "task": "并发重放同一 handle，并跨 Step、主体、tenant、环境测试 expiry/revocation；再于 dispatch、commit、receipt、settle 切点终止 Worker。",
+      "accept": "只有一次 reservation/副作用；所有身份、摘要、环境或版本错配均零副作用；unknown 先按原 CallID 对账。",
+      "goal": "掌握 allowlist、最小权限、凭证代理、网络/文件沙箱、审计和 HITL。",
+      "diagrams": [
+        "sandbox-capability-gates",
+        "approval-capability-sequence"
+      ],
+      "mnemonic": "小白先懂：小事不给山门钥匙，高风险先停剑。",
+      "self_check": [
+        "密钥为什么不进模型上下文？",
+        "哪些动作必须审批？",
+        "越权拒绝后记录什么证据？"
+      ],
+      "transition_in": "Ledger Agent 只拿到 tenant-7 的当前账单资料，但 MCP server 把 ledger.create_bill 标成 readOnly。这个提示若被当成授权，前面的门禁就会失效。",
+      "transition_out": "调用身份、凭证与执行环境都被宿主策略收紧；下一章把同一条调用链的 token、费用、工具次数和墙钟时间放进一份可对账预算。",
+      "self_check_answers": [
+        "陈平安：密钥留在 Secret Broker，只向匹配 audience 的 Tool 注入短期凭证。宁姚：对，prompt、日志、stderr 和 artifact 都不能带明文。",
+        "陈平安：create_bill 是写副作用，必须展示 canonical payload 并绑定 approval capability。宁姚：对，MCP 的 readOnly hint 不能降权。",
+        "陈平安：越权拒绝要记录 principal、tenant、operation、policy digest、reason 和 audit event。宁姚：对，但不得泄露 secret 或他租户对象。"
+      ]
+    },
+    {
+      "title": "第二十二章  失败要有证词：预算、Trace、重放与 Eval",
+      "scene": "同一句话昨天成功、今天失败。模型版本变了，提示词也改过，却没有记录。阿良说，没有证词的失败，只能成为传闻。",
+      "dialogue": [
+        [
+          "陈平安",
+          "两个 Worker 都看见余额够，我让它们先跑，回来再记账。"
+        ],
+        [
+          "李宝瓶",
+          "它们会一起透支。出门前，谁先把钱压在根 Run 的账上？"
+        ],
+        [
+          "陈平安",
+          "我原子 reserve 最坏消耗，actual 回来再对账。"
+        ],
+        [
+          "宁姚",
+          "Unknown 仍占预留。账没清，谁也别把钱拿走。"
+        ],
+        [
+          "宁姚",
+          "预算只回答还能不能走。一次跑通，不算本事。"
+        ]
+      ],
+      "principles": [
+        "预算覆盖 token、费用、步骤、时间、工具调用和高风险动作；同错指纹触发熔断。",
+        "普通 hash 只在可信摘要另存时发现损坏；防篡改证据使用不可变 manifest、签名或 MAC、密钥版本与追加式事件链。",
+        "事件回放、mock 工具轨迹重演和真实再执行是三种不同模式，副作用策略各自明确。",
+        "Eval 固定数据集、评判规则、模型/提示/工具/策略/代码版本，并保留失败样本。"
+      ],
+      "code": "type RunArtifact struct {\n    InputRef, ContextRef, ToolResultRef string\n    ModelRevision, PromptVersion       string\n    ToolSchemaVersion, PolicyVersion   string\n    CodeRevision, ExternalDataVersion  string\n    ManifestRef, ManifestDigest        string\n    Signature, SigningKeyVersion       string\n}\n\n// Replay modes: event playback, mocked-tool trajectory replay,\n// or explicit real re-execution.",
+      "pitfalls": [
+        "只存最终答案",
+        "trace 里放完整密钥",
+        "重放时再次执行写工具"
+      ],
+      "task": "建立受签名 manifest 的 artifact 引用与三种 replay 模式，再用 golden eval 比较两个版本并触发预算熔断。",
+      "accept": "dry-run 不触发副作用；manifest 签名可验证且密钥可轮换；报告包含版本、预算、失败样本与回归差异。",
+      "goal": "掌握多维预算、错误指纹、熔断、版本记录、只读重放和 golden eval。",
+      "diagrams": [
+        "observability-trace-architecture",
+        "evidence-replay-matrix"
+      ],
+      "mnemonic": "小白先懂：失败留下版本、输入、步骤、花费与判词。",
+      "self_check": [
+        "为什么不能无限 Agent loop？",
+        "dry-run replay 如何避免副作用？",
+        "成功率必须说明哪些条件？"
+      ],
+      "transition_in": "受限 Worker 准备继续 run-0827。两个执行者同时读取余额，都以为 token 与 Tool 次数还够，事后记账已经来不及阻止超限。",
+      "transition_out": "预算、事件与 Replay 的承诺已经分开；下一章把修复放进 Coding Harness，让候选代码在独立环境里接受确定性验证。",
+      "self_check_answers": [
+        "陈平安：无限 loop 会穿透 token、费用、Tool 次数和墙钟预算，也会重复未知副作用。宁姚：对，hard limit 阻止新调用。",
+        "陈平安：event playback 不执行 Tool，mock trajectory 用固定替身；真实重跑才新建 Run 和审批。宁姚：对，三种 Replay 不能共用承诺。",
+        "陈平安：成功率要说明样本、版本、采样次数、分布、置信区间和阈值。宁姚：对，单次通过不能证明质量。"
+      ]
+    },
+    {
+      "title": "第二十三章  AI 写代码也要过剑阵：Coding Harness",
+      "goal": "把 spec、上下文发现、受限编辑、构建测试、review、重试熔断与人工合并连成编码闭环。",
+      "scene": "Coder 又把同一个错误送到门前。左右只在日志上划了一线，崔东山问能不能再试，宁姚已经把人工接管的牌子挂起。",
+      "dialogue": [
+        [
+          "陈平安",
+          "我直接改用户仓库，失败再 git reset；暂存区却少了一块。"
+        ],
+        [
+          "宁姚",
+          "那是用户的 dirty 文件。先把修复放到 candidate@base，你拿什么验？"
+        ],
+        [
+          "陈平安",
+          "我记下补丁摘要。三道门禁跑完，再请 Reviewer 看证据。"
+        ],
+        [
+          "李宝瓶",
+          "base 若前进，先重建候选并重跑门禁；单次通过不能证明质量。"
+        ],
+        [
+          "左右",
+          "失败只丢 candidate，不碰宿主。证据齐了，仍由人决定是否合并。"
+        ]
+      ],
+      "principles": [
+        "先写 spec/plan/tasks，明确用户可见行为、接口、数据、安全边界和验收证据。",
+        "Context discovery 读取规则、调用链、消费者、测试和运行证据，不把整个仓库无脑塞给模型。",
+        "工具授权限制 command、args、cwd、env、network、进程树、时间、输出、写路径与 diff。",
+        "不可信构建测试运行在隔离环境；同错指纹和预算触发人工接管。",
+        "生产发布、主干合并和高风险写操作仍由 branch protection 与独立人工审批决定。"
+      ],
+      "code": "type CodingCapability struct {\n    AllowedCommands []CommandRule // args, cwd, env and network\n    WritablePaths   []string\n    MaxLoops, MaxProcesses int\n    MaxCPU, MaxBytes, MaxDiff int64\n}\n\n// Run untrusted build/tests in isolation.\n// Branch protection and human merge stay external.",
+      "pitfalls": [
+        "需求不清便直接改代码",
+        "测试失败就无界自修复",
+        "让模型持有生产凭证或直接合并主干"
+      ],
+      "task": "为真实小改动定义 CodingCapability，在隔离环境执行构建测试并触发超预算人工接管。",
+      "accept": "越权参数/路径/网络被拒绝；每轮有 diff、测试和 review 证据；机器不能绕过 branch protection 合并。",
+      "diagrams": [
+        "coding-harness-loop"
+      ],
+      "mnemonic": "小白先懂：先立约，再落笔；机器验过，人来定夺。",
+      "self_check": [
+        "何时应先 Explore？",
+        "哪些步骤必须确定性执行？",
+        "什么条件触发人工接管？"
+      ],
+      "transition_in": "Eval 找到账单金额校验的缺口。Ledger Agent 需要改代码，但用户仓库里已有未提交文件和暂存内容，不能把修复直接写进去再靠 reset 收拾。",
+      "transition_out": "候选代码与用户工作区已经隔离，验证和人工审批也留下证据；最后一章回到 HTTP 入口，用 request key 把重复请求收束到同一个 Run。",
+      "self_check_answers": [
+        "陈平安：需求入口、调用链或用户工作区状态不明时先 Explore。宁姚：对，证据不足时不直接编辑。",
+        "陈平安：format、lint、build、test 和 digest 校验由确定性工具执行。宁姚：对，Reviewer 只依据契约与证据判定。",
+        "陈平安：同错重复、预算耗尽、越界、base 变化或高风险合并都转人工。宁姚：对，机器不能绕过分支保护。"
+      ]
+    },
+    {
+      "title": "第二十四章  最后一炉：可控 Ledger Agent",
+      "scene": "众人围在最后一张系统总图旁。阿良压住斗笠，黄狗守着门，宁姚逐项核对四份证据，陈平安把最后一处箭头改正。",
+      "dialogue": [
+        [
+          "陈平安",
+          "entry-0827 重送了。我按 key 找旧 Run，会不会把别人的请求捞回来？"
+        ],
+        [
+          "阮秀",
+          "会。先对 tenant、owner 和 operation；输入摘要不一样呢？"
+        ],
+        [
+          "陈平安",
+          "回 409，不再动账。同摘要才取回 run-0827。"
+        ],
+        [
+          "宁姚",
+          "旧 Run 也要验 owner。Step 的 CallID 仍是 call-create-bill-0827。"
+        ],
+        [
+          "宁姚",
+          "固定 CallID 查 receipt；receipt-req-0827 对上 bill-0827，才算收尾。"
+        ]
+      ],
+      "principles": [
+        "入口唯一约束是 tenant_id + authenticated owner_id + operation + entry_key；首次写入同时保存双摘要与 visibility。",
+        "同一 owner 作用域内，entry-0827 同摘要返回 run-0827；同 key 不同输入或 profile 返回 409 且零副作用。",
+        "命中已有 Run 仍按当前 Principal 做对象授权；同租户不同 owner 与跨租户都不能读取或接管旧 Run。",
+        "step-create-bill-0827 固定 call-create-bill-0827，并在可信 Executor 内映射下游 idempotency key req-0827。",
+        "req-0827 只创建 bill-0827；响应丢失后按 receipt-req-0827 对账，不重新执行 create_bill。"
+      ],
+      "code": "func (h *Handler) StartRun(\n    ctx context.Context, p Principal, key EntryKey,\n    input CreateBillInput, profile ExecutionProfile,\n) (Run, error) {\n    entry := CanonicalEntry{\n        TenantID: p.TenantID, OwnerID: p.SubjectID,\n        Operation: \"create_bill\", Key: key,\n        InputDigest: input.Digest(), ProfileDigest: profile.Digest(),\n        Visibility: OwnerVisible,\n    }\n    // Unique scope: tenant + authenticated owner + operation + key.\n    run, created, err := h.runs.CreateQueuedOnce(ctx, entry, input)\n    if errors.Is(err, ErrDigestConflict) {\n        return Run{}, ErrIdempotencyConflict // only this owner's key\n    }\n    if err != nil { return Run{}, err }\n    if !created && !h.policy.CanReadRun(p, run) {\n        return Run{}, ErrNotFound\n    }\n    return run, nil\n}",
+      "pitfalls": [
+        "为了 Agent 化而 Agent 化",
+        "验收只看演示",
+        "上线后没有失败闭环"
+      ],
+      "task": "让同租户两个 owner 并发使用 entry-0827，再在同一 owner 内修改金额/profile；随后于下游 commit 后丢失 receipt。",
+      "accept": "同 owner 同摘要只建一个 Run；摘要冲突 409 且零副作用；不同 owner 不碰撞也不泄露；重复 CallID 只落一条 bill/outbox。",
+      "goal": "把 Go 服务、数据库、流式运行、Tool/MCP、权限、HITL、trace 与 eval 接成完整系统。",
+      "diagrams": [
+        "ledger-agent-main-path",
+        "ledger-agent-evidence-path",
+        "harness-seven-domains",
+        "book-learning-map"
+      ],
+      "mnemonic": "小白先懂：模型可以不稳，剑匣必须可控、可测、可恢复、可审计。",
+      "self_check": [
+        "dispatch 前为何先持久化 reservation 与 checkpoint？",
+        "缓存失效为何在 commit 后？",
+        "上线门禁由哪些证据组成？"
+      ],
+      "transition_in": "修复通过审核并部署。用户以 entry-0827 提交 tenant-7 的 create_bill 请求时网络超时，客户端随即重试；最终闭环要从入口第一行识别同一次意图。",
+      "transition_out": "同一个 Ledger Agent 已从自然语言入口走完受控 Tool、持久 Run/Step、Context、权限、预算、Replay 与 Coding Harness；入口重试返回同一 Run，未知副作用先对账，整条事件链可恢复、可验证。",
+      "self_check_answers": [
+        "陈平安：先校验 active approval，再于 dispatch 前原子写 approval reservation、预算 reservation、版本/fence 与事件。宁姚：请求不能先发，账随后再补。",
+        "陈平安：数据库 commit 后再失效缓存，避免失败事务先删缓存后又重建旧值。宁姚：缓存只是投影。",
+        "陈平安：上线门禁要有入口幂等、唯一副作用、receipt 对账、取消状态、事件重建、Eval 和人工批准证据。宁姚：能演示不等于闭环。"
+      ]
+    }
+  ],
+  "supplements": [
+    {
+      "chapter": 1,
+      "id": "go-control-flow-declarations",
+      "title": "先把分支走明白",
+      "kicker": "小白先懂：先让业务状态决定分支，再认识 if、switch、for 和声明的职责。",
+      "dialogue": [
+        [
+          "陈平安",
+          "我把零塞进 default，结果非法账目混进了正常分支。"
+        ],
+        [
+          "李宝瓶",
+          "负数、零、正数是三种状态。零为什么不单列？"
+        ],
+        [
+          "陈平安",
+          "我先用 if 挡非法值，再用 switch 单列零和正数。"
+        ],
+        [
+          "宁姚",
+          "循环只用 for。跨分支的结果用 var，别被 := 遮住。"
+        ]
+      ],
+      "bullets": [
+        "用 if 处理守卫条件，先返回错误，缩短正常路径。",
+        "switch 可省略表达式，适合互斥且有命名意义的条件。",
+        "for 同时承担计数、条件循环和无限循环三种形态。",
+        "短声明只用于局部新变量；跨分支结果用 var 明确作用域。"
+      ],
+      "code": "type BillID string\n\nfunc classify(n int64) string {\n    switch {\n    case n < 0:\n        return \"invalid\"\n    case n == 0:\n        return \"zero\"\n    default:\n        return \"positive\"\n    }\n}",
+      "exercise": "给 classify 增加一个上限分支，并故意制造一次 := 遮蔽后修正。",
+      "acceptance": "测试覆盖负数、零、正常值和上限外值；正常路径无变量遮蔽。",
+      "provenance": "expert-go:C1",
+      "source": "go",
+      "source_order": 0,
+      "source_index": 0,
+      "previous_failure": "splitAmount 加上正值校验后，陈平安又把 total==0 塞进 default，非法路径混进了正常分支。",
+      "next_hook": "分支走明白了，还得让 go test 真正守住零值和非法值。"
+    },
+    {
+      "chapter": 1,
+      "id": "go-real-test-file",
+      "title": "测试要住进 _test.go",
+      "kicker": "小白先懂：先写一个能失败的普通测试，重复出现后再重构为表驱动。",
+      "dialogue": [
+        [
+          "陈平安",
+          "余数又被我删了，正文示例却一点没报警。"
+        ],
+        [
+          "李宝瓶",
+          "先写最小测试。十文分三份，商和余数各是多少？"
+        ],
+        [
+          "陈平安",
+          "我在 _test.go 直接测三和一，再补零份数等表格用例。"
+        ],
+        [
+          "宁姚",
+          "成功要守金额总和，失败用 errors.Is 认 ErrInvalidSplit。"
+        ]
+      ],
+      "bullets": [
+        "生产文件与测试文件同包放置，文件名必须以 _test.go 结尾。",
+        "表驱动测试把输入、期望和用例名放在同一处。",
+        "t.Run 让失败定位到具体场景，不只停在测试函数名。",
+        "错误路径要断言错误类别或条件，不能只看返回值。"
+      ],
+      "code": "func TestSplitAmount(t *testing.T) {\n    tests := []struct {\n        name         string\n        total, parts int64\n        wantQ, wantR int64\n        wantErr      bool\n    }{\n        {\"exact\", 12, 3, 4, 0, false},\n        {\"remainder\", 10, 3, 3, 1, false},\n        {\"zero total\", 0, 3, 0, 0, true},\n        {\"zero parts\", 10, 0, 0, 0, true},\n        {\"negative parts\", 10, -2, 0, 0, true},\n        {\"negative total\", -1, 3, 0, 0, true},\n    }\n    for _, tt := range tests {\n        t.Run(tt.name, func(t *testing.T) {\n            q, r, err := splitAmount(tt.total, tt.parts)\n            if tt.wantErr {\n                if !errors.Is(err, ErrInvalidSplit) {\n                    t.Fatalf(\"err=%v, want ErrInvalidSplit\", err)\n                }\n                return\n            }\n            if err != nil || q != tt.wantQ || r != tt.wantR {\n                t.Fatalf(\"q=%d r=%d err=%v\", q, r, err)\n            }\n            if q*tt.parts+r != tt.total {\n                t.Fatal(\"amount was not conserved\")\n            }\n        })\n    }\n}",
+      "exercise": "新建 split_amount_test.go，用 TestSplitAmount 覆盖整除、余数、非正金额和非法份数。",
+      "acceptance": "go test ./... 能发现用例；测试只调用 splitAmount，成功路径守住金额恒等式，失败路径识别 ErrInvalidSplit。",
+      "provenance": "expert-go:B1",
+      "source": "go",
+      "source_order": 0,
+      "source_index": 1,
+      "previous_failure": "控制流改对了，可正文里的示例没有被 go test 发现，余数被丢掉时无人报警。",
+      "next_hook": "函数的行为守住了；下一章看 CreateBillRequest 交给 JSON 时，字段名字为何会变。"
+    },
+    {
+      "chapter": 2,
+      "id": "go-utf8-string-byte-rune",
+      "title": "一个字不一定一个字节",
+      "kicker": "小白先懂：不另开一门字符课，只修复同一张账单的备注失败。",
+      "dialogue": [
+        [
+          "陈平安",
+          "“周末吃饭”切前两个位置，备注竟成了乱码。"
+        ],
+        [
+          "李宝瓶",
+          "string 装字节，len 也数字节。你要的是哪种“两个”？"
+        ],
+        [
+          "陈平安",
+          "我要两个码点。我先验 UTF-8，再转 []rune 截取。"
+        ],
+        [
+          "宁姚",
+          "码点不等于字素簇。表情等用户字符，要另写产品边界。"
+        ]
+      ],
+      "bullets": [
+        "string 是只读字节序列，可以含任意字节，不保证是合法 UTF-8。",
+        "len(s) 返回字节数；utf8.RuneCountInString 返回 rune 数。",
+        "range 遇到非法 UTF-8 时产生 RuneError，并按规则前进。",
+        "按用户可见字符截断还涉及字素簇，rune 也不等于视觉字符。"
+      ],
+      "code": "func inspect(s string) (int, int, bool) {\n    bytes := len(s)\n    runes := utf8.RuneCountInString(s)\n    valid := utf8.ValidString(s)\n    return bytes, runes, valid\n}",
+      "exercise": "比较“Go”“中国”和一个非法 UTF-8 字节串的三项结果。",
+      "acceptance": "能解释字节数与 rune 数的差异，并在切片前验证边界或先转 []rune。",
+      "provenance": "expert-go:C2",
+      "source": "go",
+      "source_order": 0,
+      "source_index": 2,
+      "previous_failure": "CreateBillRequest 解码成功了，可备注“周末吃饭”用 note[:2] 截断后变成了乱码。",
+      "next_hook": "备注不再乱码，但客户端拼错 amount_cents 时，默认 Decode 仍然沉默通过。"
+    },
+    {
+      "chapter": 2,
+      "id": "go-strict-json-contract",
+      "title": "JSON 解码要有边界",
+      "kicker": "小白先懂：字段能反序列化只是起点，对外请求还要形成严格边界。",
+      "dialogue": [
+        [
+          "陈平安",
+          "amount_cents 拼错了，Decode 没报错，我就让账单进来了。"
+        ],
+        [
+          "宁姚",
+          "它默认忽略未知字段，也可能只读完第一个 JSON 值。"
+        ],
+        [
+          "陈平安",
+          "我拒绝未知字段，再读一次确认 io.EOF，并校验金额为正。"
+        ],
+        [
+          "李宝瓶",
+          "三态另用字段标记；重复 key 直接拒绝，token 解析失败也退回。"
+        ]
+      ],
+      "bullets": [
+        "对外输入拒绝未知字段、尾随 JSON，并在 token 层拒绝重复或仅大小写不同的 key。",
+        "*int64 只能把缺失与 null 合并为 nil，再与零和负数一起按正金额契约拒绝。",
+        "若必须区分 missing、null、value 三态，使用带 Present/Null 标记并实现 UnmarshalJSON 的类型。",
+        "重复键策略须在网关、服务和签名规范化层一致，不能依赖 encoding/json 的后值覆盖。"
+      ],
+      "code": "type CreateBillRequest struct {\n    AmountCents *int64 `json:\"amount_cents\"`\n}\n\nfunc decodeBill(r io.Reader) (CreateBillRequest, error) {\n    data, err := io.ReadAll(io.LimitReader(r, 1<<20+1))\n    if err != nil {\n        return CreateBillRequest{}, fmt.Errorf(\"read body: %w\", err)\n    }\n    if len(data) > 1<<20 {\n        return CreateBillRequest{}, ErrBodyTooLarge\n    }\n    if err := rejectDuplicateKeys(data); err != nil {\n        return CreateBillRequest{}, err\n    }\n    dec := json.NewDecoder(bytes.NewReader(data))\n    dec.DisallowUnknownFields()\n    var v CreateBillRequest\n    if err := dec.Decode(&v); err != nil { return v, err }\n    if err := dec.Decode(&struct{}{}); err != io.EOF {\n        return v, ErrTrailingJSON\n    }\n    if v.AmountCents == nil || *v.AmountCents <= 0 {\n        return v, ErrInvalidAmount\n    }\n    return v, nil\n}\n\nfunc rejectDuplicateKeys(data []byte) error {\n    dec := json.NewDecoder(bytes.NewReader(data))\n    if err := scanJSONValue(dec); err != nil { return err }\n    if _, err := dec.Token(); err != io.EOF { return ErrTrailingJSON }\n    return nil\n}\n\nfunc scanJSONValue(dec *json.Decoder) error {\n    tok, err := dec.Token()\n    if err != nil { return err }\n    d, ok := tok.(json.Delim)\n    if !ok { return nil }\n    switch d {\n    case '{':\n        seen := map[string]struct{}{}\n        for dec.More() {\n            keyToken, err := dec.Token()\n            if err != nil { return err }\n            key, ok := keyToken.(string)\n            if !ok { return ErrInvalidJSON }\n            folded := strings.ToLower(key)\n            if _, exists := seen[folded]; exists {\n                return ErrDuplicateKey\n            }\n            seen[folded] = struct{}{}\n            if err := scanJSONValue(dec); err != nil { return err }\n        }\n    case '[':\n        for dec.More() {\n            if err := scanJSONValue(dec); err != nil { return err }\n        }\n    default:\n        return ErrInvalidJSON\n    }\n    _, err = dec.Token()\n    return err\n}",
+      "exercise": "测试缺失、null、零、负数、正数、未知字段、尾随 JSON、重复 amount_cents、大小写变体和嵌套重复 key。",
+      "acceptance": "仅正金额请求通过；缺失与 null 同样拒绝；未知、尾随及任意层重复或大小写碰撞 key 均失败。",
+      "provenance": "expert-go:C7",
+      "source": "go",
+      "source_order": 0,
+      "source_index": 3,
+      "previous_failure": "备注修好后，客户端把 amount_cents 拼错，Decode 没报错；另一请求重复写两次金额，后值还悄悄盖住了前值。",
+      "next_hook": "请求边界清楚了，接下来要决定账单列表返回 nil 还是空集合，以及谁能修改底层数据。"
+    },
+    {
+      "chapter": 3,
+      "id": "go-container-contracts",
+      "title": "容器值也有契约",
+      "kicker": "小白先懂：nil、顺序和共享底层存储，会共同改变容器 API 的真实含义。",
+      "dialogue": [
+        [
+          "陆沉",
+          "调用方 append 一下，内部账单也变了。nil 和空还重要吗？"
+        ],
+        [
+          "阮秀",
+          "JSON 里可能是 null 和 []；slice 还可能共用底层数组。"
+        ],
+        [
+          "陈平安",
+          "我约定返回空集合，复制元素，map 输出前排序 key。"
+        ],
+        [
+          "宁姚",
+          "再写清所有权。nil map 写前先 make，并发访问必须收口。"
+        ]
+      ],
+      "bullets": [
+        "nil slice 可读、可 append；nil map 可读但不能写。",
+        "map 遍历顺序未定义，测试和输出都不能依赖它。",
+        "slice 复制只复制描述符，元素仍可能共享底层数组。",
+        "API 应明确返回 nil 还是空集合，以及是否交付所有权。"
+      ],
+      "code": "func sortedKeys(m map[string]int) []string {\n    keys := make([]string, 0, len(m))\n    for k := range m {\n        keys = append(keys, k)\n    }\n    sort.Strings(keys)\n    return keys\n}",
+      "exercise": "写一个返回副本的 Names 方法，并比较 nil 与空 slice 的 JSON 输出。",
+      "acceptance": "调用方修改返回值不会污染内部状态；排序输出可重复；nil 语义有测试。",
+      "provenance": "expert-go:M1",
+      "source": "go",
+      "source_order": 0,
+      "source_index": 4,
+      "previous_failure": "汇总函数把内部 slice 直接返回，调用方 append 后，账本里的原数据也跟着发生了变化。",
+      "next_hook": "容器契约稳定了，Service 需要一个最小接口来读取和保存这些账单。"
+    },
+    {
+      "chapter": 4,
+      "id": "go-interface-typed-nil",
+      "title": "接口里的 nil 有两层",
+      "kicker": "小白先懂：接口值同时携带动态类型和动态值，不能只看里面的指针是否为空。",
+      "dialogue": [
+        [
+          "崔东山",
+          "指针明明是 nil，装进 error 后却走了失败分支。"
+        ],
+        [
+          "李宝瓶",
+          "接口还带着 *Problem 这个动态类型，所以它并不等于 nil。"
+        ],
+        [
+          "陈平安",
+          "我先查具体指针，成功直接 return nil；断言改用 v, ok。"
+        ],
+        [
+          "宁姚",
+          "别交出 typed nil。只有不变量已保证类型，才考虑直接断言。"
+        ]
+      ],
+      "bullets": [
+        "接口值由动态类型和动态值组成；typed nil 仍保留动态类型。",
+        "返回 error 时不要把 nil 具体指针装进接口后返回。",
+        "外部数据或可变实现使用 v, ok := x.(T)，不要赌断言成功。",
+        "type switch 适合有限分支；开放扩展优先依靠接口方法。"
+      ],
+      "code": "type Problem struct{ Msg string }\n\nfunc (*Problem) Error() string { return \"problem\" }\n\nfunc validate(ok bool) error {\n    var p *Problem\n    if !ok {\n        p = &Problem{Msg: \"bad input\"}\n    }\n    if p == nil { return nil }\n    return p\n}",
+      "exercise": "写一个失败版本返回 p，再用测试证明 err != nil，最后按示例修复。",
+      "acceptance": "成功路径的 error 接口确实为 nil；所有不确定断言都处理 ok。",
+      "provenance": "expert-go:C3",
+      "source": "go",
+      "source_order": 0,
+      "source_index": 5,
+      "previous_failure": "MemoryBillRepo 已满足接口，但一次成功校验返回了装着 nil 指针的 error，调用方仍走进失败分支。",
+      "next_hook": "接口的 nil 边界收住后，还要判断重复代码究竟是共同算法，还是不同业务碰巧长得像。"
+    },
+    {
+      "chapter": 4,
+      "id": "go-generics-when-useful",
+      "title": "泛型只抽共同算法",
+      "kicker": "小白先懂：先确认重复的是稳定算法，再决定是否引入类型参数。",
+      "dialogue": [
+        [
+          "陈平安",
+          "我把创建和撤销硬塞进一个泛型函数，错误处理全乱了。"
+        ],
+        [
+          "阮秀",
+          "三步外形相同，不代表副作用和失败语义相同。"
+        ],
+        [
+          "陈平安",
+          "业务流程保留具名函数，只把取 map keys 写成泛型。"
+        ],
+        [
+          "李宝瓶",
+          "约束只留算法所需能力。只比较相等，就用 comparable。"
+        ]
+      ],
+      "bullets": [
+        "泛型适合容器、集合变换和与具体业务无关的稳定算法。",
+        "类型约束保持最小；只比较相等就使用 comparable。",
+        "业务规则差异优先用具名函数或接口，不强凑类型参数。",
+        "调用处比抽象前更难读时，保留少量重复通常更便宜。"
+      ],
+      "code": "func keys[K comparable, V any](m map[K]V) []K {\n    out := make([]K, 0, len(m))\n    for k := range m {\n        out = append(out, k)\n    }\n    return out\n}",
+      "exercise": "找两段真实重复代码，判断共同的是算法还是仅仅长得相似。",
+      "acceptance": "能说明类型参数消除的具体重复；约束未暴露无用操作。",
+      "provenance": "expert-go:C3",
+      "source": "go",
+      "source_order": 0,
+      "source_index": 6,
+      "previous_failure": "接口错误修好后，陈平安试图把创建账单和撤销账单两个三步流程强行塞进同一个泛型函数。",
+      "next_hook": "抽象没有越界，接下来检查这些包属于哪个 module，又为何能在 main 中连起来。"
+    },
+    {
+      "chapter": 5,
+      "id": "go-module-diagnostics",
+      "title": "依赖问题先问模块",
+      "kicker": "小白先懂：先问模块边界和引入路径，再判断依赖是否健康。",
+      "dialogue": [
+        [
+          "顾璨",
+          "本地能 import，CI 却拿到了另一版依赖，这是怎么回事？"
+        ],
+        [
+          "宁姚",
+          "先查引入链。go.mod 定边界，go.sum 只校验下载内容。"
+        ],
+        [
+          "陈平安",
+          "我用 go mod why 和 go mod graph 查，再审 tidy 的改动。"
+        ],
+        [
+          "李宝瓶",
+          "tidy 删除不是无用铁证；verify 校验缓存，也不查漏洞。"
+        ]
+      ],
+      "bullets": [
+        "go.mod 记录模块路径、Go 版本和直接或间接依赖。",
+        "go mod tidy 会考虑主模块相关包、测试及各 OS/架构/build tag 组合，执行后必须审查 diff。",
+        "go mod why -m 解释引入路径；go mod graph 展开模块关系。",
+        "go mod verify 校验缓存内容与 go.sum，不代表依赖没有漏洞。"
+      ],
+      "exercise": "任选一个间接依赖，写出 why 路径、版本来源和是否仍需保留。",
+      "acceptance": "能从导入链解释依赖；tidy 后只有预期 go.mod/go.sum 变化。",
+      "provenance": "expert-go:C6",
+      "source": "go",
+      "source_order": 0,
+      "source_index": 7,
+      "previous_failure": "main 的装配代码写完了，本地也能 import Repo 包，但 CI 解析到的依赖版本与预期不同。",
+      "next_hook": "模块图解释清楚了，还要关掉本地 workspace，确认发布时单模块也能成立。"
+    },
+    {
+      "chapter": 5,
+      "id": "go-workspace-boundaries",
+      "title": "工作区不是发布配置",
+      "kicker": "小白先懂：go.work 是本地联调视图，不是发布依赖的替代品。",
+      "dialogue": [
+        [
+          "阿良",
+          "go.work 一关，旁边的共享模块就找不到了。直接提交它？"
+        ],
+        [
+          "阮秀",
+          "它是本地联调视图，也会遮住缺失的正式版本。"
+        ],
+        [
+          "陈平安",
+          "我查 go env GOWORK，再关闭工作区逐个跑模块测试。"
+        ],
+        [
+          "宁姚",
+          "缺依赖就补正式版本。发布用 go.mod 别混本地 replace。"
+        ]
+      ],
+      "bullets": [
+        "go work use 聚合多个本地模块，不改各模块的发布依赖。",
+        "go env GOWORK 显示当前是否被工作区接管。",
+        "用 GOWORK=off go test ./... 验证每个模块能独立成立。",
+        "replace 若仅用于本地开发，应避免混入准备发布的 go.mod。"
+      ],
+      "exercise": "建立含两个模块的临时工作区，再关闭 GOWORK 验证各自测试。",
+      "acceptance": "工作区内联调通过；每个模块在 GOWORK=off 下仍可解析并测试。",
+      "provenance": "expert-go:C6",
+      "source": "go",
+      "source_order": 0,
+      "source_index": 8,
+      "previous_failure": "依赖图看似正常，可关闭本地 go.work 后，账本模块立刻找不到旁边的共享模块。",
+      "next_hook": "模块独立测试通过后，不存在的账单从 Repository 返回错误，开始考验跨层传播。"
+    },
+    {
+      "chapter": 6,
+      "id": "go-error-chain",
+      "title": "错误要能被识别",
+      "kicker": "小白先懂：错误文本给人看，保留下来的错误链给程序判断。",
+      "dialogue": [
+        [
+          "左右",
+          "ErrMissing 只剩新文案了，Handler 比字符串不行吗？"
+        ],
+        [
+          "李宝瓶",
+          "文案一改就断。加 load bill 语义时，用 %w 留住原因。"
+        ],
+        [
+          "陈平安",
+          "我用 fmt.Errorf 包装，再用 errors.Is 判断原错误。"
+        ],
+        [
+          "阮秀",
+          "结构信息才用 errors.As。错误与日志都别层层重复处理。"
+        ]
+      ],
+      "bullets": [
+        "使用 fmt.Errorf 加上下文时，以 %w 保留可遍历的原因链。",
+        "稳定类别用哨兵错误配合 errors.Is，结构信息用自定义类型。",
+        "errors.As 抽取链上的目标类型，不依赖具体包裹层数。",
+        "错误应在能增加业务语义的边界处理一次，避免重复记录。"
+      ],
+      "code": "var ErrMissing = errors.New(\"missing\")\n\nfunc load(id string) error {\n    err := read(id)\n    if err != nil {\n        return fmt.Errorf(\"load %s: %w\", id, err)\n    }\n    return nil\n}",
+      "exercise": "为 load 补一层业务上下文，并用 errors.Is 验证底层 ErrMissing。",
+      "acceptance": "错误文本包含操作上下文；调用方不解析字符串即可识别错误类别。",
+      "provenance": "expert-go:C4",
+      "source": "go",
+      "source_order": 0,
+      "source_index": 9,
+      "previous_failure": "ErrMissing 穿过 Repo 和 Service 后只剩一段新文本，Handler 再也识别不出“账单不存在”。",
+      "next_hook": "可预期错误能被识别后，还要把真正的 panic 限制在正确边界。"
+    },
+    {
+      "chapter": 6,
+      "id": "go-defer-panic-recover",
+      "title": "recover 只守边界",
+      "kicker": "小白先懂：可预期失败返回 error；recover 只在能够制定隔离策略的边界工作。",
+      "dialogue": [
+        [
+          "陈平安",
+          "金额写错就 panic，我 recover 后返回零，账却像成功了。"
+        ],
+        [
+          "宁姚",
+          "输入失败应返回 error。吞掉 panic 会把坏状态伪装成成功。"
+        ],
+        [
+          "陈平安",
+          "我改为返回 error；请求边界 recover 时记堆栈并清理。"
+        ],
+        [
+          "李宝瓶",
+          "defer 后进先出，实参登记时求值；goroutine 只能在自身顶层 recover。"
+        ]
+      ],
+      "bullets": [
+        "defer 在函数返回前按后进先出执行，适合就地登记清理。",
+        "defer 的实参在登记时求值；闭包读取变量时要留意后续变化。",
+        "可预期的 I/O、校验和业务失败都应返回 error。",
+        "边界 recover 后要记录堆栈、转换结果，并让资源清理继续执行。"
+      ],
+      "code": "func boundary(next func() error) (err error) {\n    defer func() {\n        if v := recover(); v != nil {\n            logPanic(v, debug.Stack())\n            err = ErrInternal\n        }\n    }()\n    return next()\n}",
+      "exercise": "让 next 依次正常返回、返回业务错误、触发 panic，观察三条路径。",
+      "acceptance": "业务错误原样传播；panic 仅在边界转稳定错误；堆栈只进内部日志且 defer 清理执行。",
+      "provenance": "expert-go:C4",
+      "source": "go",
+      "source_order": 0,
+      "source_index": 10,
+      "previous_failure": "错误链修好后，解析非法金额的函数仍然 panic，并在每个小函数里被 recover 成空结果。",
+      "next_hook": "正常返回、业务错误和 panic 边界分开后，测试还要覆盖未知输入而不靠吞 panic 过关。"
+    },
+    {
+      "chapter": 6,
+      "id": "go-testing-fuzz-cleanup",
+      "title": "测试从例子走向性质",
+      "kicker": "小白先懂：单元测试锁定已知场景，fuzz 用稳定性质寻找未知反例。",
+      "dialogue": [
+        [
+          "崔瀺",
+          "表格里的输入都过了，怪字节还是撞坏了解码器。"
+        ],
+        [
+          "阮秀",
+          "表格守已知场景，fuzz 找未知反例。先定要守的性质。"
+        ],
+        [
+          "陈平安",
+          "我加空串和中文种子，断言编解码往返相等，用 t.Cleanup 收尾。"
+        ],
+        [
+          "宁姚",
+          "失败输入留下回归。并行子测试不能共享状态，race 路径也要跑到。"
+        ]
+      ],
+      "bullets": [
+        "t.Helper 让失败定位回调用处，t.Cleanup 统一登记资源回收。",
+        "子测试按场景命名，并只在互不共享状态时使用 t.Parallel。",
+        "f.Add 放入有意义的种子；Fuzz 函数断言稳定性质。",
+        "发现的失败输入进入语料库，修复后成为持续回归资产。"
+      ],
+      "code": "func FuzzRoundTrip(f *testing.F) {\n    f.Add(\"hello\")\n    f.Fuzz(func(t *testing.T, in string) {\n        out, err := roundTrip(in)\n        if err != nil { t.Fatal(err) }\n        if out != in {\n            t.Fatalf(\"got %q want %q\", out, in)\n        }\n    })\n}",
+      "exercise": "为声明支持任意 string 的编解码器加入空串和中文种子，断言往返必成功且相等。",
+      "acceptance": "常规测试可重复；fuzz 不靠吞 panic 通过；临时资源由 Cleanup 回收。",
+      "provenance": "expert-go:B4",
+      "source": "go",
+      "source_order": 0,
+      "source_index": 11,
+      "previous_failure": "边界 recover 已收紧，可账单解码器只测了几个手写输入，一段未预料的字节序列仍让性质失守。",
+      "next_hook": "输入空间扩展后，下一次失败不在解析，而在两个 goroutine 同时更新账本总额。"
+    },
+    {
+      "chapter": 7,
+      "id": "go-memory-model-race",
+      "title": "没有同步，就没有顺序",
+      "kicker": "小白先懂：并发正确性依赖 happens-before，不依赖日志顺序、延时或调度运气。",
+      "dialogue": [
+        [
+          "陈平安",
+          "我加了 sleep，total 偶尔正确，race 还是报警。"
+        ],
+        [
+          "李宝瓶",
+          "别看日志顺序。并发读写同一位置，缺同步就是竞争。"
+        ],
+        [
+          "陈平安",
+          "启动前写配置可被子任务看见；其他共享访问另建同步。"
+        ],
+        [
+          "宁姚",
+          "启动、channel、锁和原子各管自己的同步边。测试还要跑到它。"
+        ]
+      ],
+      "bullets": [
+        "同一内存位置并发访问且至少一次为写，缺少同步就是数据竞争。",
+        "goroutine 启动、channel 收发、锁和原子操作可建立特定同步关系。",
+        "sleep、日志顺序和本机多次成功都不是同步证据。",
+        "go test -race ./... 是动态检查，仍需覆盖真实并发路径。"
+      ],
+      "code": "func publish() <-chan int {\n    ch := make(chan int, 1)\n    go func() {\n        value := 42\n        ch <- value\n        close(ch)\n    }()\n    return ch\n}",
+      "exercise": "把一个共享 bool 轮询示例改成 channel 通知，并分别跑普通测试和 race。",
+      "acceptance": "能指出同步边；race 检查无报告；实现不依赖 sleep 或调度运气。",
+      "provenance": "expert-go:B3",
+      "source": "go",
+      "source_order": 0,
+      "source_index": 12,
+      "previous_failure": "汇总结果偶尔正确，开发者便用 sleep 调整顺序，可 go test -race 仍报告 total 的读写冲突。",
+      "next_hook": "知道同步边以后，下一步按数据所有权选择 Mutex、Once、atomic 或 channel。"
+    },
+    {
+      "chapter": 7,
+      "id": "go-sync-tool-choice",
+      "title": "先定所有权，再选同步器",
+      "kicker": "小白先懂：先定状态的所有者和不变量，再选择匹配问题形状的同步工具。",
+      "dialogue": [
+        [
+          "陆沉",
+          "我把初始化、计数、传结果全改成 channel，代码更乱了。"
+        ],
+        [
+          "阮秀",
+          "传所有权或事件用 channel；护一组共享状态，Mutex 更直接。"
+        ],
+        [
+          "陈平安",
+          "初始化用 Once，独立计数才用 atomic，小计交给一个 owner。"
+        ],
+        [
+          "李宝瓶",
+          "RWMutex 要让基准证明收益。含锁结构也不能复制。"
+        ]
+      ],
+      "bullets": [
+        "Mutex 保护一组必须共同保持不变量的字段，锁范围要可说明。",
+        "RWMutex 只有在读多、竞争真实且基准证明收益时再采用。",
+        "Once 表达恰好一次初始化；atomic 只适合简单独立状态。",
+        "禁止复制已使用的锁；包含锁的结构通常以指针传递。"
+      ],
+      "code": "type ConfigCache struct {\n    once sync.Once\n    cfg  Config\n}\n\nfunc (c *ConfigCache) Get() Config {\n    c.once.Do(func() { c.cfg = loadConfig() })\n    return c.cfg\n}",
+      "exercise": "为一个计数器和一个配置缓存分别选择同步工具，并写出选择理由。",
+      "acceptance": "每个共享状态有明确所有者；工具与不变量匹配；race 检查通过。",
+      "provenance": "expert-go:M3",
+      "source": "go",
+      "source_order": 0,
+      "source_index": 13,
+      "previous_failure": "数据竞争定位后，陈平安把配置初始化、共享计数和结果传递全部改成 channel，代码反而更难收口。",
+      "next_hook": "同步器选对了，可消费者提前返回后，生产者仍需要取消、关闭与等待协议。"
+    },
+    {
+      "chapter": 8,
+      "id": "go-goroutine-lifecycle",
+      "title": "启动 goroutine 时就写退出路",
+      "kicker": "小白先懂：启动 goroutine 时就同时写下正常完成、取消和等待路径。",
+      "dialogue": [
+        [
+          "崔东山",
+          "消费者拿三笔就走，生产者堵在第四笔。加 default 行吗？"
+        ],
+        [
+          "宁姚",
+          "default 可能忙等或丢结果。先定谁取消、谁关闭、谁等待。"
+        ],
+        [
+          "陈平安",
+          "生产者关 out，发送时监听取消；消费者 cancel 后等待退出。"
+        ],
+        [
+          "李宝瓶",
+          "Context 向下传别久存；接收方别关 out；select 只选可运行操作，不保公平。"
+        ]
+      ],
+      "bullets": [
+        "接收 context 的函数不保存它，取消信号沿调用链向下传。",
+        "创建 channel 的一方通常负责关闭；接收方不要替发送方 close。",
+        "每个 goroutine 都要有正常完成、取消或错误退出路径。",
+        "使用 WaitGroup 或 errgroup 等待收口，不能只让进程替它回收。"
+      ],
+      "code": "func produce(ctx context.Context) <-chan int {\n    out := make(chan int)\n    go func() {\n        defer close(out)\n        for i := 0; ; i++ {\n            select {\n            case out <- i:\n            case <-ctx.Done():\n                return\n            }\n        }\n    }()\n    return out\n}",
+      "exercise": "让消费者只取三个值就取消，测试生产者能在超时前退出。",
+      "acceptance": "测试能证明取消后 goroutine 收口；无重复关闭、阻塞发送或忙等。",
+      "provenance": "expert-go:C5",
+      "source": "go",
+      "source_order": 0,
+      "source_index": 14,
+      "previous_failure": "消费者只取三笔账单便返回，生产者仍阻塞在第四次发送，测试直到超时都没有收口。",
+      "next_hook": "goroutine 已能被证明回收，账单请求可以安全进入 Handler、Service 与 Repository 的完整链路。"
+    },
+    {
+      "chapter": 9,
+      "id": "go-io-boundaries",
+      "title": "先学数据怎么流",
+      "kicker": "小白先懂：io.Reader 和 io.Writer 把文件、网络与内存统一成流式边界。",
+      "dialogue": [
+        [
+          "陈平安",
+          "请求才几个字段，我先全部读进内存再解码吧？"
+        ],
+        [
+          "李宝瓶",
+          "来客若递来一卷没有尽头的纸呢？"
+        ],
+        [
+          "陈平安",
+          "我先限长再解码，超限就退回；谁取得资源谁关闭。"
+        ],
+        [
+          "宁姚",
+          "读到内容不等于读完，最后还要检查 Read 返回的错误。"
+        ]
+      ],
+      "bullets": [
+        "Reader 允许分块读取；一次 Read 返回的数据和错误都要一起处理。",
+        "Writer 可能短写，优先使用 io.Copy 等已处理循环的标准工具。",
+        "LimitedReader 在进入解码器前限制输入体积，避免无界内存占用。",
+        "Closer 的关闭责任要在获得资源的边界明确登记。"
+      ],
+      "code": "func copyLimited(dst io.Writer, src io.Reader) error {\n    lr := &io.LimitedReader{R: src, N: 1<<20 + 1}\n    n, err := io.Copy(dst, lr)\n    if err != nil { return err }\n    if n > 1<<20 { return ErrTooLarge }\n    return nil\n}",
+      "exercise": "用 strings.Reader 模拟小输入和超限输入，测试复制结果与错误。",
+      "acceptance": "实现不一次性读入全部数据；超限可识别；写入错误能返回调用方。",
+      "provenance": "expert-go:B2",
+      "source": "go",
+      "source_order": 0,
+      "source_index": 15,
+      "previous_failure": "刚才准备解析 bill-0827 时，Handler 直接读取整个请求体；输入大小仍由调用方决定，内存边界没有闭合。",
+      "next_hook": "输入流已被限制，接下来处理 HTTP 超时、状态码、响应体关闭与连接复用。"
+    },
+    {
+      "chapter": 9,
+      "id": "go-http-client-server",
+      "title": "HTTP 默认值不是生产配置",
+      "kicker": "小白先懂：请求生命周期要有超时、状态检查、Body 关闭和大小限制。",
+      "dialogue": [
+        [
+          "陈平安",
+          "http.Get 没报错，req-0827 就算成功送达吧？"
+        ],
+        [
+          "阿良",
+          "回信写着 500，你也当喜帖收？"
+        ],
+        [
+          "陈平安",
+          "我传取消和超时，关响应 Body，再有界读取并判状态。"
+        ],
+        [
+          "宁姚",
+          "客户端复用，服务端也限时。把那封 500 回信收好。"
+        ]
+      ],
+      "bullets": [
+        "复用带超时配置的 http.Client；Do 只报告传输错误，非 2xx 由调用方判断。",
+        "拿到 Response 后立即 defer Body.Close，成功与失败响应都限制读取体积。",
+        "小型非 2xx 响应在上限内 drain 到 EOF 后关闭，以便 Transport 复用连接。",
+        "错误体超过 drain 上限时立即停止读取并关闭，明确接受该连接不再复用。"
+      ],
+      "code": "var ErrHTTPStatus = errors.New(\"unexpected HTTP status\")\n\nconst (\n    maxBody       = int64(1 << 20)\n    maxErrorDrain = int64(64 << 10)\n)\n\nfunc fetch(ctx context.Context, c *http.Client, url string) error {\n    req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)\n    if err != nil { return err }\n    res, err := c.Do(req)\n    if err != nil { return err }\n    defer res.Body.Close()\n\n    if res.StatusCode < 200 || res.StatusCode >= 300 {\n        statusErr := fmt.Errorf(\"%w: %d\", ErrHTTPStatus, res.StatusCode)\n        n, drainErr := io.CopyN(io.Discard, res.Body, maxErrorDrain+1)\n        if drainErr != nil && !errors.Is(drainErr, io.EOF) {\n            return errors.Join(statusErr, drainErr)\n        }\n        if n > maxErrorDrain {\n            return fmt.Errorf(\"%w: drain limit; no reuse\", statusErr)\n        }\n        return statusErr\n    }\n\n    n, err := io.Copy(io.Discard, io.LimitReader(res.Body, maxBody+1))\n    if err != nil { return err }\n    if n > maxBody { return ErrTooLarge }\n    return nil\n}",
+      "exercise": "用 httptest.Server 连续返回小型 500、超大 500 和超限 2xx，观察连接复用与读取上限。",
+      "acceptance": "小型非 2xx 可复用连接；超大错误体有界关闭且明确放弃复用；所有路径关闭 Body 并无 goroutine 泄漏。",
+      "provenance": "expert-go:B2",
+      "source": "go",
+      "source_order": 0,
+      "source_index": 16,
+      "previous_failure": "bill-0827 的请求体已有大小上限，但默认 http.Get 仍可能久等，500 响应也不会自动变成 Go error。",
+      "next_hook": "Client 与 Server 的生命周期已明确，下一步在不绑定固定端口的情况下验证整套 HTTP 契约。"
+    },
+    {
+      "chapter": 9,
+      "id": "go-httptest-contract",
+      "title": "在进程内测完整 HTTP",
+      "kicker": "小白先懂：httptest 能验证路由、状态、头部和响应体，而不依赖固定端口。",
+      "dialogue": [
+        [
+          "陈平安",
+          "直接调用 Handler 没报错，HTTP 契约就算测过了吧？"
+        ],
+        [
+          "阮秀",
+          "路由错了、方法错了，这样也看得见吗？"
+        ],
+        [
+          "陈平安",
+          "我用 Recorder 验处理器，再用测试 Server 验真实客户端。"
+        ],
+        [
+          "宁姚",
+          "断言状态和 JSON，别占固定端口。测试门牌挂回去。"
+        ]
+      ],
+      "bullets": [
+        "NewRequest 与 NewRecorder 适合快速断言 handler 的状态和响应体。",
+        "NewServer 提供临时 URL，覆盖客户端、路由和真实传输交互。",
+        "断言 Content-Type、状态码和稳定字段，不只查正文包含某段文字。",
+        "测试服务器必须 Close；客户端重定向策略应按场景显式配置。"
+      ],
+      "code": "func TestHealth(t *testing.T) {\n    req := httptest.NewRequest(\"GET\", \"/health\", nil)\n    rec := httptest.NewRecorder()\n    healthHandler(rec, req)\n    res := rec.Result()\n    defer res.Body.Close()\n    if res.StatusCode != http.StatusOK {\n        t.Fatalf(\"status=%d\", res.StatusCode)\n    }\n}",
+      "exercise": "为一个 JSON handler 增加成功、未知字段和方法不允许三组 HTTP 测试。",
+      "acceptance": "测试断言状态、Content-Type 与 JSON 契约；不绑定固定端口。",
+      "provenance": "expert-go:B4",
+      "source": "go",
+      "source_order": 0,
+      "source_index": 17,
+      "previous_failure": "HTTP 边界写进了代码，却还没有测试证明 bill-0827 的状态码、头部和 JSON 响应在真实路由上成立。",
+      "next_hook": "HTTP 契约已有可重复证据，接下来验证请求携带的身份是否可信。"
+    },
+    {
+      "chapter": 9,
+      "id": "backend-09-authn-oidc",
+      "title": "补页 9.A 身份从哪里来：JWT 与 OIDC",
+      "kicker": "小白先懂：Token 能拆开，不等于身份可信。",
+      "dialogue": [
+        [
+          "李宝瓶",
+          "来客把 body 里的 user_id 当路引，门房差点放行。"
+        ],
+        [
+          "宁姚",
+          "字能读出来，就等于签名可信？"
+        ],
+        [
+          "陈平安",
+          "我从可信边界取凭证，验签发方和有效期，再生成 Principal。"
+        ],
+        [
+          "宁姚",
+          "失败统一算未认证，日志只留指纹。假路引收进证物袋。"
+        ]
+      ],
+      "bullets": [
+        "只在 TLS 与可信代理边界后接收凭证，不能信任请求体或任意 X-Tenant-ID。",
+        "JWT 验证固定算法白名单，并核对 issuer、audience、exp、nbf 与 clock skew。",
+        "JWKS 按 kid 缓存；未知 kid 只触发有界刷新，轮换期同时接受明确的新旧密钥。",
+        "OIDC claim 映射为 typed Principal；原始 claim 不直接成为业务授权结论。",
+        "认证失败统一返回 401 和稳定 code，日志只留 token 指纹，不留原始 token。"
+      ],
+      "code": "func Verify(raw string, now time.Time) (Principal, error) {\n    tok, err := verifier.Verify(raw, now, allowedLeeway)\n    if err != nil { return Principal{}, ErrUnauthenticated }\n    if tok.Iss != wantIss || !tok.HasAudience(wantAud) {\n        return Principal{}, ErrUnauthenticated\n    }\n    if tok.Subject == \"\" || tok.Tenant == \"\" {\n        return Principal{}, ErrUnauthenticated\n    }\n    if !membership.Allows(tok.Subject, tok.Tenant) {\n        return Principal{}, ErrUnauthenticated\n    }\n    return Principal{\n        UserID: tok.Subject, TenantID: tok.Tenant,\n    }, nil\n}",
+      "exercise": "注入伪造签名、错误 audience、过期 token、未知 kid 和轮换中的旧 kid。",
+      "acceptance": "五类非法凭证全部返回稳定 401；合法凭证生成 Principal；日志与 trace 不出现原始 token。",
+      "provenance": "expert-backend:CRITICAL-1",
+      "source": "backend",
+      "source_order": 1,
+      "source_index": 0,
+      "previous_failure": "刚才的创建请求若只相信客户端自填的 user_id，bill-0827 可能被记到冒名者账下。",
+      "next_hook": "身份可信之后，仍要验证这个主体是否有权创建或读取 bill-0827。"
+    },
+    {
+      "chapter": 9,
+      "id": "backend-09-object-authz",
+      "title": "补页 9.B 过了山门，还要问能不能动这本账",
+      "kicker": "小白先懂：认证回答你是谁，授权回答这件事你能不能做。",
+      "dialogue": [
+        [
+          "阮秀",
+          "门房认出了人，便把 bill-0827 递给了任何登录者。"
+        ],
+        [
+          "李宝瓶",
+          "进得门，就能翻别人的账本吗？"
+        ],
+        [
+          "陈平安",
+          "我让 Service 按 Principal 核对动作、对象和租户关系。"
+        ],
+        [
+          "宁姚",
+          "拒绝或隐藏要统一。把越界翻开的账本合上。"
+        ]
+      ],
+      "bullets": [
+        "Handler 只提取 Principal；Service 对 create、read、update、delete 分别做授权。",
+        "对象级策略至少绑定 tenant、subject、role/policy version 与资源状态。",
+        "403 表示身份可信但权限不足；为防资源枚举可按既定策略返回 404。",
+        "拒绝路径写入稳定 error code、audit_id、policy version，不泄露对象内容。",
+        "角色降权、成员移出租户和资源转移都要让旧授权及时失效。"
+      ],
+      "code": "func (s *Service) Get(\n    ctx context.Context, p Principal, id string,\n) (Bill, error) {\n    bill, err := s.repo.Get(ctx, p.TenantID, id)\n    if err != nil { return Bill{}, err }\n    if !s.policy.CanRead(p, bill) {\n        return Bill{}, ErrNotFound\n    }\n    return bill, nil\n}",
+      "exercise": "覆盖同租户无权对象、跨租户 ID、降权旧 token、资源不存在四种读取。",
+      "acceptance": "四条路径符合既定 403/404 契约；拒绝均有 audit_id；任何响应都不泄露对象是否存在。",
+      "provenance": "expert-backend:CRITICAL-1",
+      "source": "backend",
+      "source_order": 1,
+      "source_index": 1,
+      "previous_failure": "Principal 已证明来人属于 tenant-7，却还没有证明他能读取 bill-0827。",
+      "next_hook": "对象授权有了规则，还需确认中间件次序、超时和优雅关闭不会绕开规则。"
+    },
+    {
+      "chapter": 9,
+      "id": "backend-09-http-boundary",
+      "title": "补页 9.C 中间件有顺序，Server 也有收剑时刻",
+      "kicker": "小白先懂：门口先编号再验人，关门先摘流量再等在途请求。",
+      "dialogue": [
+        [
+          "陆沉",
+          "panic 一来，门房先丢了 request id，连事故账都记不上。"
+        ],
+        [
+          "李宝瓶",
+          "人还没验，事故先到了。拿什么追查？"
+        ],
+        [
+          "陈平安",
+          "request id 先落账，再做恢复和认证。崩了也有来路。"
+        ],
+        [
+          "宁姚",
+          "限流守门。shutdown 先摘流量，再等在途请求。"
+        ]
+      ],
+      "bullets": [
+        "可信代理名单决定是否采信 Forwarded/X-Forwarded-For，不能全网信任。",
+        "统一校验 Content-Type、body 上限、request ID、panic recovery 与错误响应。",
+        "ReadHeaderTimeout 只守 header；非流式 body/write 还要用 ReadTimeout、WriteTimeout 或 Handler 级 deadline。",
+        "关闭时先让 readiness 失败，再用 Shutdown 等待普通在途请求。",
+        "SSE、流式上传和 hijacked 连接需按路由单独治理，不能照搬统一读写时限。"
+      ],
+      "code": "func newServer(cfg Config, router http.Handler) *http.Server {\n    // SSE uses a dedicated streaming server with route-level deadlines.\n    return &http.Server{\n        Addr: cfg.Addr, Handler: middlewareChain(router),\n        ReadHeaderTimeout: 5 * time.Second,\n        ReadTimeout: 15 * time.Second, WriteTimeout: 15 * time.Second,\n        IdleTimeout: 60 * time.Second, MaxHeaderBytes: 1 << 20,\n    }\n}\n\nfunc stop(srv *http.Server) error {\n    var errs []error\n    readiness.Store(false)\n    drain, cancelDrain := context.WithTimeout(\n        context.Background(), 5*time.Second)\n    if err := waitForEndpointRemoval(drain); err != nil {\n        errs = append(errs, fmt.Errorf(\"drain: %w\", err))\n    }\n    cancelDrain()\n    closeHijackedConnections()\n    stop, cancelStop := context.WithTimeout(\n        context.Background(), 10*time.Second)\n    if err := srv.Shutdown(stop); err != nil {\n        errs = append(errs, err)\n        if closeErr := srv.Close(); closeErr != nil {\n            errs = append(errs, closeErr)\n        }\n    }\n    cancelStop()\n    return errors.Join(errs...)\n}",
+      "exercise": "真实启动 Server，注入慢 header、慢 body、panic、SSE 与 SIGTERM。",
+      "acceptance": "非流式 header/body 均按时限收口；SSE 不被误杀；panic 不写半截 JSON；摘流后在途请求有界完成。",
+      "provenance": "expert-backend:MAJOR-1",
+      "source": "backend",
+      "source_order": 1,
+      "source_index": 3,
+      "previous_failure": "bill-0827 的身份与对象规则已经补上，但无 request ID 的 panic 和粗暴关服仍会留下半截响应。",
+      "next_hook": "HTTP 边界已经站稳，下一章沿同一请求拆开 Handler、Service 与 Repository。"
+    },
+    {
+      "chapter": 10,
+      "id": "backend-10-tenant-defense",
+      "title": "补页 10.A 多租户不是一个 Header",
+      "kicker": "小白先懂：应用层守一次，查询层再落一道 tenant 铁门。",
+      "dialogue": [
+        [
+          "齐静春",
+          "上层认了 tenant-7，SQL 却没带租户条件。"
+        ],
+        [
+          "宁姚",
+          "门口验过身份，库里就能少一道锁？"
+        ],
+        [
+          "陈平安",
+          "我让每次读写都带 tenant_id，并核对约束和 RLS。"
+        ],
+        [
+          "宁姚",
+          "租户只取自 Principal；连接归还前擦净那枚租户印。"
+        ]
+      ],
+      "bullets": [
+        "TenantID 只来自可信 Principal，不来自 header、path 或 body 的自由输入。",
+        "Repository API 强制接收 tenant；查询、更新、删除都在 SQL 中带 tenant 条件。",
+        "唯一约束与外键优先包含 tenant_id，避免同号对象跨租户串联。",
+        "PostgreSQL RLS 可作纵深防御，但连接复用时必须正确设置并清理会话租户。",
+        "管理任务与跨租户报表使用独立 capability、连接角色和审计通路。"
+      ],
+      "code": "const getBill = `\nSELECT id, amount_cents, version\nFROM bills\nWHERE tenant_id = $1 AND id = $2`\n\nfunc (r *Repo) Get(ctx context.Context,\n    tenant, id string) (Bill, error) {\n    row := r.db.QueryRowContext(ctx, getBill, tenant, id)\n    return scanBill(row)\n}",
+      "exercise": "在普通 API、后台任务和导出查询中各注入一次缺失 tenant 条件。",
+      "acceptance": "静态 SQL 断言或集成测试捕获三处遗漏；RLS 再拒绝跨租户访问；审计能区分普通与管理通路。",
+      "provenance": "expert-backend:CRITICAL-1",
+      "source": "backend",
+      "source_order": 1,
+      "source_index": 2,
+      "previous_failure": "Service 虽从 Principal 得到 tenant-7，Repository 若只按 bill_id 查询，仍可能碰到别的租户同号对象。",
+      "next_hook": "租户边界已经落到查询层，下一步处理 req-0827 重放造成的重复写。"
+    },
+    {
+      "chapter": 11,
+      "id": "backend-11-transaction-helper",
+      "title": "补页 11.A 事务模板与 Commit 结果不确定",
+      "kicker": "小白先懂：Rollback 能收残局，Commit 失败却未必说明没落账。",
+      "dialogue": [
+        [
+          "阮秀",
+          "Commit 回信丢了，有人把 bill-0827 当失败又写一遍。"
+        ],
+        [
+          "宁姚",
+          "没收到回信，就能断定数据库没盖章？"
+        ],
+        [
+          "陈平安",
+          "我把结果记为 Unknown，再用 req-0827 查首次结果。"
+        ],
+        [
+          "宁姚",
+          "别盲重写；同一原子写只用一张事务凭据。印章先留桌上。"
+        ]
+      ],
+      "bullets": [
+        "事务 helper 统一 BeginTx、defer Rollback、panic 收口和 Commit 错误分类。",
+        "所有参与原子性的 Repository 方法必须使用同一个 *sql.Tx。",
+        "业务错误回滚；Commit 返回错误时结果可能未知，不能盲目重放非幂等写。",
+        "外部网络调用不放进长事务；先落状态/outbox，再由事务外执行。",
+        "记录 tx duration、rollback cause 与 commit ambiguity，禁止记录敏感 SQL 参数。"
+      ],
+      "code": "func WithTx(ctx context.Context, db *sql.DB,\n    fn func(*sql.Tx) error) (err error) {\n    tx, err := db.BeginTx(ctx, nil)\n    if err != nil { return TxError{Stage: \"begin\", Err: err} }\n    defer func() {\n        if p := recover(); p != nil {\n            _ = tx.Rollback(); panic(p)\n        }\n        if err != nil { _ = tx.Rollback() }\n    }()\n    if err = fn(tx); err != nil {\n        return TxError{Stage: \"body\", Err: err}\n    }\n    if err = tx.Commit(); err != nil {\n        return TxError{Stage: \"commit\", Err: err, Unknown: true}\n    }\n    return nil\n}",
+      "exercise": "分别在 Begin、业务写、Commit 回包三个位置注入错误，并模拟 Commit 后连接断开。",
+      "acceptance": "无连接泄漏；业务失败必回滚；Commit 不明不直接重复副作用，并可凭幂等记录查询稳定结果。",
+      "provenance": "expert-backend:CRITICAL-2",
+      "source": "backend",
+      "source_order": 1,
+      "source_index": 4,
+      "previous_failure": "req-0827 已具备幂等语义，但 Commit 回包丢失时，调用方仍无法仅凭 error 判断 bill-0827 是否落账。",
+      "next_hook": "Commit 不确定性已有查询出口，下一页转向同一账单的并发更新冲突。"
+    },
+    {
+      "chapter": 11,
+      "id": "backend-11-isolation-locks",
+      "title": "补页 11.B 隔离级别不是越高越好",
+      "kicker": "小白先懂：锁住一行、校验版本、重跑事务，三把剑各有代价。",
+      "dialogue": [
+        [
+          "崔瀺",
+          "两次修改都提交，先写的金额却被悄悄盖掉了。"
+        ],
+        [
+          "宁姚",
+          "没先说要防哪种冲突，怎么选锁？"
+        ],
+        [
+          "陈平安",
+          "我先在租户内查当前 version；找不到仍回 ErrNotFound。"
+        ],
+        [
+          "宁姚",
+          "版本真的过期才回 409。零行不等于全是冲突。"
+        ]
+      ],
+      "bullets": [
+        "先在可信 tenant/owner 作用域内读取当前对象；不存在或越界统一返回 ErrNotFound。",
+        "当前 version 与 expected version 不同才是 ErrConflict，并映射 HTTP 409/bill_version_conflict。",
+        "持锁后更新仍非一行属于内部一致性错误，不能把不存在或越界伪装成版本冲突。",
+        "只对白名单 deadlock/serialization failure 重试整个事务；ErrConflict 交给调用方重新读取。"
+      ],
+      "code": "var ErrConflict = errors.New(\"bill version conflict\")\n\nfunc (r *Repo) UpdateBill(ctx context.Context, tx *sql.Tx,\n    tenantID, id string, expected, amount int64) error {\n    // Both helpers scope every query by tenantID + id.\n    current, err := r.lockVersion(ctx, tx, tenantID, id)\n    if errors.Is(err, sql.ErrNoRows) { return ErrNotFound }\n    if err != nil { return err }\n    if current != expected { return ErrConflict }\n    rows, err := r.updateAtVersion(\n        ctx, tx, tenantID, id, expected, amount)\n    if err != nil { return err }\n    if rows != 1 { return ErrInvariant }\n    return nil\n}",
+      "exercise": "并发修改同一 bill：验一次成功、一次版本冲突；不存在与跨租户 ID 均返回 ErrNotFound。",
+      "acceptance": "过期 version 稳定返回 409/bill_version_conflict；不存在与跨租户对象不泄露存在性；成功更新不会覆盖先提交版本。",
+      "provenance": "expert-backend:CRITICAL-2",
+      "source": "backend",
+      "source_order": 1,
+      "source_index": 5,
+      "previous_failure": "两个设备同时修改 bill-0827，后写者可能悄悄覆盖先写者，事务存在却没有守住业务不变量。",
+      "next_hook": "并发更新已能判冲突，还要把每实例连接池放回数据库总容量中计算。"
+    },
+    {
+      "chapter": 11,
+      "id": "backend-11-connection-pool",
+      "title": "补页 11.C 连接池是一道总容量预算",
+      "kicker": "小白先懂：每座院子十口井，十座院子就是一百口。",
+      "dialogue": [
+        [
+          "阮秀",
+          "每个副本都把连接池开满，数据库门口忽然站不下了。"
+        ],
+        [
+          "李宝瓶",
+          "只数自己这队，别的副本就不占位置？"
+        ],
+        [
+          "陈平安",
+          "我汇总实例、任务和运维预留，查询限时并关闭资源。"
+        ],
+        [
+          "宁姚",
+          "池满就拒绝或降级。把最后一张连接号牌留给运维。"
+        ]
+      ],
+      "bullets": [
+        "连接池不是吞吐开关；数据库 CPU、锁和 max_connections 才是总边界。",
+        "配置 MaxOpen、MaxIdle、ConnMaxLifetime 与 ConnMaxIdleTime，并加入随机抖动。",
+        "查询必须带 context deadline；rows、stmt 与 tx 都要在所有路径关闭。",
+        "扩容前计算实例总池、迁移 job、只读副本和运维保留连接。",
+        "池饱和时明确拒绝或降级，不能让请求无限等待并拖垮 goroutine。"
+      ],
+      "code": "func ConfigurePool(db *sql.DB, c PoolConfig) {\n    db.SetMaxOpenConns(c.MaxOpen)\n    db.SetMaxIdleConns(c.MaxIdle)\n    db.SetConnMaxLifetime(c.MaxLifetime)\n    db.SetConnMaxIdleTime(c.MaxIdleTime)\n}\n\n// instances*MaxOpen + jobs + ops < DB max_connections",
+      "exercise": "用多实例预算模拟池饱和、慢查询、请求取消与连接生命周期集中到期。",
+      "acceptance": "总连接不越数据库预算；取消后连接归还；等待时间有指标；连接轮换不形成同刻重连尖峰。",
+      "provenance": "expert-backend:CRITICAL-2",
+      "source": "backend",
+      "source_order": 1,
+      "source_index": 6,
+      "previous_failure": "并发更新开始排队后，若每个实例都随意放大 MaxOpenConns，数据库会先被总连接数耗尽。",
+      "next_hook": "数据库连接有了总预算，事务仍需跨过数据库与消息系统之间的边界。"
+    },
+    {
+      "chapter": 11,
+      "id": "backend-11-outbox-inbox",
+      "title": "补页 11.D 事务外盒：Outbox、Inbox 与至少一次投递",
+      "kicker": "小白先懂：账与信同炉落地，送信可以重来，副作用只能认一次。",
+      "dialogue": [
+        [
+          "阮秀",
+          "账已盖章，BillCreated 留在内存里，崩溃后没送出。"
+        ],
+        [
+          "李宝瓶",
+          "账和待寄信分两次落笔，中间断了怎么办？"
+        ],
+        [
+          "陈平安",
+          "我同事务写 bill-0827 和 outbox，消费端再按事件去重。"
+        ],
+        [
+          "宁姚",
+          "投递可重复，副作用只能落一次。把待寄信塞进账本夹层。"
+        ]
+      ],
+      "bullets": [
+        "业务写与 outbox insert 共用事务，消除数据库与 Broker 的双写窗口。",
+        "Relay 用 FOR UPDATE SKIP LOCKED 有界认领，失败按 available_at 退避重试。",
+        "consumer 在同一事务写 inbox(event_id) 与本地副作用；外部副作用改写本地 outbox。",
+        "aggregate_id 配合单调 sequence；只认领队首事件，前序失败会阻塞后继。",
+        "毒消息进入 DLQ；人工 replay 经过权限、租户、幂等与审计门禁。"
+      ],
+      "code": "func createBill(tx *sql.Tx, b Bill, e Event) error {\n    if err := bills.Insert(tx, b); err != nil { return err }\n    if err := outbox.Insert(tx, e); err != nil { return err }\n    return nil\n}\n\nfunc consume(tx *sql.Tx, e Event) error {\n    fresh, err := inbox.InsertOnce(tx, e.ID)\n    if err != nil || !fresh { return err }\n    if err = projector.Apply(tx, e); err != nil { return err }\n    return localOutbox.Insert(tx, e.FollowUp())\n}",
+      "exercise": "在 Commit 前、Commit 后 Publish 前、Publish 后 Ack 前、消费写入后 Ack 前分别 kill 进程。",
+      "acceptance": "事件最终不丢；重复投递不重复副作用；同 aggregate 顺序可解释；DLQ 回放不绕过授权。",
+      "provenance": "expert-backend:CRITICAL-3",
+      "source": "backend",
+      "source_order": 1,
+      "source_index": 7,
+      "previous_failure": "bill-0827 已提交，但进程可能在 Publish BillCreated 之前退出，账在而事件丢失。",
+      "next_hook": "BillCreated 已可可靠投递，但消费速度和过载策略要交给有界 Worker。"
+    },
+    {
+      "chapter": 13,
+      "id": "backend-13-worker-pool",
+      "title": "补页 13.A 真正的有界 Worker Pool",
+      "kicker": "小白先懂：闸门管同时过桥的人，队列才管桥头等候的人。",
+      "dialogue": [
+        [
+          "剑灵",
+          "有人往 channel 塞活，却没人说谁关门，停机时撞了锁。"
+        ],
+        [
+          "阮秀",
+          "只摆一只篮子，就算管好了工人与收摊？"
+        ],
+        [
+          "陈平安",
+          "我限定 worker 和队列，只让提交侧关门，停止时选排空或中止。"
+        ],
+        [
+          "宁姚",
+          "用状态机避开关后再投。收摊牌只交给提交侧。"
+        ]
+      ],
+      "bullets": [
+        "Queue 容量、worker 数和单任务上限共同决定内存与下游并发。",
+        "Submit 接受 context，并返回 accepted、queue_full、stopped 等稳定结果。",
+        "只有提交方关闭输入；关闭与提交并发必须由状态机或锁协调，避免 send-on-closed。",
+        "Worker 隔离 panic 并记录 job_id；结果通道的关闭权只能归拥有者。",
+        "Stop(ctx) 明确 drain 或 abort，等待全部 worker 在期限内退出。"
+      ],
+      "exercise": "以 1000/s 生产、100/s 消费，注入慢任务、取消、worker panic 与 shutdown。",
+      "acceptance": "内存有界；队列深度不越界；无 send-on-closed；panic 不杀进程；所有 worker 按策略在期限内退出。",
+      "provenance": "expert-backend:CRITICAL-4",
+      "source": "backend",
+      "source_order": 1,
+      "source_index": 8,
+      "previous_failure": "上一页只有一个加大的 channel，没有固定消费者、关闭协议和队满结果，BillCreated 仍可能拖垮进程。",
+      "next_hook": "Worker Pool 已有关闭协议，过载与暂态故障仍需不同的韧性手段。"
+    },
+    {
+      "chapter": 13,
+      "id": "backend-13-resilience",
+      "title": "补页 13.B 限流、背压、重试与熔断不是一回事",
+      "kicker": "小白先懂：限流管来客，背压管排队，重试管再来，熔断管暂不再来。",
+      "dialogue": [
+        [
+          "阿良",
+          "入口和 Worker 都重试，bill-0827 挤出了一串副本。"
+        ],
+        [
+          "李宝瓶",
+          "队满和下游故障，真能按同一个开关？"
+        ],
+        [
+          "陈平安",
+          "我统一重试预算，只重试幂等暂态错，队满稳定拒绝。"
+        ],
+        [
+          "宁姚",
+          "半开只放少量探测，所有调用仍限时。把多余重试券撕掉。"
+        ]
+      ],
+      "bullets": [
+        "Token Bucket 管速率与突发；并发 Gate 管同时执行；有界 Queue 管等待容量。",
+        "过载返回 429 或 503，并提供可解释的 Retry-After；取消不伪装成失败。",
+        "重试只用于幂等/安全操作和暂态错误，外层统一预算，避免跨层放大。",
+        "指数退避配 full jitter，并受次数、总时长和额外流量比例约束。",
+        "Circuit Breaker 有 closed/open/half-open 状态，但不能替代请求 timeout。"
+      ],
+      "exercise": "注入下游 50% timeout、持续故障和恢复抖动，比较无预算重试与有预算策略。",
+      "acceptance": "额外重试量不越预算；下游持续故障时 breaker 打开；half-open 探测有界；恢复后自动关闭且无流量尖峰。",
+      "provenance": "expert-backend:CRITICAL-4",
+      "source": "backend",
+      "source_order": 1,
+      "source_index": 9,
+      "previous_failure": "Worker 遇到下游超时便层层重试，BillCreated 的一次失败被放大成多次并发请求。",
+      "next_hook": "异步处理不会无限放大请求了，客户端接下来通过 SSE 观察同一账单状态。"
+    },
+    {
+      "chapter": 14,
+      "id": "backend-14-stream-slow-client",
+      "title": "补页 14.A SSE、WebSocket 与慢客户端",
+      "kicker": "小白先懂：水能一直流，桶却不能无限大。",
+      "dialogue": [
+        [
+          "陆沉",
+          "慢读者没接水，服务端却替他摆起无数只桶。"
+        ],
+        [
+          "李宝瓶",
+          "只是单向报状态，为什么先搬来 WebSocket？"
+        ],
+        [
+          "陈平安",
+          "我用 SSE 和有界发送队列，队满就合并或断开。"
+        ],
+        [
+          "宁姚",
+          "游标只续同一 bill_id，data 要按行写。多余水桶撤走。"
+        ]
+      ],
+      "bullets": [
+        "本章事件聚合只有 Bill；路由、授权、事件存储与游标全部以 bill_id 为键。",
+        "BillEvent 使用 queued、processing、completed、failed 等类型，并带该 bill_id 内单调 event sequence。",
+        "SSE 设置 no-cache、X-Accel-Buffering:no、心跳、event ID 与游标过期契约。",
+        "每连接 outbound queue 有界；慢客户端按 Bill 事件策略 drop/coalesce/disconnect，不无限占内存。",
+        "订阅授权版本变化；连接中途降权、成员移除或对象转移时重验并断开，不能只在握手时授权。",
+        "断线只结束 Bill 事件订阅；显式取消账单处理使用 bill_id API，并持久化 Bill 状态。"
+      ],
+      "code": "func (h *BillEventHandler) Stream(c *gin.Context) {\n    ctx, p := c.Request.Context(), PrincipalFrom(c)\n    billID := c.Param(\"bill_id\")\n    // Atomic snapshot+watch closes the check/register race.\n    access, err := h.authz.WatchBill(ctx, p, billID)\n    if err != nil { h.writeError(c, err); return }\n    defer access.Close()\n    allowed, err := access.Revalidate(ctx)\n    if err != nil || !allowed { h.writeError(c, ErrNotFound); return }\n\n    events, err := h.events.SubscribeBill(\n        ctx, p.TenantID, billID, c.GetHeader(\"Last-Event-ID\"))\n    if err != nil { h.writeError(c, err); return }\n    defer events.Close()\n\n    // Select on events, ctx and access changes.\n    // Revocation revalidates current Bill state, then disconnects.\n    h.writeBillSSE(ctx, c.Writer, events, access)\n}",
+      "exercise": "测试 `/bills/:bill_id/events` 的对象授权、断线重连、游标过期和慢读；再把另一个 bill_id 的游标提交给 bill-0827。",
+      "acceptance": "代码和文案只使用 Bill/bill_id 语义；bill_id 不能加载别的对象，跨账单游标被拒；断线只收口订阅，显式取消才改变 Bill 状态。",
+      "provenance": "expert-backend:MAJOR-2",
+      "source": "backend",
+      "source_order": 1,
+      "source_index": 10,
+      "previous_failure": "SSE 虽能推送 bill-0827，但一个慢客户端会让发送队列持续增长，断线后还可能重复收到旧事件。",
+      "next_hook": "流式连接的容量边界已有契约，接下来用观测信号定位 bill-0827 的真实瓶颈。"
+    },
+    {
+      "chapter": 15,
+      "id": "go-benchmark-profile-trace",
+      "title": "先量，再看 CPU，再看等待",
+      "kicker": "小白先懂：benchmark、pprof 和 trace 回答三类不同的性能问题。",
+      "dialogue": [
+        [
+          "陈平安",
+          "Worker 最慢，我重写最复杂的函数准能提速吧？"
+        ],
+        [
+          "李宝瓶",
+          "长得复杂，就一定是热点吗？"
+        ],
+        [
+          "陈平安",
+          "我固定 bill-0827 的负载，先采 profile 和 trace 再改。"
+        ],
+        [
+          "宁姚",
+          "改后同机同版本复测；不同尺子别混算。秒表先别扔。"
+        ]
+      ],
+      "bullets": [
+        "Benchmark 使用固定输入和 b.N，避免把准备工作算进被测循环。",
+        "用 b.ReportAllocs 观察分配；比较前固定机器、版本和负载条件。",
+        "pprof 用采样定位 CPU、堆和阻塞热点，结论要回到源码验证。",
+        "go tool trace 展示 goroutine、网络阻塞和调度事件的时间关系。",
+        "优化后重跑同一基准，并保留前后数据与统计波动。"
+      ],
+      "code": "func BenchmarkDecode(b *testing.B) {\n    data := []byte(\"{\\\"id\\\":1}\")\n    b.ReportAllocs()\n    b.ResetTimer()\n    for i := 0; i < b.N; i++ {\n        var v Bill\n        if err := json.Unmarshal(data, &v); err != nil {\n            b.Fatal(err)\n        }\n    }\n}",
+      "exercise": "为一个热点函数建立基准，采集 CPU profile 和 trace，并分别写一句结论。",
+      "acceptance": "基准可重复且含分配数据；pprof 与 trace 结论不混用；优化有前后对比。",
+      "provenance": "expert-go:C8",
+      "source": "go",
+      "source_order": 0,
+      "source_index": 18,
+      "previous_failure": "分布式 Trace 已把延迟圈到处理 bill-0827 的 Worker，却不能仅凭一个慢 Span 判断是计算、分配还是调度等待。",
+      "next_hook": "局部性能原因已有可重复证据，接下来把单次慢账单放回整体 SLI/SLO 中判断发布影响。"
+    },
+    {
+      "chapter": 15,
+      "id": "backend-15-observability-slo",
+      "title": "补页 15.A 从三类信号走到 SLO",
+      "kicker": "小白先懂：日志讲发生了什么，指标说影响多大，Trace 解释为何走到这里。",
+      "dialogue": [
+        [
+          "阿良",
+          "一张账慢了就敲钟，值班人却不知道影响了多少人。"
+        ],
+        [
+          "李宝瓶",
+          "HTTP 202 回得快，用户的账就办完了吗？"
+        ],
+        [
+          "陈平安",
+          "我量 Run 到终态的时间，并盯积压和 Unknown 的最老年龄。"
+        ],
+        [
+          "宁姚",
+          "异步终态越过 SLO，Canary 就停。警铃只系在用户结果上。"
+        ]
+      ],
+      "bullets": [
+        "eligible Run 的分母、排除项、统计窗口与版本必须固定；主动取消和演练流量只能按书面规则排除。",
+        "terminal success 是 eligible Run 在 TerminalDeadline 内进入成功终态的比例；超时仍未终结计失败。",
+        "time-to-terminal 从接受异步请求计到成功或失败终态，至少跟踪 p50/p95/p99。",
+        "queue、outbox、unknown、reconciling 同时监控 oldest age 与 backlog，避免低流量下只看深度漏报。",
+        "Canary 对零样本、样本不足、快照过期和配置版本不一致一律失败关闭，再检查异步 SLO 与多窗口 burn rate。"
+      ],
+      "exercise": "依次注入 Worker 停摆、outbox 不发布、回执丢失进入 unknown/reconciling，以及 SSE 正常但异步执行不终结；保持 HTTP 202 延迟正常。",
+      "acceptance": "零样本、过期快照、配置错版或任一异步门槛越界都阻断 Canary；恢复后按同一版本定义重新取证。",
+      "provenance": "expert-backend:MAJOR-3",
+      "source": "backend",
+      "source_order": 1,
+      "source_index": 11,
+      "previous_failure": "虽然找到了 bill-0827 的慢 Span，但仅凭一次错误或一条慢请求报警，会制造噪声而非发布依据。",
+      "next_hook": "SLO 已把事故影响量化，发布系统可以据此决定继续、回滚或前滚修复。",
+      "code": "type AsyncSLOGate struct {\n    ConfigVersion string\n    Window, TerminalDeadline, MaxSnapshotAge time.Duration\n    MinEligible uint64\n    MinTerminalSuccess float64\n    MaxTimeToTerminalP95, MaxQueueAge time.Duration\n    MaxOutboxAge, MaxUnknownAge, MaxReconcileAge time.Duration\n    MaxBacklogs [4]uint64 // queue, outbox, unknown, reconcile\n}\n\ntype AsyncSnapshot struct {\n    ConfigVersion string\n    CapturedAt time.Time\n    Window, TerminalDeadline time.Duration\n    Eligible, SuccessWithinDeadline uint64\n    TimeToTerminalP95, OldestQueueAge time.Duration\n    OldestOutboxAge, OldestUnknownAge time.Duration\n    OldestReconcileAge time.Duration\n    Backlogs [4]uint64\n}\n\nfunc (g AsyncSLOGate) AllowCanary(\n    now time.Time, s AsyncSnapshot,\n) error {\n    if g.MinEligible == 0 || g.MaxSnapshotAge <= 0 ||\n        s.Eligible == 0 || s.SuccessWithinDeadline > s.Eligible ||\n        s.ConfigVersion != g.ConfigVersion ||\n        s.Window != g.Window ||\n        s.TerminalDeadline != g.TerminalDeadline ||\n        s.CapturedAt.After(now) ||\n        now.Sub(s.CapturedAt) > g.MaxSnapshotAge ||\n        s.Eligible < g.MinEligible {\n        return ErrInsufficientEvidence\n    }\n    for i := range s.Backlogs {\n        if s.Backlogs[i] > g.MaxBacklogs[i] { return ErrAsyncSLO }\n    }\n    successRate := float64(s.SuccessWithinDeadline) / float64(s.Eligible)\n    if successRate < g.MinTerminalSuccess ||\n        s.TimeToTerminalP95 > g.MaxTimeToTerminalP95 ||\n        s.OldestQueueAge > g.MaxQueueAge ||\n        s.OldestOutboxAge > g.MaxOutboxAge ||\n        s.OldestUnknownAge > g.MaxUnknownAge ||\n        s.OldestReconcileAge > g.MaxReconcileAge {\n        return ErrAsyncSLO\n    }\n    return nil\n}"
+    },
+    {
+      "chapter": 16,
+      "id": "go-daily-tooling-gate",
+      "title": "把日常门禁固定下来",
+      "kicker": "小白先懂：工具链的价值在于每次都执行，并且失败能定位到具体责任。",
+      "dialogue": [
+        [
+          "陈平安",
+          "本地 go test 全绿，这个修复就能直接合并吧？"
+        ],
+        [
+          "宁姚",
+          "没跑到的竞争路径，也会自己变绿？"
+        ],
+        [
+          "陈平安",
+          "我让流水线先挑格式和静态错误，再跑测试与 race。"
+        ],
+        [
+          "左右",
+          "每项只证明自己的边界。绿灯牌不能替 req-0827 收尾。"
+        ]
+      ],
+      "bullets": [
+        "gofmt -w 统一格式；CI 用格式差异检查阻止未格式化代码。",
+        "go vet ./... 检查常见可疑结构，但不能替代测试和代码审查。",
+        "go test ./... 守功能；go test -race ./... 覆盖关键并发包或定时全跑。",
+        "go test -coverprofile=cover.out ./... 记录覆盖变化，不追逐单一百分比。",
+        "govulncheck ./... 结合实际调用链检查已知漏洞，并审查依赖变更。"
+      ],
+      "exercise": "把五项命令写入本地脚本或 CI，并为快门禁与慢门禁划分阶段。",
+      "acceptance": "提交门禁可一键复现；任何失败会阻断合并并留下命令与日志。",
+      "provenance": "expert-go:M4",
+      "source": "go",
+      "source_order": 0,
+      "source_index": 19,
+      "previous_failure": "bill-0827 的修复准备提交时只跑了 go test ./...，格式、静态问题、真实并发路径和依赖漏洞仍未进入固定门禁。",
+      "next_hook": "静态与动态门禁已经固定，下一步验证服务启动、终止和资源关闭是一份完整契约。"
+    },
+    {
+      "chapter": 16,
+      "id": "go-lifecycle-graceful-shutdown",
+      "title": "启动和退出是一份契约",
+      "kicker": "小白先懂：组合根创建依赖，信号触发取消，关闭流程等待在途工作收口。",
+      "dialogue": [
+        [
+          "陈平安",
+          "旧进程收到 SIGTERM 直接退，请求会自己搬去新副本吧？"
+        ],
+        [
+          "阮秀",
+          "正在写 bill-0827 的事务，也会凭空搬家？"
+        ],
+        [
+          "陈平安",
+          "我先摘 readiness，再等普通请求，取消后台任务后逆序关资源。"
+        ],
+        [
+          "宁姚",
+          "长连接另行通知，每步共用总时限。最后再熄旧门灯。"
+        ]
+      ],
+      "bullets": [
+        "main 作为 composition root 登记资源，并按启动的逆序执行关闭。",
+        "Shutdown 只等待普通 HTTP 请求；长连接与后台 worker 需要显式通知和等待。",
+        "监听异常、Shutdown 超时或正常取消都必须进入同一套后续有界清理阶段。",
+        "每阶段使用明确时限，收集所有失败并用 errors.Join 返回，不能首错即提前退出。"
+      ],
+      "code": "func run(ctx context.Context, srv *http.Server) error {\n    errc := make(chan error, 1)\n    go func() { errc <- srv.ListenAndServe() }()\n    var errs []error\n    serveDone := false\n    recordServe := func(err error) {\n        if err != nil && !errors.Is(err, http.ErrServerClosed) {\n            errs = append(errs, fmt.Errorf(\"serve HTTP: %w\", err))\n        }\n    }\n\n    select {\n    case err := <-errc:\n        serveDone = true\n        recordServe(err)\n    case <-ctx.Done():\n    }\n\n    readiness.Store(false)\n    drainCtx, cancelDrain := context.WithTimeout(\n        context.Background(), 5*time.Second)\n    if err := waitForEndpointRemoval(drainCtx); err != nil {\n        errs = append(errs, fmt.Errorf(\"drain readiness: %w\", err))\n    }\n    cancelDrain()\n    notifyLongLivedClients()\n    shutdownCtx, cancelShutdown := context.WithTimeout(\n        context.Background(), 5*time.Second)\n    if err := srv.Shutdown(shutdownCtx); err != nil {\n        errs = append(errs, fmt.Errorf(\"shutdown HTTP: %w\", err))\n        if closeErr := srv.Close(); closeErr != nil {\n            errs = append(errs,\n                fmt.Errorf(\"force close HTTP: %w\", closeErr))\n        }\n    }\n    cancelShutdown()\n    if !serveDone { recordServe(<-errc) }\n\n    cleanupCtx, cancelCleanup := context.WithTimeout(\n        context.Background(), 5*time.Second)\n    if err := waitAndClose(cleanupCtx); err != nil {\n        errs = append(errs, fmt.Errorf(\"close resources: %w\", err))\n    }\n    cancelCleanup()\n    return errors.Join(errs...)\n}",
+      "exercise": "注入超时 Handler、Shutdown 错误、worker 与资源关闭错误，记录各阶段仍被调用及其顺序。",
+      "acceptance": "监听失败或 Shutdown 失败后仍执行后续清理；总时长有界；最终错误聚合每个失败阶段。",
+      "provenance": "expert-go:M5",
+      "source": "go",
+      "source_order": 0,
+      "source_index": 20,
+      "previous_failure": "修复版本通过了代码门禁，但滚动发布直接终止旧进程，正在处理的 req-0827 和长连接没有有界收口。",
+      "next_hook": "进程生命周期已有有界关闭协议，接下来确保配置可校验、密钥不进入发布物。"
+    },
+    {
+      "chapter": 16,
+      "id": "backend-16-config-container",
+      "title": "补页 16.A 配置、密钥与容器硬边界",
+      "kicker": "小白先懂：配置可以进册，密钥只该临时递到手里。",
+      "dialogue": [
+        [
+          "崔东山",
+          "有人图省事，把山门密钥烤进了可复制的镜像层。"
+        ],
+        [
+          "宁姚",
+          "镜像人人能搬，Secret 也该跟着走？"
+        ],
+        [
+          "陈平安",
+          "我启动时校验配置，密钥只留引用，由 Secret Manager 注入。"
+        ],
+        [
+          "宁姚",
+          "值不进镜像和日志，容器用 non-root。把明文钥匙熔掉。"
+        ]
+      ],
+      "bullets": [
+        "配置来源优先级固定，启动时 fail-fast，并记录不含敏感值的配置指纹。",
+        "Secret 使用引用而非明文，支持轮换与新旧密钥双窗口，禁止进入仓库和镜像层。",
+        "日志、panic dump、环境诊断和 metrics 都执行敏感字段脱敏。",
+        "容器采用 non-root、read-only rootfs、drop capabilities、tmpfs 与 seccomp。",
+        "CPU/内存/PID requests 与 limits 要同 Go GC、连接池、队列容量一起预算。"
+      ],
+      "code": "type Config struct {\n    Addr      string\n    DBURLRef  string\n    MaxOpen   int\n}\n\nfunc (c Config) Validate() error {\n    if c.Addr == \"\" || c.DBURLRef == \"\" {\n        return ErrInvalidConfig\n    }\n    if c.MaxOpen < 1 { return ErrInvalidConfig }\n    return nil\n}",
+      "exercise": "注入缺失配置、未知字段、日志泄密、只读文件系统、密钥轮换和内存上限。",
+      "acceptance": "错误配置启动即失败；镜像/日志无密钥；轮换不中断；容器在只读根目录和资源限制下正常运行。",
+      "provenance": "expert-backend:MAJOR-4",
+      "source": "backend",
+      "source_order": 1,
+      "source_index": 12,
+      "previous_failure": "准备重发版本时，旧流程把数据库凭证写进 config.yaml 并打入镜像，回滚包本身成了泄密源。",
+      "next_hook": "运行包不再携带密钥，发布仍需证明迁移可兼容、备份可恢复。"
+    },
+    {
+      "chapter": 16,
+      "id": "backend-16-deploy-restore",
+      "title": "补页 16.B 迁移、灰度（Canary）、回滚与恢复演练",
+      "kicker": "小白先懂：镜像能退，数据未必退；备份存在，也不等于恢复可用。",
+      "dialogue": [
+        [
+          "崔瀺",
+          "先 contract 再灰度，旧代码回来却读不了新库。"
+        ],
+        [
+          "阮秀",
+          "桥先拆了，旧车从哪里回去？"
+        ],
+        [
+          "陈平安",
+          "我先 expand，再回填校验；独立 job 加锁且可重跑。"
+        ],
+        [
+          "宁姚",
+          "从备份真恢复 bill-0827，再量 RTO/RPO。旧桥先留着。"
+        ]
+      ],
+      "bullets": [
+        "Migration 用独立 job、advisory lock、statement/lock timeout，禁止每副本抢跑。",
+        "Expand/contract 保证旧新版本同时读写；回填可暂停、可重跑并有校验。",
+        "发布先摘除异常实例，再依据错误预算、业务不变量和迁移状态决定动作。",
+        "灰度（Canary）/blue-green 门禁要说明哪些变化可回滚、哪些只能前滚。",
+        "备份验校验和、加密与保留；restore drill 量出 RTO/RPO 并验证应用可读。"
+      ],
+      "exercise": "模拟滚动升级、回填中断、不可逆 contract、Canary 超预算及从备份恢复。",
+      "acceptance": "旧新版本并存无契约错误；迁移可续跑；发布越界能收口；恢复后的数据与应用校验通过 RTO/RPO。",
+      "provenance": "expert-backend:MAJOR-4",
+      "source": "backend",
+      "source_order": 1,
+      "source_index": 13,
+      "previous_failure": "Canary 已发现错误，但新版本先删除了旧列，旧镜像即使启动也读不了 bill-0827。",
+      "next_hook": "迁移与恢复路径已经演练，最终还需定义哪些验证证据才能放行。"
+    },
+    {
+      "chapter": 16,
+      "id": "backend-16-release-gates",
+      "title": "补页 16.C 上线之前，证据要一层层过门",
+      "kicker": "小白先懂：单测证明一招，发布门禁证明整条链在真实风雨里站得住。",
+      "dialogue": [
+        [
+          "左右",
+          "单测全绿，众人便当整条账单链都可靠，险些放行。"
+        ],
+        [
+          "李宝瓶",
+          "没测租户越界和恢复，绿灯替它们答过了吗？"
+        ],
+        [
+          "陈平安",
+          "我先接上真实依赖，再让迁移和并发故意撞一次。"
+        ],
+        [
+          "宁姚",
+          "固定版本与阈值，再由 Canary 裁决。发布印章现在才落。"
+        ]
+      ],
+      "bullets": [
+        "Unit/Service 测业务不变量；HTTP 契约测试覆盖 schema、状态码和稳定错误 code。",
+        "PostgreSQL/Redis/Broker 集成测试使用真实版本，并执行 migration 兼容矩阵。",
+        "race、goroutine leak、fuzz、property 与安全回归覆盖并发和输入边界。",
+        "负载与故障注入同时观察 HTTP p95/p99、terminal success、time-to-terminal、queue/outbox/unknown/reconcile age。",
+        "故障注入必须证明同步 SLO、异步 SLO、业务不变量与恢复证据同时闭合；零样本或任一越界都不能放行。"
+      ],
+      "exercise": "在 HTTP 202 仍快速成功时分别停 Worker、阻塞 outbox、丢失回执并制造 reconcile 积压，验证 Canary 门禁和恢复动作。",
+      "acceptance": "同步接口健康不能掩盖异步未终结；所有阈值引用版本化 SLO 配置，越界可判定地阻断发布并选择 rollback 或 roll-forward。",
+      "provenance": "expert-backend:CRITICAL-5",
+      "source": "backend",
+      "source_order": 1,
+      "source_index": 14,
+      "previous_failure": "修复版本的 go test ./... 已通过，却没有证明跨租户拒绝、迁移兼容和 Worker 过载路径仍然成立。",
+      "next_hook": "发布门禁闭合后，卷三将在这条已验证的 Ledger 后端之上建立可控 Harness。"
+    },
+    {
+      "chapter": 18,
+      "id": "harness-tool-contract-gate",
+      "title": "工具发现不等于工具可信",
+      "kicker": "小白先懂：先逐个认清 Skill、MCP 与 Harness，再让工具契约过门禁。",
+      "dialogue": [
+        [
+          "崔东山",
+          "Tool 刚认清，我却把 Skill 当成 MCP 里的标准对象了。"
+        ],
+        [
+          "李宝瓶",
+          "名牌摆错了。Skill 管宿主流程，MCP 只帮你找到 Tool；谁给它开门？"
+        ],
+        [
+          "陈平安",
+          "Harness 开门前查权限和预算，再把这次 Tool 契约按下手印。"
+        ],
+        [
+          "宁姚",
+          "契约一变，重新审。坏输出只交给一个 Executor。"
+        ]
+      ],
+      "bullets": [
+        "Preflight 显式接收入口已校验的 Principal，只读取 active snapshot、规范化 command 并校验输入；本页不得调用 sandbox、MCP Tool 或 artifact store。",
+        "同一个 immutable snapshot 同时供规范化、schema 与 policy 使用；热更新发生时整次失败并要求重新审批，不混用版本。",
+        "输入未知字段、超限或深度异常在副作用前拒绝；approval 变化不在 preflight 中 Consume。",
+        "唯一 Executor 才能 reserve/authorize、分配 Step CallID、dispatch、接 receipt 与 settle。",
+        "Executor 遇坏 output 先写 quarantine，再返回 ErrInvalidToolOutput；隔离成功也绝不等于调用成功。"
+      ],
+      "code": "func (h *Harness) Preflight(\n    ctx context.Context, p Principal, c ToolCall,\n) (CanonicalCommand, error) {\n    // One immutable snapshot supplies contract, schema and policy.\n    snap, err := h.controls.ActiveSnapshot(ctx, c.Server, c.Tool)\n    if err != nil { return CanonicalCommand{}, err }\n    if snap.ContractDigest != c.ContractDigest ||\n        snap.ServerBuild != c.ServerBuild {\n        return CanonicalCommand{}, ErrNeedsReapproval\n    }\n    cmd := Canonicalize(c, snap, p)\n    if err := snap.Schema.Validate(cmd.Args); err != nil {\n        return CanonicalCommand{}, err\n    }\n    if err := snap.Policy.Preflight(ctx, cmd); err != nil {\n        return CanonicalCommand{}, err\n    }\n    // Approval service later binds cmd.Digest + snap.Digest and\n    // issues an opaque, server-held CapabilityHandle.\n    return cmd, nil\n}",
+      "exercise": "断言 Preflight 对合法/坏输入都产生零 Tool 调用；再让 Executor 收到 schema-invalid output 且 quarantine 写入成功。",
+      "acceptance": "合法 preflight 只返回 canonical command；坏输入零副作用；坏 output 无 artifact/上下文/成功 Step，并始终返回非 nil ErrInvalidToolOutput。",
+      "provenance": "expert-harness:B1",
+      "source": "harness",
+      "source_order": 2,
+      "source_index": 0,
+      "previous_failure": "上一段只认清了会产生副作用的 Tool；Skill、MCP 与 Harness 还没各自站稳位置，更没证明 tools/list 的 schema 值得信任。",
+      "next_hook": "契约门禁通过后，审批仍不能只存一个 true；下一章要让授权与一次具体 Step 绑定。"
+    },
+    {
+      "chapter": 19,
+      "id": "harness-approval-reservation",
+      "title": "审批要先验证，再预留",
+      "kicker": "小白先懂：先验证，再原子预留；结果未知时保留 reservation 并转入对账。",
+      "dialogue": [
+        [
+          "阮秀",
+          "参数还没验，我先 Consume 授权；反正拒绝时账本没动。"
+        ],
+        [
+          "李宝瓶",
+          "参数都没验，授权先烧掉；真发出请求又丢了回信，账上写什么？"
+        ],
+        [
+          "陈平安",
+          "先写 dispatched，再标 Unknown；固定 CallID 查 receipt，不重发。"
+        ],
+        [
+          "宁姚",
+          "先验证，再预留。Unknown 没对清，授权不释放。"
+        ]
+      ],
+      "bullets": [
+        "ValidateActive 无副作用；ReserveAndAuthorize 才在同一事务 CAS active -> reserved，并创建/复用逻辑 Step 与预算预留。",
+        "dispatch 前以 approval ID、nonce、fence 和各记录 expected version 原子标记 dispatched，并确认未 cancel_requested。",
+        "收到 receipt 才 consumed；证明未发送才 released；unknown/reconciling 保持预留，超时不明进入 manual_terminal。",
+        "取消只追加 cancel_requested/revoked 事件并阻止新 dispatch，不删除 command digest、approval ID 或 capability 关联。",
+        "receipt 必须绑定 tenant、可信 server/audience、CallID、command digest、outcome 与 commit marker；坏 output 隔离后仍按可信 receipt 结算。"
+      ],
+      "code": "func (x *Executor) dispatchAndSettle(\n    ctx context.Context, grant Grant, step Step,\n    attempt Attempt, cmd CanonicalCommand,\n) (ArtifactRef, error) {\n    expected := ExpectedState{\n        Fence: step.Fence, StepVersion: step.Version,\n        AttemptVersion: attempt.Version, GrantVersion: grant.Version,\n        CancelRequested: false,\n    }\n    dispatched, err := x.store.MarkDispatched(\n        ctx, grant.ID, grant.Nonce, attempt.ID, expected,\n    )\n    if err != nil { return ArtifactRef{}, err }\n    expected = dispatched.Expected()\n\n    raw, receipt, runErr := x.sandbox.Run(\n        ctx, step.CallID, attempt.ID, cmd,\n    )\n    if receipt == nil {\n        err := x.store.MarkUnknown(\n            ctx, step.ID, attempt.ID, expected)\n        return ArtifactRef{}, errors.Join(ErrOutcomeUnknown, err)\n    }\n    binding := ReceiptBinding{\n        TenantID: grant.TenantID, CallID: step.CallID,\n        ServerIdentity: grant.ServerIdentity,\n        Audience: grant.Audience, CommandDigest: cmd.Digest(),\n        RequireOutcome: true, RequireCommitMarker: true,\n    }\n    trusted, err := x.receipts.Validate(receipt, binding)\n    if err != nil {\n        markErr := x.store.MarkUnknown(\n            ctx, step.ID, attempt.ID, expected)\n        return ArtifactRef{}, errors.Join(\n            ErrInvalidReceipt, err, markErr)\n    }\n    if schemaErr := x.output.Validate(raw); schemaErr != nil {\n        qerr := x.quarantine.Put(ctx, raw, schemaErr)\n        settleErr := x.store.SettleRejected(\n            ctx, step.ID, trusted, expected)\n        return ArtifactRef{}, errors.Join(\n            ErrInvalidToolOutput, qerr, settleErr)\n    }\n    return x.store.SettleReceipt(\n        ctx, step.ID, grant.ID, trusted, raw, runErr, expected)\n}",
+      "exercise": "在 reserve/send/receipt/settle 切点注入 cancel、lease takeover 和崩溃；交换两个 tenant/Step 的 receipt 并重放迟到 receipt。",
+      "acceptance": "旧 fence/version 与 post-cancel dispatch 全被拒；伪造/错绑 receipt 进入 unknown；合法重复 receipt 只幂等结算一次。",
+      "provenance": "expert-harness:B2",
+      "source": "harness",
+      "source_order": 2,
+      "source_index": 1,
+      "previous_failure": "ledger.create_bill 已通过契约门禁，但一次性 approval 若先被 Consume、再发现参数非法，会白白烧掉授权；若响应丢失后盲发，又可能重复写账。",
+      "next_hook": "授权已经与一次调用绑定；还要把 attempt、checkpoint、lease 和 fence 固定下来，重启者才知道自己有没有继续资格。"
+    },
+    {
+      "chapter": 19,
+      "id": "harness-run-step-checkpoint",
+      "title": "Run 管目标，Step 管一次动作",
+      "kicker": "小白先懂：Run 管目标，Step 管动作；版本化 checkpoint 决定恢复路径。",
+      "dialogue": [
+        [
+          "陆沉",
+          "Run 还写着 running，我让新 Worker 从断处接着跑。"
+        ],
+        [
+          "李宝瓶",
+          "断点旁还有半枚脚印。你先续跑，旧调用若其实已出去呢？"
+        ],
+        [
+          "陈平安",
+          "可能再动一次账。我不续跑，先用固定 CallID 查 receipt。"
+        ],
+        [
+          "阮秀",
+          "CallID 跟着那一步，重试才换 AttemptID。取消也要留痕。"
+        ]
+      ],
+      "bullets": [
+        "Run、Step、Attempt、Approval 分表并带版本与外键；Run 不承载 action、Attempt 或 approval nonce。",
+        "逻辑 Step 持有稳定 EffectCallID；AttemptID 与 lease 可变，但不能改变下游幂等身份。",
+        "Step 覆盖 queued、waiting_approval、executing、backoff、unknown、reconciling 与终态；非法 CAS 转换拒绝。",
+        "cancel_requested 独立持久化：停止新工作但保留 action/approval；unknown 继续对账，不能直接 cancelled。",
+        "Fence 统一为单调 uint64 命名类型，checkpoint 与所有条件写使用同一比较语义。"
+      ],
+      "code": "type Checkpoint struct {\n    RunID, StepID, ApprovalID string\n    RunVersion, StepVersion int64\n    AttemptID, EffectCallID string\n    Fence Fence\n    StepState, NextOperation string\n    CancelRequested bool\n    ModelRevision, PromptDigest string\n    ToolContractDigest, PolicyDigest string\n    CodeRevision string\n}\n\nfunc Recover(ctx context.Context, cp Checkpoint) error {\n    expected := ExpectedState{\n        Fence: cp.Fence, StepVersion: cp.StepVersion,\n    }\n    switch cp.StepState {\n    case \"executing\", \"unknown\", \"reconciling\":\n        return executor.Reconcile(\n            ctx, cp.StepID, cp.EffectCallID, expected)\n    default:\n        return scheduler.ResumeKnownState(ctx, cp, expected)\n    }\n}",
+      "exercise": "为多 Step Run 随机生成 approve、dispatch、cancel、retry、crash、lease expiry 和 receipt 序列，并从每个 checkpoint 恢复。",
+      "acceptance": "各 Step 独立保留 Attempt/Approval/receipt；CallID 不变；unknown 先 reconcile；各状态取消不丢审计；旧 fence 无法写回。",
+      "provenance": "expert-harness:B3",
+      "source": "harness",
+      "source_order": 2,
+      "source_index": 2,
+      "previous_failure": "崩溃现场只保存了 Run=running，缺少具体 Step、attempt 与 checkpoint；新 Worker 无法判断该续跑、迁移还是重新审批。",
+      "next_hook": "状态能恢复之后，Context 才有明确装载点：围绕当前 Step 取证，而不是把整段历史重新塞给模型。"
+    },
+    {
+      "chapter": 21,
+      "id": "harness-mcp-untrusted-adapter",
+      "title": "MCP Adapter 不是信任边界",
+      "kicker": "小白先懂：MCP 负责互通，不负责授信；adapter 必须冻结身份、能力和取消映射。",
+      "dialogue": [
+        [
+          "顾璨",
+          "server 自称 readOnly，我便没判 effect class。"
+        ],
+        [
+          "宁姚",
+          "木牌是 server 自己写的。真要不要动账，谁来判？"
+        ],
+        [
+          "陈平安",
+          "adapter 不信自述，先按 effect class 收紧权限，再记下 server 身份。"
+        ],
+        [
+          "李宝瓶",
+          "身份或能力一变就重审。自写的 readOnly，不是通行证。"
+        ]
+      ],
+      "bullets": [
+        "snapshot 冻结 protocol version、server identity、不可变 build/revision、capabilities 与 tools list。",
+        "server build/revision 纳入 active contract 和 approval digest；实现变化即使 schema 不变也要求重审批。",
+        "annotation、readOnly 与 idempotent 都是不可信 hint，effect class 只由宿主策略给出。",
+        "OAuth token 校验 audience，禁止向下游透传形成 confused deputy；同名 Tool 按 server identity 隔离。",
+        "App Run 与 MCP Task 分开建模，adapter 显式映射 poll/cancel，Task 状态不得覆盖 Run。"
+      ],
+      "code": "type MCPSnapshot struct {\n    ServerIdentity      string\n    ServerBuildRevision string\n    ProtocolVersion     string\n    CapabilitiesHash    string\n    ToolsListHash       string\n}\n\ntype MCPAdapter interface {\n    Snapshot(context.Context) (MCPSnapshot, error)\n    Call(context.Context, CanonicalCommand) (MCPResult, error)\n    PollTask(context.Context, string) (MCPTask, error)\n    CancelTask(context.Context, string) error\n}",
+      "exercise": "保持 schema/capabilities/tools hash 不变，只更换 server build；再伪造 readOnly、错误 audience 与 Task cancel。",
+      "acceptance": "旧 snapshot/approval 因 build 变化失效；伪造 hint 不降权；错误 token 被拒绝；MCP Task 不覆盖 run-0827。",
+      "provenance": "expert-harness:C3",
+      "source": "harness",
+      "source_order": 2,
+      "source_index": 3,
+      "previous_failure": "Context 已按 tenant 隔离，但宿主仍相信 MCP server 自报的 readOnly 与 idempotent，甚至把 MCP Task 的取消直接覆盖 App Run。",
+      "next_hook": "协议身份可信后，还要检查 Tool 真正运行在哪里，以及数据会从哪些出口泄露。"
+    },
+    {
+      "chapter": 21,
+      "id": "harness-sandbox-data-policy",
+      "title": "隔离要管进程，也要管数据",
+      "kicker": "小白先懂：sandbox 不只隔进程，还要把 secret、输出和数据留存一起纳入策略。",
+      "dialogue": [
+        [
+          "左右",
+          "我把命令塞进容器，转身发现 secret 被子进程写进 stderr。"
+        ],
+        [
+          "阮秀",
+          "容器只是壳。先关哪一扇门？"
+        ],
+        [
+          "陈平安",
+          "我先停进程、隔离输出，不送模型；再撤销凭证，记下泄露。"
+        ],
+        [
+          "宁姚",
+          "重跑先降权，关掉多余网络。artifact 脱敏后才能出门。"
+        ]
+      ],
+      "bullets": [
+        "使用非特权身份、只读根、明确可写挂载和固定 image digest。",
+        "限制 CPU、内存、PIDs、文件、输出和墙钟时间，并杀完整进程树。",
+        "拒绝宿主 socket、设备、硬链接和归档路径穿越，产物先隔离验证。",
+        "Secret broker 按 audience 注入短期凭证，五个数据出口统一脱敏。",
+        "数据按敏感度、租户、保留期和删除策略管理，删除动作也留审计。"
+      ],
+      "code": "type SandboxPolicy struct {\n    ImageDigest    string\n    UID, GID       uint32\n    ReadOnlyRoot   bool\n    Network        NetworkPolicy\n    MaxCPUTime     time.Duration\n    MaxWallTime    time.Duration\n    MaxMemoryBytes int64\n    MaxPIDs        int64\n    MaxFileBytes   int64\n    MaxOutputBytes int64\n    AllowSockets   bool\n}",
+      "exercise": "让子进程尝试 fork、后台驻留、路径逃逸和回显 secret。",
+      "acceptance": "越界行为被拒绝或收口；输出无 secret；跨租户与过期数据不可读取。",
+      "provenance": "expert-harness:C6",
+      "source": "harness",
+      "source_order": 2,
+      "source_index": 4,
+      "previous_failure": "宿主已经收窄 Tool 权限，但执行器仍能 fork 后台进程、访问宿主 socket，secret 也可能从 stderr 或 artifact 泄露。",
+      "next_hook": "环境边界稳定后，下一步才有资格谈预算：调用开始前预留，事实回来后对账。"
+    },
+    {
+      "chapter": 22,
+      "id": "harness-budget-ledger",
+      "title": "预算先预留，事实后对账",
+      "kicker": "小白先懂：estimate 决定能否开始，actual 决定真实消耗；unknown 不能被当作零。",
+      "dialogue": [
+        [
+          "崔瀺",
+          "我等调用结束才加 token，两个 Worker 却一起越线了。"
+        ],
+        [
+          "李宝瓶",
+          "两个人都等回来才记账，根 Run 的钱会不会先花穿？"
+        ],
+        [
+          "陈平安",
+          "会。我出门前先从根 Run 原子 reserve，回来按 actual 对账。"
+        ],
+        [
+          "阮秀",
+          "Unknown 就先压着预留。账没清，别把钱退回钱袋。"
+        ]
+      ],
+      "bullets": [
+        "token、money_micros、tool_calls 和 wall_millis 分维度记账。",
+        "调用前按最坏估计原子 reserve；确定零消耗才 release，unknown 保留并对账。",
+        "nested Agent 同时记录子 Step 与根 Run 归属，不能绕开总额度。",
+        "hard limit 阻止新调用；soft limit 触发降级、提醒或人工判断。",
+        "超限终态记录维度、阈值、已用、预留和未完成副作用。"
+      ],
+      "code": "type BudgetStore interface {\n    Reserve(\n        context.Context,\n        string,\n        map[BudgetDimension]int64,\n    ) (ReservationSet, error)\n    ReconcileBatch(\n        context.Context, string, UsageDigest,\n        map[BudgetDimension]int64,\n    ) error\n    ReleaseProvenUnused(context.Context, string) error\n    MarkUnknown(context.Context, string) error\n}",
+      "exercise": "让两个 worker 并发预留同一根 Run 的剩余预算，再返回不同 actual。",
+      "acceptance": "总预留不超 hard limit；多维 actual 原子幂等对账；unknown 不释放且事件完整。",
+      "provenance": "expert-harness:C2",
+      "source": "harness",
+      "source_order": 2,
+      "source_index": 5,
+      "previous_failure": "权限已经收紧，但两个 Worker 仍会并发读取同一根 Run 的剩余额度；若都在结束后才累加 token，就可能同时越过 hard limit。",
+      "next_hook": "预算账能对上数字后，还要证明这些记录没被换过；证据正文与签名需要分开。"
+    },
+    {
+      "chapter": 22,
+      "id": "harness-signed-manifest-envelope",
+      "title": "证据正文与签名分开",
+      "kicker": "小白先懂：先规范化不可变 manifest body，再让独立 envelope 签它的 digest。",
+      "dialogue": [
+        [
+          "阿良",
+          "我把 signature 塞进 manifest 正文，发现它要给自己签名。"
+        ],
+        [
+          "宁姚",
+          "正文若含签名，落笔时不就又变了？你先拆哪一层？"
+        ],
+        [
+          "陈平安",
+          "我把 canonical body 和 envelope 分开，先算 body 的 digest。"
+        ],
+        [
+          "李宝瓶",
+          "envelope 再签 digest。签名别钻回正文，免得绕成死结。"
+        ]
+      ],
+      "bullets": [
+        "manifest body 固定 schema version、Run、fingerprint、event head 和产物 digest。",
+        "按明确 canonical format 生成字节，字段重排不能改变被签语义。",
+        "envelope 仅保存 payload digest、algorithm、key ID、signature 和时间。",
+        "验证先查 trust policy 与撤销状态，再验 payload digest 和签名。",
+        "签名覆盖 subject digests，不只签一个可替换来源的 URL。"
+      ],
+      "code": "type SignatureEnvelope struct {\n    PayloadDigest string\n    Algorithm     string\n    KeyID         string\n    Signature     []byte\n    SignedAt      time.Time\n}\n\nfunc Verify(\n    body []byte,\n    env SignatureEnvelope,\n    trust TrustPolicy,\n) error",
+      "exercise": "分别篡改 artifact digest、event head、key ID 和 canonical body。",
+      "acceptance": "所有篡改均失败；合法旧签名可按历史策略验证；撤销 key 被拒绝。",
+      "provenance": "expert-harness:C4",
+      "source": "harness",
+      "source_order": 2,
+      "source_index": 6,
+      "previous_failure": "预算记录已经可对账，但 manifest 把 signature 放进自身正文，形成自引用，也没有明确旧 key 在轮换后按哪份 trust policy 验证。",
+      "next_hook": "证据能验真之后，还要说明 Replay 到底会不会碰外部世界。"
+    },
+    {
+      "chapter": 22,
+      "id": "harness-replay-eval-matrix",
+      "title": "三种 Replay，三套承诺",
+      "kicker": "小白先懂：事件回放、模拟轨迹和真实重跑，是三种不同承诺。",
+      "dialogue": [
+        [
+          "陆沉",
+          "我点 Replay，就让 run-0827 再次调用 ledger.create_bill。"
+        ],
+        [
+          "阮秀",
+          "你只想重建页面，为何还要碰账本？"
+        ],
+        [
+          "陈平安",
+          "我只回放事件，页面照样重建，Tool 一次也不叫。"
+        ],
+        [
+          "宁姚",
+          "回放不碰账。真重跑，另建 Run、另审批。"
+        ]
+      ],
+      "bullets": [
+        "可比性先固定评测协议：dataset/split/sample IDs、grader、metric、seed 与 threshold policy。",
+        "model、prompt、tool、policy 与 code 是允许声明变化的 treatment；它们正是 Eval 要比较的对象。",
+        "未声明的协议漂移返回 ErrNotComparable；结果保存样本引用、分布、置信区间、失败引用和签名。",
+        "event playback 零 Tool；mock trajectory 固定外部输入；real re-execution 新建 Run 与审批。"
+      ],
+      "code": "type EvalProtocol struct {\n    DatasetDigest, SplitDigest, SampleIDsDigest string\n    GraderDigest, MetricDigest, SeedsDigest string\n    ThresholdPolicyDigest string\n}\ntype Treatment struct {\n    ModelDigest, PromptDigest, ToolDigest string\n    PolicyDigest, CodeDigest string\n}\ntype EvalManifest struct {\n    Protocol EvalProtocol\n    Treatment Treatment\n}\n\nfunc Compare(a, b EvalManifest) error {\n    if a.Protocol != b.Protocol { return ErrNotComparable }\n    return nil // declared treatment differences are what Eval measures\n}",
+      "exercise": "保持 EvalProtocol 不变，分别改变 model、prompt 与 code treatment 并比较分布；再改变 dataset 或 grader，验证返回 ErrNotComparable。",
+      "acceptance": "声明的 treatment 差异可比较；dataset/split/sample、grader、metric、seed 或 threshold policy 漂移会拒绝比较。",
+      "provenance": "expert-harness:C5",
+      "source": "harness",
+      "source_order": 2,
+      "source_index": 7,
+      "previous_failure": "证据已经签名，却仍把 Replay 统称为‘把旧 Run 再跑一遍’，导致只读审计、模拟验证和生产重执行共用了同一套安全假设。",
+      "next_hook": "三种 Replay 已分流，最后要确保事件主轴本身足以重建状态，而不是依赖可能被采样的 trace。"
+    },
+    {
+      "chapter": 22,
+      "id": "harness-durable-event-spine",
+      "title": "Trace 会丢，事件账本不能丢",
+      "kicker": "小白先懂：持久事件是审计主轴，trace、SSE 和 metric 都只是投影。",
+      "dialogue": [
+        [
+          "顾璨",
+          "trace 明明连着全程，我把持久事件删了，SSE 重连却重复播。"
+        ],
+        [
+          "李宝瓶",
+          "trace 会漏页。SSE 重连要认上一条，靠什么编号？"
+        ],
+        [
+          "陈平安",
+          "我给每个 Run 的事件递增编号，让状态变化和 outbox 同事务落库。"
+        ],
+        [
+          "阮秀",
+          "编号只往前走，重连照号续。别拿会采样的 trace 当账本。"
+        ]
+      ],
+      "bullets": [
+        "状态转换与 outbox event 同事务提交，事件只追加且带单调 sequence。",
+        "关联 run、step、attempt、tool call、approval 和 capability ID。",
+        "事件链保存前序 digest；manifest 只签 event head 与必要 subject digest。",
+        "SSE 按 sequence 重连去重；trace span 记录 event ID 而非替代事件。",
+        "高基数明细留在 ledger，metric 只保存可聚合的延迟、错误和成本。"
+      ],
+      "code": "type EventRecord struct {\n    EventID, RunID, StepID string\n    AttemptID, ToolCallID  string\n    ApprovalID, CapabilityID string\n    SchemaVersion uint32\n    Sequence      uint64\n    Kind          string\n    PayloadRef    string\n    PayloadDigest string\n    PreviousDigest string\n    CurrentDigest  string\n    CreatedAt      time.Time\n}\n\n// CurrentDigest covers canonical metadata and PayloadDigest.",
+      "exercise": "删除全部 trace 数据，只用事件账本重建一次审批、执行和对账过程。",
+      "acceptance": "状态可完整重建；sequence 无缺口或重复；SSE 重连不会重复消费。",
+      "provenance": "expert-harness:M1",
+      "source": "harness",
+      "source_order": 2,
+      "source_index": 8,
+      "previous_failure": "Replay 模式已经分清，但审计仍依赖 OpenTelemetry trace；trace 可能采样或过期，SSE 断线后也没有稳定序号去重。",
+      "next_hook": "事件链已经能独立作证；Coding Harness 接下来也必须把每份候选补丁与这条证据链绑定。"
+    },
+    {
+      "chapter": 23,
+      "id": "harness-candidate-lifecycle",
+      "title": "候选改动必须离开宿主工作区",
+      "kicker": "小白先懂：每次编辑落在 candidate@base；失败只 discard 候选，不碰宿主状态。",
+      "dialogue": [
+        [
+          "陈平安",
+          "我在用户仓库里改坏了，准备用 git reset 收拾。"
+        ],
+        [
+          "宁姚",
+          "dirty 文件和 index 都可能是用户的。验完时 base 又前进，直接合吗？"
+        ],
+        [
+          "陈平安",
+          "不合。我重建或 rebase candidate，核对新 base，再重跑全部门禁。"
+        ],
+        [
+          "李宝瓶",
+          "证据得认得出 base 和沙箱。验坏了，只丢候选。"
+        ]
+      ],
+      "bullets": [
+        "Candidate 绑定 Run/Step/Attempt、event head、base/rules/sandbox/patch digest、验证 manifest、review 与 merge approval。",
+        "edit、verify、review、approve、merge/discard 每次状态转换与 durable event 在同一事务 CAS 落地。",
+        "merge 前重验 base、patch、evidence、approval、fence 与目标分支保护；旧 base 或旧 fence 一律失败。",
+        "trace 全丢仍可从事件链重建候选状态；取消或失败只 discard harness worktree，宿主 dirty 文件和 index 字节不变。"
+      ],
+      "code": "type Candidate struct {\n    ID, RepoID, RunID, StepID, AttemptID string\n    BaseRevision, RulesDigest, SandboxImageDigest string\n    PatchDigest, VerificationManifestDigest string\n    ReviewDigest, ApprovalID, EventHead string\n    WorktreeRef string\n    Fence Fence\n    Version int64\n    State CandidateState\n}\n\nfunc (h *CodingHarness) Transition(\n    ctx context.Context, c Candidate, next CandidateState,\n    evidence EvidenceManifest,\n) error {\n    if evidence.PatchDigest != c.PatchDigest {\n        return ErrEvidenceMismatch\n    }\n    expected := ExpectedState{\n        Fence: c.Fence, StepVersion: c.Version,\n    }\n    return h.store.CASAndAppendEvent(\n        ctx, c.ID, expected, next, evidence)\n}",
+      "exercise": "在 edit/verify/review/approve 各切点崩溃，再篡改 patch/test evidence，并制造 base 前进与 lease takeover。",
+      "acceptance": "事件可重建候选；篡改证据、旧 base、旧 fence 都拒绝 merge；宿主工作区和 index 字节级不变。",
+      "provenance": "expert-harness:B4",
+      "source": "harness",
+      "source_order": 2,
+      "source_index": 9,
+      "previous_failure": "Coding Agent 直接在用户的 dirty 仓库编辑，失败后准备用 git reset 回滚；这会覆盖原有工作区与 index，也无法证明补丁基于哪个 revision。",
+      "next_hook": "候选代码可以安全落地后，还要把线上入口改成 CreateQueuedOnce，让网络重试不复制 Run。"
+    },
+    {
+      "chapter": 24,
+      "id": "harness-handler-worker-skeleton",
+      "title": "Handler 只入队，Worker 才执行",
+      "kicker": "小白先懂：Handler 只创建持久 queued Run，lease Worker 才推进状态机。",
+      "dialogue": [
+        [
+          "崔东山",
+          "我让 Handler 直接调模型；HTTP 一超时，run-0827 就找不到了。"
+        ],
+        [
+          "阮秀",
+          "请求 Context 断了，持久 Run 也该跟着取消吗？"
+        ],
+        [
+          "陈平安",
+          "不该。我先认 tenant 和 owner，用 entry key 建好 Run，再把活交给 Worker。"
+        ],
+        [
+          "宁姚",
+          "HTTP 门关，Run 不丢。旧账若是 Unknown，继续按 CallID 对账。"
+        ]
+      ],
+      "bullets": [
+        "CreateQueuedOnce 的唯一键为 tenant-7/user-7/create_bill/entry-0827，并持久化双摘要与 visibility。",
+        "同一 owner 作用域下，同 key 同摘要返回 run-0827；不同摘要返回 409 且零副作用；不同 owner/operation/tenant 不碰撞。",
+        "命中旧 Run 仍执行对象级授权；同 tenant 不同 owner 与跨 tenant 都不能读取或接管。",
+        "step-create-bill-0827 的稳定 CallID 是 call-create-bill-0827；可信 Executor 将它映射为下游 req-0827。",
+        "req-0827 由账本服务幂等落 bill-0827/outbox，并提供 receipt-req-0827；响应丢失只 reconcile。"
+      ],
+      "code": "type EntryContract struct {\n    TenantID, OwnerID, Operation, Key string\n    InputDigest, ProfileDigest, Visibility string\n}\n\nfunc (w *Worker) Process(ctx context.Context, runID string) error {\n    lease, run, err := w.runs.Claim(ctx, runID, w.workerID)\n    if err != nil { return err }\n    defer lease.StopHeartbeat()\n    step, err := w.steps.Next(ctx, run.ID, lease.Fence)\n    if err != nil { return err }\n    if step.State.NeedsReconcile() {\n        return w.executor.Reconcile(\n            ctx, step.ID, step.CallID, lease.Fence, step.Version)\n    }\n    return w.executor.ExecuteStep(\n        ctx, lease.Fence, step.Version, step)\n}",
+      "exercise": "并发提交 entry-0827 的同摘要与冲突摘要，并在 send、commit、receipt、settle 切点终止 Worker。",
+      "acceptance": "同摘要只建 run-0827；冲突摘要 409、零副作用；跨作用域不碰撞；不可见 Run 不泄露；重复 Step 只落一个 bill/outbox，receipt 可恢复。",
+      "provenance": "expert-harness:M2",
+      "source": "harness",
+      "source_order": 2,
+      "source_index": 10,
+      "previous_failure": "最终联调仍在 Handler 里直接调用模型；HTTP 超时后 Run 身份丢失，客户端重试会重复创建任务，Worker 重启也没有稳定接续点。",
+      "next_hook": "到这里，入口幂等、可恢复执行、审批与预算、unknown/reconcile、事件证据和代码修复已经汇成同一条闭环。"
+    }
+  ],
+  "volumes": {
+    "1": [
+      "卷一  练拳铸胚：Go 从一行到并发",
+      "从读懂一段函数开始，建立类型、接口、错误与并发的肌肉记忆。"
+    ],
+    "9": [
+      "卷二  开山立城：Go 后端从请求到上线",
+      "把请求、数据、容量、观测与发布连成一座能守住失败的城。"
+    ],
+    "17": [
+      "卷三  铸造剑匣：成为 Harness AI 工程师",
+      "让模型在工具、状态、权限、预算、评测和人工审批中可靠做事。"
+    ]
+  }
+}

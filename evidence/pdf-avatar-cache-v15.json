@@ -1,0 +1,80 @@
+{
+  "阿良": {
+    "source": "output/book-v8-assets/aliang-animation-pilot-v8-r2.jpg",
+    "source_sha256": "2d45b4491b8ad1a79cd930aa8396a4e5219e99ab15463fef571b8e504726f4f3",
+    "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+    "derivative": "assets/chat-avatars/阿良-c7de86724bd40304.png"
+  },
+  "齐静春": {
+    "source": "output/book-v8-assets/qijingchun-animation-pilot-v8.jpg",
+    "source_sha256": "8657100ff1663b03d5fd761ff242051a0fc6df014004d88a89d7f230b325d43e",
+    "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+    "derivative": "assets/chat-avatars/齐静春-b87a37baca1a9f13.png"
+  },
+  "陈平安": {
+    "source": "output/book-v8-assets/chenpingan-animation-v8.jpg",
+    "source_sha256": "c2de98a8850d7ab750c4be32d803222cf056f96671f0d460529ca8b5709ba552",
+    "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+    "derivative": "assets/chat-avatars/陈平安-7900ed1ee3359c71.png"
+  },
+  "宁姚": {
+    "source": "output/book-v8-assets/ningyao-animation-pilot-v8.jpg",
+    "source_sha256": "18e8d7d7eeedb07710c6e8c84c10fd95759ade1f7a8fd6e82cbd468f63e0eb69",
+    "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+    "derivative": "assets/chat-avatars/宁姚-1ca9c3a0b6ec2dc9.png"
+  },
+  "崔瀺": {
+    "source": "output/book-v8-assets/cuican-animation-v8.jpg",
+    "source_sha256": "6620cd1216a9df9107081539edf818e6051a01d50fd9eb418546968697544742",
+    "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+    "derivative": "assets/chat-avatars/崔瀺-b94567857d36d22f.png"
+  },
+  "左右": {
+    "source": "output/book-v8-assets/zuoyou-inferred-animation-v8.jpg",
+    "source_sha256": "e63c011d06b2b60fe6840e53d719a64f3d384366898760d2543a5e4a34bc44b0",
+    "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+    "derivative": "assets/chat-avatars/左右-ef85229ab43c83fd.png"
+  },
+  "李宝瓶": {
+    "source": "output/book-v8-assets/libaoping-animation-v8.jpg",
+    "source_sha256": "67fd29e401a3a1c446557c2fcbf1eb4fe5abfab09c6881c5a910aaafcb09168d",
+    "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+    "derivative": "assets/chat-avatars/李宝瓶-1ac5f17a39ef0717.png"
+  },
+  "阮秀": {
+    "source": "output/book-v8-assets/ruanxiu-animation-v8.jpg",
+    "source_sha256": "5cad129eeec9579bdf26f2227114402dee305bda31e0933e9e290e103abe66a2",
+    "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+    "derivative": "assets/chat-avatars/阮秀-3217953e28cfc453.png"
+  },
+  "剑灵": {
+    "source": "output/book-v8-assets/swordspirit-animation-pilot-v8.jpg",
+    "source_sha256": "c2fc61e1fbd60094324b2c4a874acc2f47f14a3e7d8973f1af99134375773575",
+    "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+    "derivative": "assets/chat-avatars/剑灵-caa034cdc0bba94b.png"
+  },
+  "陆沉": {
+    "source": "output/book-v8-assets/luchen-animation-v8.jpg",
+    "source_sha256": "6c87e228ea32eb8060a5cfb92926704f55545e4da699355d3494c57491311bdd",
+    "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+    "derivative": "assets/chat-avatars/陆沉-d74e698b0fb4f9ae.png"
+  },
+  "顾璨": {
+    "source": "output/book-v8-assets/gucan-animation-v8.jpg",
+    "source_sha256": "8ca5d8c0c2d132c701ff09a17657c7b7b7a73fbf6504ce8621766726f8f0f743",
+    "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+    "derivative": "assets/chat-avatars/顾璨-29e20e1139ee2fd3.png"
+  },
+  "崔东山": {
+    "source": "output/book-v8-assets/cuidongshan-animation-v8.jpg",
+    "source_sha256": "f1d4d17b661ce1a7e52700bb19372702eb90717481db4444c92f77fd935a45d9",
+    "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+    "derivative": "assets/chat-avatars/崔东山-b6c4f8a7188d63cb.png"
+  },
+  "周米粒": {
+    "source": "output/imagegen/v5/zhoumili-v5.png",
+    "source_sha256": "49c8144e8eb395cb21374aa7bc51d53551f3f0d11521adef5a1f1c30617005cb",
+    "crop_contract": "square-512-face-0.50-0.34-zoom-1.33-circle-v1",
+    "derivative": "assets/chat-avatars/周米粒-61ad07e7e0a1025b.png"
+  }
+}

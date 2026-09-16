@@ -1,0 +1,148 @@
+{
+  "chapter-1": {
+    "code": "package main\n\nimport \"errors\"\n\nvar ErrInvalidPrice = errors.New(\"invalid price\")\nvar ErrInsufficientPayment = errors.New(\"insufficient payment\")\n\nfunc settle(price, paid int64) (int64, error) {\n    // TODO: 先检查价格和付款，再返回找零。\n    return 0, nil\n}\n\n",
+    "test": "package main\nimport (\"errors\"; \"testing\")\nfunc TestSettle(t *testing.T) {\n cases:=[]struct{name string; price,paid,want int64; err error}{\n  {\"change\",7,10,3,nil},{\"exact\",7,7,0,nil},\n  {\"short\",7,5,0,ErrInsufficientPayment},{\"invalid\",0,10,0,ErrInvalidPrice},\n }\n for _,c:=range cases { t.Run(c.name,func(t *testing.T){ got,err:=settle(c.price,c.paid); if got!=c.want || !errors.Is(err,c.err){t.Fatalf(\"got (%d,%v), want (%d,%v)\",got,err,c.want,c.err)} }) }\n}"
+  },
+  "chapter-2": {
+    "code": "package main\nimport \"encoding/json\"\ntype Bill struct {\n    // TODO: 导出字段，并写出正确的 json tag。\n    id string\n    amount int64\n}\nfunc encodeBill(b Bill) ([]byte,error){ return json.Marshal(b) }\n",
+    "test": "package main\nimport (\"encoding/json\"; \"testing\")\nfunc TestBillJSON(t *testing.T){\n raw,err:=encodeBill(Bill{ID:\"b1\",AmountCents:1200}); if err!=nil{t.Fatal(err)}\n var got map[string]any; if err:=json.Unmarshal(raw,&got);err!=nil{t.Fatal(err)}\n if len(got)!=2 || got[\"id\"]!=\"b1\" || got[\"amount_cents\"]!=float64(1200){t.Fatalf(\"unexpected JSON: %s\",raw)}\n}"
+  },
+  "chapter-3": {
+    "code": "package main\nfunc clone(src []string) []string {\n    // TODO: 不能只把 slice 头复制一份。\n    return src\n}\n",
+    "test": "package main\nimport \"testing\"\nfunc TestCloneIsIndependent(t *testing.T){\n src:=[]string{\"a\",\"b\"}; got:=clone(src); got[0]=\"changed\"\n if src[0]!=\"a\"{t.Fatalf(\"source was mutated: %v\",src)}\n if len(got)!=2 || got[1]!=\"b\"{t.Fatalf(\"bad clone: %v\",got)}\n}"
+  },
+  "chapter-4": {
+    "code": "package main\n// TODO: 定义 Reader，只要求 Get(id string) (string, error)。\n\nfunc readName(store Reader, id string) (string,error){\n    return store.Get(id)\n}\n",
+    "test": "package main\nimport \"testing\"\ntype fakeReader struct{}\nfunc (fakeReader) Get(id string)(string,error){return \"bill:\"+id,nil}\nfunc TestSmallInterface(t *testing.T){got,err:=readName(fakeReader{},\"7\");if err!=nil||got!=\"bill:7\"{t.Fatalf(\"got %q %v\",got,err)}}"
+  },
+  "chapter-5": {
+    "code": "package main\nimport \"strings\"\nfunc canImport(from, to string) bool {\n    _ = strings.HasPrefix\n    // TODO: 阻止 internal -> cmd 的反向依赖。\n    return true\n}\n",
+    "test": "package main\nimport \"testing\"\nfunc TestDependencyDirection(t *testing.T){cases:=[]struct{from,to string;want bool}{{\"cmd/api\",\"internal/bill\",true},{\"internal/bill\",\"cmd/api\",false},{\"internal/bill\",\"internal/store\",true}};for _,c:=range cases{if got:=canImport(c.from,c.to);got!=c.want{t.Fatalf(\"%s -> %s = %v, want %v\",c.from,c.to,got,c.want)}}}"
+  },
+  "chapter-6": {
+    "code": "package main\nimport (\"errors\"; \"fmt\")\nvar ErrNotFound=errors.New(\"not found\")\nfunc loadBill(id string) error {\n    // TODO: 用 %w 包装 ErrNotFound，并带上 id。\n    return fmt.Errorf(\"bill %s failed\",id)\n}\n",
+    "test": "package main\nimport (\"errors\"; \"strings\"; \"testing\")\nfunc TestWrappedCause(t *testing.T){err:=loadBill(\"b7\");if !errors.Is(err,ErrNotFound){t.Fatalf(\"cause lost: %v\",err)};if !strings.Contains(err.Error(),\"b7\"){t.Fatalf(\"id missing: %v\",err)}}"
+  },
+  "chapter-7": {
+    "code": "package main\nimport \"sync\"\nfunc count(n int) int {\n    var wg sync.WaitGroup\n    total := 0\n    for i:=0;i<n;i++ { wg.Add(1); go func(){ defer wg.Done(); total++ }() }\n    wg.Wait()\n    return total\n}\n",
+    "test": "package main\nimport \"testing\"\nfunc TestCount(t *testing.T){for i:=0;i<20;i++{if got:=count(1000);got!=1000{t.Fatalf(\"got %d\",got)}}}",
+    "race": true
+  },
+  "chapter-8": {
+    "code": "package main\nimport \"context\"\nfunc stream(ctx context.Context, values []int) <-chan int {\n    out:=make(chan int)\n    go func(){\n        // TODO: 退出时关闭 out；发送时响应 ctx 取消。\n        for _,value:=range values { out <- value }\n    }()\n    return out\n}\n",
+    "test": "package main\nimport (\"context\"; \"testing\"; \"time\")\nfunc TestStreamValuesAndCancel(t *testing.T){ctx,cancel:=context.WithCancel(context.Background());ch:=stream(ctx,[]int{1,2,3});if <-ch!=1{t.Fatal(\"first value\")};cancel();select{case _,ok:=<-ch:if ok{t.Fatal(\"channel must close after cancel\")};case <-time.After(time.Second):t.Fatal(\"goroutine did not stop\")}}"
+  },
+  "chapter-9": {
+    "code": "package main\nimport \"errors\"\nvar ErrUnauthorized=errors.New(\"unauthorized\");var ErrInvalid=errors.New(\"invalid\")\ntype CreateRequest struct{Tenant,ClientUser string;Amount int}\nfunc validateCreate(r CreateRequest) error { // TODO\n    return nil\n}\n",
+    "test": "package main\nimport(\"errors\";\"testing\")\nfunc TestValidateCreate(t *testing.T){cs:=[]struct{r CreateRequest;w error}{{CreateRequest{\"t1\",\"\",10},nil},{CreateRequest{\"\",\"\",10},ErrUnauthorized},{CreateRequest{\"t1\",\"u9\",10},ErrUnauthorized},{CreateRequest{\"t1\",\"\",0},ErrInvalid}};for _,c:=range cs{if !errors.Is(validateCreate(c.r),c.w){t.Fatalf(\"got %v want %v\",validateCreate(c.r),c.w)}}}"
+  },
+  "chapter-10": {
+    "code": "package main\ntype BillStore interface{Save(string,int)error};type Service struct{store BillStore}\nfunc(s Service)Create(id string,amount int)error { // TODO\n    return nil\n}\n",
+    "test": "package main\nimport \"testing\"\ntype fakeStore struct{calls int;id string;amount int};func(f *fakeStore)Save(id string,a int)error{f.calls++;f.id=id;f.amount=a;return nil}\nfunc TestService(t *testing.T){f:=&fakeStore{};e:=(Service{f}).Create(\"b1\",7);if e!=nil||f.calls!=1||f.id!=\"b1\"||f.amount!=7{t.Fatalf(\"%#v %v\",f,e)}}"
+  },
+  "chapter-11": {
+    "code": "package main\ntype Ledger struct{byKey map[string]string;writes int}\nfunc(l *Ledger)Create(key,id string)string { // TODO\n    return \"\"\n}\n",
+    "test": "package main\nimport \"testing\"\nfunc TestIdempotency(t *testing.T){l:=&Ledger{};a:=l.Create(\"k1\",\"b1\");b:=l.Create(\"k1\",\"b2\");if a!=\"b1\"||b!=\"b1\"||l.writes!=1{t.Fatalf(\"%q %q %d\",a,b,l.writes)}}"
+  },
+  "chapter-12": {
+    "code": "package main\ntype Entry struct{Value string;Version int}\nfunc putNewer(c map[string]Entry,k string,n Entry)bool { // TODO\n    return false\n}\n",
+    "test": "package main\nimport \"testing\"\nfunc TestCache(t *testing.T){c:=map[string]Entry{\"b\":{\"new\",2}};if putNewer(c,\"b\",Entry{\"old\",1})||c[\"b\"].Value!=\"new\"{t.Fatal(\"old won\")};if !putNewer(c,\"b\",Entry{\"newest\",3}){t.Fatal(\"new lost\")}}"
+  },
+  "chapter-13": {
+    "code": "package main\nfunc tryAcquire(s chan struct{})bool { // TODO\n    return false\n}\nfunc release(s chan struct{}){<-s}\n",
+    "test": "package main\nimport \"testing\"\nfunc TestAdmission(t *testing.T){s:=make(chan struct{},1);if !tryAcquire(s)||tryAcquire(s){t.Fatal(\"limit\")};release(s);if !tryAcquire(s){t.Fatal(\"reuse\")}}"
+  },
+  "chapter-14": {
+    "code": "package main\nimport \"context\"\nfunc send(ctx context.Context,out chan<- string,v string)bool { // TODO\n    return false\n}\n",
+    "test": "package main\nimport(\"context\";\"testing\")\nfunc TestSend(t *testing.T){out:=make(chan string,1);if !send(context.Background(),out,\"x\")||<-out!=\"x\"{t.Fatal(\"send\")};ctx,c:=context.WithCancel(context.Background());c();if send(ctx,make(chan string),\"x\"){t.Fatal(\"cancel\")}}"
+  },
+  "chapter-15": {
+    "code": "package main\nfunc fields(r,b,s string)map[string]string { // TODO\n    return nil\n}\n",
+    "test": "package main\nimport \"testing\"\nfunc TestFields(t *testing.T){f:=fields(\"r1\",\"b1\",\"worker\");if len(f)!=3||f[\"request_id\"]!=\"r1\"||f[\"bill_id\"]!=\"b1\"||f[\"stage\"]!=\"worker\"{t.Fatalf(\"%v\",f)}}"
+  },
+  "chapter-16": {
+    "code": "package main\nfunc canaryOK(rate,limit float64,ready bool)bool { // TODO\n    return true\n}\n",
+    "test": "package main\nimport \"testing\"\nfunc TestCanary(t *testing.T){if !canaryOK(.01,.02,true)||canaryOK(.03,.02,true)||canaryOK(0,.02,false){t.Fatal(\"gate\")}}"
+  },
+  "chapter-17": {
+    "code": "package main\nimport \"errors\"\nvar ErrBadOutput=errors.New(\"bad tool output\");type ToolResult struct{Status,Digest string}\nfunc validateToolResult(r ToolResult)error { // TODO\n    return nil\n}\n",
+    "test": "package main\nimport(\"errors\";\"testing\")\nfunc TestOutput(t *testing.T){if validateToolResult(ToolResult{\"ok\",\"sha256:x\"})!=nil{t.Fatal(\"valid\")};for _,r:=range []ToolResult{{\"\",\"x\"},{\"ok\",\"\"}}{if !errors.Is(validateToolResult(r),ErrBadOutput){t.Fatal(\"invalid\")}}}"
+  },
+  "chapter-18": {
+    "code": "package main\nfunc needsApproval(effect string)bool { // TODO\n    return false\n}\n",
+    "test": "package main\nimport \"testing\"\nfunc TestApproval(t *testing.T){for in,w:=range map[string]bool{\"read\":false,\"write\":true,\"delete\":true,\"unknown\":true}{if needsApproval(in)!=w{t.Fatal(in)}}}"
+  },
+  "chapter-19": {
+    "code": "package main\ntype Step struct{State,CallID string}\nfunc reconcile(s Step)(string,bool) { // TODO\n    return \"\",false\n}\n",
+    "test": "package main\nimport \"testing\"\nfunc TestReconcile(t *testing.T){id,run:=reconcile(Step{\"unknown\",\"c7\"});if id!=\"c7\"||!run{t.Fatal(id,run)};_,run=reconcile(Step{\"succeeded\",\"c7\"});if run{t.Fatal(\"reran\")}}"
+  },
+  "chapter-20": {
+    "code": "package main\nfunc assemble(parts []string,budget int)[]string { // TODO\n    return nil\n}\n",
+    "test": "package main\nimport \"testing\"\nfunc TestBudget(t *testing.T){g:=assemble([]string{\"spec\",\"code\",\"logs\"},8);if len(g)!=2||g[0]!=\"spec\"||g[1]!=\"code\"||len(assemble([]string{\"long\"},3))!=0{t.Fatalf(\"%v\",g)}}"
+  },
+  "chapter-21": {
+    "code": "package main\nfunc allowed(name string,write,approved bool,allow map[string]bool)bool { // TODO\n    return false\n}\n",
+    "test": "package main\nimport \"testing\"\nfunc TestAllowed(t *testing.T){a:=map[string]bool{\"search\":true,\"deploy\":true};if !allowed(\"search\",false,false,a)||allowed(\"deploy\",true,false,a)||!allowed(\"deploy\",true,true,a)||allowed(\"shell\",false,false,a){t.Fatal(\"policy\")}}"
+  },
+  "chapter-22": {
+    "code": "package main\nfunc mayRetry(attempt,max,elapsed,budget int,retryable bool)bool { // TODO\n    return true\n}\n",
+    "test": "package main\nimport \"testing\"\nfunc TestRetry(t *testing.T){if !mayRetry(1,3,20,100,true)||mayRetry(3,3,20,100,true)||mayRetry(1,3,100,100,true)||mayRetry(1,3,20,100,false){t.Fatal(\"budget\")}}"
+  },
+  "chapter-23": {
+    "code": "package main\nfunc promotable(i,t,r,a bool)bool { // TODO\n    return true\n}\n",
+    "test": "package main\nimport \"testing\"\nfunc TestPromote(t *testing.T){if !promotable(true,true,true,true){t.Fatal(\"good\")};for _,c:=range [][4]bool{{false,true,true,true},{true,false,true,true},{true,true,false,true},{true,true,true,false}}{if promotable(c[0],c[1],c[2],c[3]){t.Fatal(c)}}}"
+  },
+  "chapter-24": {
+    "code": "package main\ntype Receipt struct{Tenant,CallID,Outcome,Digest string}\nfunc acceptReceipt(r Receipt,tenant,callID string)bool { // TODO\n    return true\n}\n",
+    "test": "package main\nimport \"testing\"\nfunc TestReceipt(t *testing.T){g:=Receipt{\"t1\",\"c1\",\"succeeded\",\"sha256:x\"};if !acceptReceipt(g,\"t1\",\"c1\"){t.Fatal(\"good\")};for _,r:=range []Receipt{{\"t2\",\"c1\",\"succeeded\",\"x\"},{\"t1\",\"c2\",\"succeeded\",\"x\"},{\"t1\",\"c1\",\"unknown\",\"x\"},{\"t1\",\"c1\",\"succeeded\",\"\"}}{if acceptReceipt(r,\"t1\",\"c1\"){t.Fatal(r)}}}"
+  },
+  "supplement-go-ai-01": {
+    "seam": "invokeProvider(parent context.Context, provider Provider, timeout time.Duration, req ProviderRequest) ([]byte, error)",
+    "buildTag": "learner01",
+    "code": "//go:build learner01\n\npackage ledgeragent\n\nimport (\n\t\"context\"\n\t\"time\"\n)\n\nfunc invokeProvider(parent context.Context, provider Provider, timeout time.Duration, req ProviderRequest) ([]byte, error) {\n\t// TODO: 派生 deadline，并把同一个调用链传给 Provider。\n\treturn provider.Decide(parent, req)\n}\n",
+    "test": "package ledgeragent\n\nimport (\n\t\"context\"\n\t\"errors\"\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestLearner01ProviderDeadline(t *testing.T) {\n\tprobe := ProviderFunc(func(ctx context.Context, _ ProviderRequest) ([]byte, error) {\n\t\tif _, ok := ctx.Deadline(); !ok { return nil, errors.New(\"no derived deadline\") }\n\t\t<-ctx.Done()\n\t\treturn nil, ctx.Err()\n\t})\n\t_, err := invokeProvider(context.Background(), probe, 5*time.Millisecond, ProviderRequest{TenantID:\"t\", RunID:\"r\"})\n\tif !errors.Is(err, context.DeadlineExceeded) { t.Fatalf(\"deadline not propagated: %v\", err) }\n\tparent, cancel := context.WithCancel(context.Background()); cancel()\n\t_, err = invokeProvider(parent, probe, time.Second, ProviderRequest{})\n\tif !errors.Is(err, context.Canceled) { t.Fatalf(\"parent cancellation lost: %v\", err) }\n}\n"
+  },
+  "supplement-go-ai-02": {
+    "seam": "decodeDecisionStrict(body []byte) (Decision, error)",
+    "buildTag": "learner02",
+    "code": "//go:build learner02\n\npackage ledgeragent\n\nimport \"encoding/json\"\n\nfunc decodeDecisionStrict(body []byte) (Decision, error) {\n\tvar decision Decision\n\t// TODO: 这只能证明 JSON 能解码，尚未证明 Decision 可执行。\n\terr := json.Unmarshal(body, &decision)\n\treturn decision, err\n}\n",
+    "test": "package ledgeragent\n\nimport (\n\t\"errors\"\n\t\"testing\"\n)\n\nfunc TestLearner02StrictDecision(t *testing.T) {\n\tvalid := [][]byte{[]byte(`{\"kind\":\"answer\",\"answer\":\"ok\"}`), []byte(`{\"kind\":\"tool\",\"tool\":\"reports.read\",\"arguments\":{\"path\":\"a\"}}`)}\n\tfor _, body := range valid { if _, err := decodeDecisionStrict(body); err != nil { t.Fatalf(\"valid rejected: %v\", err) } }\n\tinvalid := [][]byte{[]byte(`{\"kind\":\"answer\",\"answer\":\"ok\",\"extra\":1}`), []byte(`{\"kind\":\"answer\",\"answer\":\"ok\"} {}`), []byte(`{\"kind\":\"answer\",\"answer\":\"\"}`), []byte(`{\"kind\":\"answer\",\"answer\":\"ok\",\"tool\":\"x\"}`)}\n\tfor _, body := range invalid { if _, err := decodeDecisionStrict(body); !errors.Is(err, ErrInvalidDecision) { t.Fatalf(\"invalid accepted or wrong error: %s: %v\", body, err) } }\n}\n"
+  },
+  "supplement-go-ai-03": {
+    "seam": "idempotencyIdentity(req CreateRunRequest) (key string, digest string, err error)",
+    "buildTag": "learner03",
+    "code": "//go:build learner03\n\npackage ledgeragent\n\nimport \"fmt\"\n\nfunc idempotencyIdentity(req CreateRunRequest) (key string, digest string, err error) {\n\tif req.TenantID == \"\" || req.IdempotencyKey == \"\" || req.Input == \"\" { return \"\", \"\", fmt.Errorf(\"required\") }\n\t// TODO: key 不能脱离 tenant；input 不能作为明文身份保存。\n\treturn req.IdempotencyKey, req.Input, nil\n}\n",
+    "test": "package ledgeragent\n\nimport \"testing\"\n\nfunc TestLearner03IdempotencyIdentity(t *testing.T) {\n\ta, da, err := idempotencyIdentity(CreateRunRequest{TenantID:\"a\", IdempotencyKey:\"k\", Input:\"same\"}); if err != nil { t.Fatal(err) }\n\tb, db, err := idempotencyIdentity(CreateRunRequest{TenantID:\"b\", IdempotencyKey:\"k\", Input:\"same\"}); if err != nil { t.Fatal(err) }\n\tif a == b || da != db || da == \"same\" { t.Fatalf(\"scope/digest boundary failed: %q %q %q %q\", a, b, da, db) }\n\t_, dc, _ := idempotencyIdentity(CreateRunRequest{TenantID:\"a\", IdempotencyKey:\"k\", Input:\"changed\"}); if dc == da { t.Fatal(\"changed input kept same digest\") }\n\tif _, _, err := idempotencyIdentity(CreateRunRequest{TenantID:\"\", IdempotencyKey:\"k\", Input:\"x\"}); err == nil { t.Fatal(\"missing tenant accepted\") }\n}\n"
+  },
+  "supplement-go-ai-04": {
+    "seam": "validateToolPath(path string) error",
+    "buildTag": "learner04",
+    "code": "//go:build learner04\n\npackage ledgeragent\n\nfunc validateToolPath(path string) error {\n\t// TODO: 在进入 os.Root 前完成廉价、确定的输入拒绝。\n\treturn nil\n}\n",
+    "test": "package ledgeragent\n\nimport (\n\t\"os\"\n\t\"path/filepath\"\n\t\"testing\"\n)\n\nfunc TestLearner04ToolPath(t *testing.T) {\n\tif validateToolPath(\"reports/today.json\") != nil { t.Fatal(\"relative path rejected\") }\n\tfor _, path := range []string{\"\", filepath.Join(string(filepath.Separator), \"etc\", \"passwd\")} { if validateToolPath(path) == nil { t.Fatalf(\"unsafe path accepted: %q\", path) } }\n\tbase := t.TempDir(); rootDir := filepath.Join(base, \"root\"); if err := os.Mkdir(rootDir, 0700); err != nil { t.Fatal(err) }\n\tif err := os.WriteFile(filepath.Join(base, \"secret\"), []byte(\"secret\"), 0600); err != nil { t.Fatal(err) }\n\troot, err := os.OpenRoot(rootDir); if err != nil { t.Fatal(err) }; defer root.Close()\n\tif file, err := resolve(root, \"../secret\"); err == nil { file.Close(); t.Fatal(\"os.Root escape succeeded\") }\n}\n"
+  },
+  "supplement-go-ai-05": {
+    "seam": "validateFence(now time.Time, r *record, lease Lease) error",
+    "buildTag": "learner05",
+    "code": "//go:build learner05\n\npackage ledgeragent\n\nimport \"time\"\n\nfunc validateFence(now time.Time, r *record, lease Lease) error {\n\t// TODO: fence 不是唯一凭证，必须验证完整 lease。\n\tif r.step.Fence != lease.Fence { return ErrStaleLease }\n\treturn nil\n}\n",
+    "test": "package ledgeragent\n\nimport (\n\t\"errors\"\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestLearner05Fence(t *testing.T) {\n\tnow := time.Now(); r := &record{run:Run{Status:StatusRunning}, step:Step{ID:\"s\", Status:StatusRunning, LeaseOwner:\"w\", Fence:2, LeaseUntil:now.Add(time.Minute)}, token:\"token\"}\n\tgood := Lease{StepID:\"s\", WorkerID:\"w\", Fence:2, Token:\"token\"}\n\tif err := validateFence(now, r, good); err != nil { t.Fatalf(\"valid lease rejected: %v\", err) }\n\tbad := []Lease{good, good, good}; bad[0].Fence=1; bad[1].Token=\"wrong\"; bad[2].WorkerID=\"other\"\n\tfor _, lease := range bad { if err := validateFence(now, r, lease); !errors.Is(err, ErrStaleLease) { t.Fatalf(\"stale lease accepted: %#v %v\", lease, err) } }\n\tif err := validateFence(now.Add(2*time.Minute), r, good); !errors.Is(err, ErrStaleLease) { t.Fatal(\"expired lease accepted\") }\n}\n",
+    "race": true
+  },
+  "supplement-go-ai-06": {
+    "seam": "copyEventsAfter(events []Event, after int64) []Event",
+    "buildTag": "learner06",
+    "code": "//go:build learner06\n\npackage ledgeragent\n\nfunc copyEventsAfter(events []Event, after int64) []Event {\n\t// TODO: 过滤游标并切断 Data 的底层数组别名。\n\treturn events\n}\n",
+    "test": "package ledgeragent\n\nimport \"testing\"\n\nfunc TestLearner06EventCopy(t *testing.T) {\n\tsource := []Event{{Sequence:3,Data:[]byte(`{\"v\":3}`)},{Sequence:4,Data:[]byte(`{\"v\":4}`)},{Sequence:5,Data:[]byte(`{\"v\":5}`)}}\n\tgot := copyEventsAfter(source, 3)\n\tif len(got) != 2 || got[0].Sequence != 4 || got[1].Sequence != 5 { t.Fatalf(\"bad replay: %#v\", got) }\n\tgot[0].Data[0] = '['\n\tif source[1].Data[0] != '{' { t.Fatal(\"replay aliases source Data\") }\n}\n"
+  },
+  "supplement-go-ai-07": {
+    "seam": "AssessEval(versions EvidenceVersions, policy EvalPolicy, results []EvalResult) EvalReport",
+    "buildTag": "learner07",
+    "code": "//go:build learner07\n\npackage ledgeragent\n\nfunc AssessEval(versions EvidenceVersions, policy EvalPolicy, results []EvalResult) EvalReport {\n\t// TODO: 不要让平均意义上的成功掩盖安全回归。\n\treturn EvalReport{Passed:true, Policy:policy, Versions:versions, Results:results}\n}\n",
+    "test": "package ledgeragent\n\nimport \"testing\"\n\nfunc TestLearner07EvalGate(t *testing.T) {\n\tversions := EvidenceVersions{Dataset:\"d1\", Prompt:\"p1\", Provider:\"provider1\"}\n\tunsafe := []EvalResult{{CaseID:\"hostile\", Security:true, Passed:false}}\n\treport := AssessEval(versions, EvalPolicy{MaxSecurityFailures:0}, unsafe)\n\tif report.Passed || report.SecurityFailures != 1 || len(report.Results) != 1 { t.Fatalf(\"security gate failed: %#v\", report) }\n\tif !AssessEval(versions, EvalPolicy{MaxSecurityFailures:1}, unsafe).Passed { t.Fatal(\"explicit threshold ignored\") }\n\tif AssessEval(EvidenceVersions{}, EvalPolicy{}, nil).Passed { t.Fatal(\"unversioned evidence accepted\") }\n\tif AssessEval(versions, EvalPolicy{}, []EvalResult{{CaseID:\"quality\", Passed:false}}).Passed { t.Fatal(\"ordinary failure accepted\") }\n}\n"
+  },
+  "supplement-go-ai-08": {
+    "seam": "reserveWorkerSlot(slots chan struct{}) bool",
+    "buildTag": "learner08",
+    "code": "//go:build learner08\n\npackage ledgeragent\n\nfunc reserveWorkerSlot(slots chan struct{}) bool {\n\t// TODO: 尝试真实占位，但永远不能等待。\n\treturn true\n}\n",
+    "test": "package ledgeragent\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestLearner08Admission(t *testing.T) {\n\tslots := make(chan struct{}, 1)\n\tif !reserveWorkerSlot(slots) || len(slots) != 1 { t.Fatal(\"available slot not reserved\") }\n\tstarted := time.Now(); if reserveWorkerSlot(slots) { t.Fatal(\"full capacity accepted\") }; if time.Since(started) > 50*time.Millisecond { t.Fatal(\"full capacity blocked\") }\n\t<-slots; if !reserveWorkerSlot(slots) { t.Fatal(\"released capacity not reusable\") }\n\tif reserveWorkerSlot(nil) { t.Fatal(\"nil capacity accepted\") }\n}\n"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "status": "pass",
+  "source": "work/book/v14-project/build/build_book.py",
+  "source_sha256": "c013644972440a99e83980adecae2a36506bc201168947014c9790b6db767cf9",
+  "content_overrides_sha256": "b719359235afbe6288adeebae75e606a1a72d6a8d8dc36ec720aaf2c851d9e93",
+  "output": "work/book/v15-text-review/output/人间铸剑录_v15_幼稚化ELI5_完整文字审稿版.md",
+  "output_sha256": "8a5d1dee4edb1716f49f068af43b74b990860fe86a07e3661c4cc6569bced775",
+  "chapters": 24,
+  "supplements": 47,
+  "source_dialogue_turns": 308,
+  "dialogue_turns": 401,
+  "code_blocks": 64,
+  "beginner_sections": 71,
+  "analogy_sections": 71,
+  "technical_sections": 71,
+  "pdf_changed": false,
+  "ppt_changed": false,
+  "story_layer_sha256": {
+    "story-go.json": "0ca0e9c42f7fc6a03feca48930bc27025d18de36a3a860836d14571c7a8fdf1f",
+    "story-backend.json": "ee6b313b2dceef792486cad25c8ea4af97ce55e7924796bb04dab01f46fd280e",
+    "story-harness.json": "32ae8c43e823d83e8a14ba3ec17843fb8f3ab64438fe559196b4503d608b10ad"
+  },
+  "story_chapters": 24,
+  "story_supplements": 47,
+  "story_dialogue_turns": 401,
+  "story_longest_turn": {
+    "kind": "chapter",
+    "id": "18",
+    "chars": 39,
+    "text": "真正写账的是 ledger.create_bill；Harness 先做门禁。"
+  }
+}

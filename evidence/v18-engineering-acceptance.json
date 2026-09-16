@@ -1,0 +1,682 @@
+{
+  "status": "pass",
+  "claim": "engineering acceptance",
+  "score": 100,
+  "version": "18.7.0",
+  "generatedAt": "2026-09-16T09:24:49.929000+00:00",
+  "environment": {
+    "python": "3.12.14",
+    "go": "go version go1.25.5 darwin/arm64",
+    "platform": "darwin",
+    "runnerPort": 49359,
+    "runnerPid": 35767
+  },
+  "checks": [
+    {
+      "command": "/Users/jingxin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 build_html.py",
+      "status": "pass"
+    },
+    {
+      "command": "go test ./...",
+      "status": "pass"
+    },
+    {
+      "command": "go test -race -shuffle=on -count=20 ./...",
+      "status": "pass"
+    },
+    {
+      "command": "go test -race ./...",
+      "status": "pass"
+    },
+    {
+      "command": "/Users/jingxin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 verify_dialogue_quality.py",
+      "status": "pass"
+    },
+    {
+      "command": "node browser_audit.mjs",
+      "status": "pass"
+    },
+    {
+      "command": "node enterprise_learning_audit.mjs",
+      "status": "pass"
+    }
+  ],
+  "api": [
+    {
+      "case": "valid",
+      "status": 200,
+      "ok": true,
+      "output": "ok\n"
+    },
+    {
+      "case": "cross-origin",
+      "status": 403
+    },
+    {
+      "case": "trailing-json",
+      "status": 400
+    },
+    {
+      "case": "oversized",
+      "status": 413
+    },
+    {
+      "case": "wrong-content-type",
+      "status": 415
+    },
+    {
+      "case": "child-process-import",
+      "status": 422,
+      "output": "教学运行器禁止导入 \"os/exec\""
+    },
+    {
+      "case": "start-process",
+      "status": 422,
+      "output": "教学运行器禁止创建子进程"
+    },
+    {
+      "case": "host-file-read",
+      "status": 200,
+      "output": "true"
+    },
+    {
+      "case": "file-limit",
+      "status": 422
+    },
+    {
+      "case": "sandbox",
+      "status": 200,
+      "output": "true true"
+    },
+    {
+      "case": "symlink-home-read",
+      "status": 200,
+      "output": "true"
+    },
+    {
+      "case": "host-env-secret",
+      "status": 200,
+      "output": "true"
+    },
+    {
+      "case": "bounded-output",
+      "status": 200,
+      "outputBytes": 32796,
+      "truncated": true
+    },
+    {
+      "case": "timeout",
+      "status": 422,
+      "message": "运行超过 30 秒，已停止。"
+    },
+    {
+      "case": "exercise-1",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:699d497ac0dc3c156c61e229f7dac5ec3371449ffafeed0831809d4adfd2e165",
+      "runProof": true
+    },
+    {
+      "case": "exercise-2",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:45dd2ed0d9832fd5810e28acde35fac0bd73f1692d08afaecda9079d0ff5a7e2",
+      "runProof": true
+    },
+    {
+      "case": "exercise-3",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:a32c86c13a92f6d7bb98fd3627e00691c5bf3a8a0fbd6398415eff8c1e9c095e",
+      "runProof": true
+    },
+    {
+      "case": "exercise-4",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:47df565c167bbc31cfada5ec0d22f9e0f63ac8a977fcb0a7f309dd4ea9e94c66",
+      "runProof": true
+    },
+    {
+      "case": "exercise-5",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:bbb7bb4dbb3171557e826a2046996e5f44b0ccc66c183611a688d7c225dc360e",
+      "runProof": true
+    },
+    {
+      "case": "exercise-6",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:3cb6ea154bdea369dea9e6951fc35c6ac46448a1fd1c7895d18ac53c619b8cbc",
+      "runProof": true
+    },
+    {
+      "case": "exercise-7",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:e84642243a6d99aa382b1ec6ff3e805466856e6f7d385f9b86a704260c81e79d",
+      "runProof": true
+    },
+    {
+      "case": "exercise-8",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:8cfef02b4517a317de6a055ecfbc61573c5f46fcda2ec629ab78473eb08056f9",
+      "runProof": true
+    },
+    {
+      "case": "exercise-9",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:7e29c06af93cc913386634563d3a7727064d328be4749da9249d34558ed5b996",
+      "runProof": true
+    },
+    {
+      "case": "exercise-10",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:acee51450394371b92a4c84ebec8080333a1e90bf9b0b2000b70ba7b846dc0d5",
+      "runProof": true
+    },
+    {
+      "case": "exercise-11",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:654dad75329342a52193848da0bb0a08ca895a1d9528af4b70a62f8eaf2a0d60",
+      "runProof": true
+    },
+    {
+      "case": "exercise-12",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:be0b013e8f8fd61b731d9174665b94160352b83f71d3dc42a15c38f083137a41",
+      "runProof": true
+    },
+    {
+      "case": "exercise-13",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:8188faf33836b62bb8a377f85ae59993de5264490025afdb1beeaa30f3b4aee3",
+      "runProof": true
+    },
+    {
+      "case": "exercise-14",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:69be65db20a2b828f3cab44826a1c91e24b3479c175d89feb77ca548f19f4cf9",
+      "runProof": true
+    },
+    {
+      "case": "exercise-15",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:76246e08c3bbe60ebc882c1cdafea922c7d6c748df7db5606e7d7f8771c70804",
+      "runProof": true
+    },
+    {
+      "case": "exercise-16",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:91817f6187fe2c74f642696e25b3eea680e7dcddf75f82d6b5509a6aad9f6787",
+      "runProof": true
+    },
+    {
+      "case": "exercise-17",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:8ceb476ec04085d70452812e6a0dff1dcd6b294b2fb11baa462c34031e2c92d6",
+      "runProof": true
+    },
+    {
+      "case": "exercise-18",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:4c9e815aba93a6173df38d8feda2b2c02386c25a6a89a9faecd202cb55976d35",
+      "runProof": true
+    },
+    {
+      "case": "exercise-19",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:097473d92ef6ba2b77e75d521c48420dddd29974c1ef2feb2f51161c14772010",
+      "runProof": true
+    },
+    {
+      "case": "exercise-20",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:9f458e0e448fafb393e356bd8efc084262f5b6af49d560f05052e90a67b6c994",
+      "runProof": true
+    },
+    {
+      "case": "exercise-21",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:beca961cab4f0ab29dc4f03959c0a86b0aba2d81e6eb204abd00d69898973be1",
+      "runProof": true
+    },
+    {
+      "case": "exercise-22",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:a7c8cd8811de11864dfb86d863190bdc74811d5351d34a8498e6cbe21f7bb2f2",
+      "runProof": true
+    },
+    {
+      "case": "exercise-23",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:e6fd9773a6f63010291b552c987c7ad6f32d77b4ec639891a04c35c6cdf7b9e9",
+      "runProof": true
+    },
+    {
+      "case": "exercise-24",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "digest": "sha256:cf1819c2c064febfd15777e6864112bd8b6d49258b59caa399cc9fd0467fe3d3",
+      "runProof": true
+    },
+    {
+      "case": "project-exercise-supplement-go-ai-01",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "labStatus": 200,
+      "digest": "sha256:65886e7b3103d01ca8d3dd0eea2cfcffa87fdb50c66d4cb146fd496275aa8c3c",
+      "runProof": true,
+      "labProof": true,
+      "milestoneTestPassed": true,
+      "learnerContractPassed": true
+    },
+    {
+      "case": "project-exercise-supplement-go-ai-02",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "labStatus": 200,
+      "digest": "sha256:49053a486571192356d9e6b7cc6185ab82659b48e0ed7f92b49fa742c7c17831",
+      "runProof": true,
+      "labProof": true,
+      "milestoneTestPassed": true,
+      "learnerContractPassed": true
+    },
+    {
+      "case": "project-exercise-supplement-go-ai-03",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "labStatus": 200,
+      "digest": "sha256:2cbe9b2d7e039d865c4b33a2d40b1f31e0c86b81456383de477ba79cda24d372",
+      "runProof": true,
+      "labProof": true,
+      "milestoneTestPassed": true,
+      "learnerContractPassed": true
+    },
+    {
+      "case": "project-exercise-supplement-go-ai-04",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "labStatus": 200,
+      "digest": "sha256:f6e779f2dd858e2ddfcf242dcae7d2c5cf0ae1f2d0f8119f175f0e9734449ec1",
+      "runProof": true,
+      "labProof": true,
+      "milestoneTestPassed": true,
+      "learnerContractPassed": true
+    },
+    {
+      "case": "project-exercise-supplement-go-ai-05",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "labStatus": 200,
+      "digest": "sha256:25fa82bf00657d059583a51ffe4428017975b1354d45b34e6b08e301c9d09aa9",
+      "runProof": true,
+      "labProof": true,
+      "milestoneTestPassed": true,
+      "learnerContractPassed": true
+    },
+    {
+      "case": "project-exercise-supplement-go-ai-06",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "labStatus": 200,
+      "digest": "sha256:4d8ebcafe9e6c5be47920d1a5e84db70e6973989bfe9f486859c4c42b0c27f25",
+      "runProof": true,
+      "labProof": true,
+      "milestoneTestPassed": true,
+      "learnerContractPassed": true
+    },
+    {
+      "case": "project-exercise-supplement-go-ai-07",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "labStatus": 200,
+      "digest": "sha256:18ac0cc017653066aafe638612dfb2dad248a362270551f0d885a077828f645d",
+      "runProof": true,
+      "labProof": true,
+      "milestoneTestPassed": true,
+      "learnerContractPassed": true
+    },
+    {
+      "case": "project-exercise-supplement-go-ai-08",
+      "starterStatus": 422,
+      "solutionStatus": 200,
+      "labStatus": 200,
+      "digest": "sha256:1cb0592a6eae7a5ac337019d27dc281b3b5d04985fbad4f5c778a1a4544a0866",
+      "runProof": true,
+      "labProof": true,
+      "milestoneTestPassed": true,
+      "learnerContractPassed": true
+    },
+    {
+      "case": "workshop-1-pass",
+      "status": 200,
+      "digest": "sha256:d051fb89a4fe78953e7c009bf9ad79fca7d89dac5dd294c703074acfc3dca955"
+    },
+    {
+      "case": "workshop-1-fail",
+      "status": 422
+    },
+    {
+      "case": "workshop-2-pass",
+      "status": 200,
+      "digest": "sha256:97e053a0b9b0c30853ec8bbbd488aa98a54261c05b03d354ce90c99104489665"
+    },
+    {
+      "case": "workshop-2-fail",
+      "status": 422
+    },
+    {
+      "case": "workshop-3-pass",
+      "status": 200,
+      "digest": "sha256:476828c5ed41ec499d0e180da89af65af62835d60655421c6dc500b0ba198344"
+    },
+    {
+      "case": "workshop-3-fail",
+      "status": 422
+    },
+    {
+      "case": "workshop-4-pass",
+      "status": 200,
+      "digest": "sha256:d206c26c3c1e443ad425cdafccc322cbc87f9585d28d0da3f355d7c9e4d36a64"
+    },
+    {
+      "case": "workshop-4-fail",
+      "status": 422
+    },
+    {
+      "case": "workshop-5-pass",
+      "status": 200,
+      "digest": "sha256:730557e9ccbfb660c16980a6cb40b0dfc9c566b2fc7d315960ea48d83349ce31"
+    },
+    {
+      "case": "workshop-5-fail",
+      "status": 422
+    },
+    {
+      "case": "workshop-6-pass",
+      "status": 200,
+      "digest": "sha256:756b96d6b68e274698ae577a678d8b75de798755083029788c836c60ebfec8df"
+    },
+    {
+      "case": "workshop-6-fail",
+      "status": 422
+    },
+    {
+      "case": "workshop-7-pass",
+      "status": 200,
+      "digest": "sha256:b02d07406607920d67629561da3d84a7e4146fc6dcb8c62149d08626bca8d4c0"
+    },
+    {
+      "case": "workshop-7-fail",
+      "status": 422
+    },
+    {
+      "case": "workshop-8-pass",
+      "status": 200,
+      "digest": "sha256:490f1356e279e17921ff56d6f9794d398919d36197da34e0972464928d3194e6"
+    },
+    {
+      "case": "workshop-8-fail",
+      "status": 422
+    },
+    {
+      "case": "workshop-9-pass",
+      "status": 200,
+      "digest": "sha256:93d663b1b1b8189713eafbe26d633625c080bd777359370ff66a307f1b796d4f"
+    },
+    {
+      "case": "workshop-9-fail",
+      "status": 422
+    },
+    {
+      "case": "workshop-10-pass",
+      "status": 200,
+      "digest": "sha256:55357cc90bcea492d82ab75b9ded93530f8686971e4bc6097c0381b99447f400"
+    },
+    {
+      "case": "workshop-10-fail",
+      "status": 422
+    },
+    {
+      "case": "workshop-11-pass",
+      "status": 200,
+      "digest": "sha256:a6c9612b59239adb135338d07cb8d1ecc9235f75903d20f56378e0b52558a143"
+    },
+    {
+      "case": "workshop-11-fail",
+      "status": 422
+    },
+    {
+      "case": "workshop-12-pass",
+      "status": 200,
+      "digest": "sha256:1f7106a8d3b9637077664564511ff7e59e8543cc1312b579f693c587bc09d766"
+    },
+    {
+      "case": "workshop-12-fail",
+      "status": 422
+    },
+    {
+      "case": "workshop-13-pass",
+      "status": 200,
+      "digest": "sha256:0343836cb353208130613bfe7aa0550d50b4bc60b07f58a19b30a762c2080c3b"
+    },
+    {
+      "case": "workshop-13-fail",
+      "status": 422
+    },
+    {
+      "case": "workshop-14-pass",
+      "status": 200,
+      "digest": "sha256:8ba0adcbda91b867a8477e941a890f94be5a475e96cdde23ffa2b273f78470b7"
+    },
+    {
+      "case": "workshop-14-fail",
+      "status": 422
+    },
+    {
+      "case": "workshop-15-pass",
+      "status": 200,
+      "digest": "sha256:71cb7b02d234bb42dc5555482165ca47a87176a310f5610effc1a3413d00aaab"
+    },
+    {
+      "case": "workshop-15-fail",
+      "status": 422
+    },
+    {
+      "case": "workshop-16-pass",
+      "status": 200,
+      "digest": "sha256:b02a6c1a364efd32c5e25d65ca49dfdbd47dfc08a9fd9d955b9729e46279e1ce"
+    },
+    {
+      "case": "workshop-16-fail",
+      "status": 422
+    },
+    {
+      "case": "workshop-17-pass",
+      "status": 200,
+      "digest": "sha256:2059f79ec53a818f4f49653cb668dae70e0395a67046c6f1663f987807efb8d8"
+    },
+    {
+      "case": "workshop-17-fail",
+      "status": 422
+    },
+    {
+      "case": "workshop-18-pass",
+      "status": 200,
+      "digest": "sha256:db343c90b588705d3cb61f7bb305a669240650f6705207b077594e703b59fc72"
+    },
+    {
+      "case": "workshop-18-fail",
+      "status": 422
+    },
+    {
+      "case": "workshop-19-pass",
+      "status": 200,
+      "digest": "sha256:a03f52fa0c6fa894d1edffae3bcd17fb3b8147d67ea31d791a700a6a5df08208"
+    },
+    {
+      "case": "workshop-19-fail",
+      "status": 422
+    },
+    {
+      "case": "workshop-20-pass",
+      "status": 200,
+      "digest": "sha256:07e30b8ae5369f403dedd4f0bd22cbe1a98f4125de8b49e04f66ee3f75a755d0"
+    },
+    {
+      "case": "workshop-20-fail",
+      "status": 422
+    },
+    {
+      "case": "workshop-21-pass",
+      "status": 200,
+      "digest": "sha256:331759942285f471adb6020bc32733517cba8ca745c20c16f5b2159c9e62576f"
+    },
+    {
+      "case": "workshop-21-fail",
+      "status": 422
+    },
+    {
+      "case": "workshop-22-pass",
+      "status": 200,
+      "digest": "sha256:f545e2325486eacb165a56fea35c842a761016fe264355af6958094f206a7c58"
+    },
+    {
+      "case": "workshop-22-fail",
+      "status": 422
+    },
+    {
+      "case": "workshop-23-pass",
+      "status": 200,
+      "digest": "sha256:a0da6b713fa8c2e6f6e0fa9369c1a41c9e595b407fce14ed6567fce41c5bb972"
+    },
+    {
+      "case": "workshop-23-fail",
+      "status": 422
+    },
+    {
+      "case": "workshop-24-pass",
+      "status": 200,
+      "digest": "sha256:270f75d41f5cb76870d2a7fd07de0d02ccace29c422ec7bc7ec731b45e03833e"
+    },
+    {
+      "case": "workshop-24-fail",
+      "status": 422
+    },
+    {
+      "case": "completion-valid",
+      "status": 200,
+      "digest": "sha256:c844cb2d94e5af8213f097ecc6e37be3ab3f03eb8f6cbd19a4e7f3ad996117e3"
+    },
+    {
+      "case": "completion-empty-proof",
+      "status": 422
+    },
+    {
+      "case": "completion-forged-proof",
+      "status": 422
+    },
+    {
+      "case": "completion-cross-unit-proof",
+      "status": 422
+    },
+    {
+      "case": "completion-tampered-digest",
+      "status": 422
+    },
+    {
+      "case": "project-completion-valid",
+      "status": 200,
+      "digest": "sha256:327f1a0229510ca32fe158b2f945cd07493ff39d2be231356792454f98c24761"
+    },
+    {
+      "case": "project-completion-no-challenge",
+      "status": 422
+    },
+    {
+      "case": "project-completion-forged-challenge",
+      "status": 422
+    },
+    {
+      "case": "project-completion-cross-unit-challenge",
+      "status": 422
+    },
+    {
+      "case": "project-completion-tampered-lab",
+      "status": 422
+    }
+  ],
+  "coverage": {
+    "chapters": 24,
+    "supplements": 55,
+    "projectMilestones": 8,
+    "workshopsPositive": 24,
+    "workshopsNegative": 24,
+    "codeExercises": 32,
+    "dialogueTurns": 448
+  },
+  "sha256": {
+    "VERSION": "64c531a67b4c54a664e1e868e90e3c605a700d0547b9962affe2c404b95f6883",
+    "build_html.py": "98b926382467f3f31c6fed935306ecf5b8a12a9069278e3aa685fd68a911718e",
+    "verify_v18.py": "4fd63354d794a5d993bedbb2ca9fd0ea17de6a36ef73e1677578a1fc7d54f9ea",
+    "verify-v18.sh": "044dd8b323ba6d35f18f3e681227d0afc15165cd1b1763be49996eaa66037686",
+    "interactive/index.html": "c4a9a0e6db089f1b8e7b1431843479709e67b794a0a386f44bb034253a0438f0",
+    "interactive/app.js": "2a4543ef6b240b311392250d8aa9d21fd3c50ab7d65a8a09ecc2aa6f19bc8d48",
+    "interactive/styles.css": "d2b925208aeb84e3ab1ac4eaaa37e0938336be620bef1e64cc73f9931de21142",
+    "interactive/data/book.json": "6252eb0c8368938ba6d9a1502b0cf08356b4640f78823e15d1a754426b7e5c71",
+    "runner/main.go": "225763ca5ee4e317cfc19d17cd44a426f8c93091764fcff6e3d2832286549eb9",
+    "runner/main_test.go": "4babbcf0d39e6121f6e4906f59bf736ed6447b84b77538c19abc08bec70e9421",
+    "runner/exercises.json": "aede258ced9d27ae511778875f6b8c1a5542504f05c1c1d826e6295e9199aed7",
+    "runner/rubrics.json": "26c004e11b36b0e164b0dbbd3f82a5df259011f0e9252f3a51ebf8ba79b2fe72",
+    "labs/harness-lab/go.mod": "40b1455a3c7ad1499c0ea2a9a3f06778d57daec835890d8638a1fa4ea20be9ba",
+    "labs/harness-lab/harness.go": "07807ad2e04d20227a4c1ef17c37943b80b16300113c59b13bfb4fbf0fa654ec",
+    "labs/harness-lab/harness_test.go": "7a5f4153d52e3840b2d263229f2b058a267aaa1984bc6a65d61cb697ff818dae",
+    "browser_audit.mjs": "fdaa4f3e9a80db2be13db7c1aa1dbf728899694dc084e09f9a594cbb2364343c",
+    "enterprise_learning_audit.mjs": "b0e14ed05ba55004fc28029f41643bc066d754005fc29da2651707e921f3c5e7",
+    "package.json": "6b997a3796f666524be37d2570530cc5c6d94b6a0ffe5a2fe42bad448d13b60e",
+    "package-lock.json": "0b376a2316f008098e032047b02934b859523f3e12bec466f4e15f488011a562",
+    "evidence/browser-v18.json": "998cc27c4a688e4568b1f954af9b5e3d03d7c05558b4bbd2dc34dfff841005a2",
+    "labs/ledger-agent/README.md": "7566eb6ab3aa528a7d3e0384d18f479228fba486bd2da9d611c511b7b72a1eb4",
+    "labs/ledger-agent/cmd/server/main.go": "1fae0195d46f92d2e5d7024805cad25cfe10980d5fa7385d209a180763256016",
+    "labs/ledger-agent/eval.go": "7db5927eb1ab18dc7767b3ae756c695369f8de01e5c7c6d7adf7ee19c06883ea",
+    "labs/ledger-agent/go.mod": "58717c7e1078f6e27d0e562c03206f6c939ec8397d3522904853f84868e1725f",
+    "labs/ledger-agent/http.go": "e610fea8afc3764495f767c862147581bf28173c09af85fa761baa902bc37a15",
+    "labs/ledger-agent/http_test.go": "5006fe2d7e066ceacccbabcb7908ec8c46c0c665995a560abc5cc8b9249cf2ce",
+    "labs/ledger-agent/milestones_test.go": "88f63a125c3e60baa0416e14e09369abb820eafd7a0bbe638ca87c60c561dc01",
+    "labs/ledger-agent/provider.go": "3357b87250bbc758dee4da6ac5319fca3492bbaf83c47022517d6879123771c0",
+    "labs/ledger-agent/provider_test.go": "c93b476517d4c5d05caa55101f2a70943bb99517cf7702f1c51baad8a2bded05",
+    "labs/ledger-agent/seam_01_reference.go": "bc82667cece2f0e2b6b0833d7a259c953e09b6ac3c7e3eb60b9fd06f59452792",
+    "labs/ledger-agent/seam_02_reference.go": "935bdc75df3b9be034a93c9473d47fdf085f1c2d7ce78f7db926227585543410",
+    "labs/ledger-agent/seam_03_reference.go": "c310053266195cc4ba999e5a2ec63c4a837963c671f39166f609639289f3cafe",
+    "labs/ledger-agent/seam_04_reference.go": "b267ba8a3d6e7d890014f0bf2691aa30f6b26b9b4dcda5444ebc45081c76d508",
+    "labs/ledger-agent/seam_05_reference.go": "d1114ed3976f574c7b1601a7b9aa041c6703a3ce0e4290f4c060a5c0fcccce52",
+    "labs/ledger-agent/seam_06_reference.go": "d40c4360227c30c4b3c926c62c55e9ef40e6fb59298f8e08d96822531923a56f",
+    "labs/ledger-agent/seam_07_reference.go": "70d978bd8c173e191baea842f3cbe1279f1cec8d439a937faab47a4be85d99e8",
+    "labs/ledger-agent/seam_08_reference.go": "b450e63ee96f22bba0fb30907aa0908e053c3daacd8de61fb11ffff58e7cea32",
+    "labs/ledger-agent/store.go": "c00059e43050ecd5b72dcf10aa64fed79f4b2662829c8a79e84bbdad372ddb94",
+    "labs/ledger-agent/store_test.go": "65e1baf85fb19a7a6867575bbe5134a16b39de983de0b55f00b639b7de7dc8d9",
+    "labs/ledger-agent/tools.go": "fafff29987e9e88d25987d859bfc25d1aad84d0e87fe00335e9fdb17665e7eca",
+    "labs/ledger-agent/tools_test.go": "25242f3a90f701fcc96f3465c2ffa3fa870ae1924b7eedbc4a6df0abda5a9cd3",
+    "labs/ledger-agent/types.go": "9204e61e21fba8eff78cff867ef5f633747d7924f7865301ac23bd8746b2d030",
+    "labs/ledger-agent/worker.go": "ef6b75cb24fceb56186d12eec1c6c532663880473e99aceddac43de7fd360e30",
+    "labs/ledger-agent/worker_test.go": "962edbb8e0a7dfc1e4dc7ef5466a70dca509a109835d149aa1d451a962a2f85a"
+  }
+}

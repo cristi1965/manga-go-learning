@@ -1,0 +1,53 @@
+{
+  "status": "pass",
+  "units": 71,
+  "turns": 448,
+  "starts": {
+    "阿良": 24,
+    "李宝瓶": 6,
+    "阮秀": 4,
+    "陈平安": 19,
+    "周米粒": 17,
+    "宁姚": 5,
+    "陆沉": 1,
+    "左右": 3
+  },
+  "ends": {
+    "阿良": 6,
+    "周米粒": 14,
+    "李宝瓶": 11,
+    "阮秀": 8,
+    "宁姚": 17,
+    "左右": 12,
+    "陆沉": 2,
+    "陈平安": 9
+  },
+  "speakers": {
+    "阿良": 70,
+    "李宝瓶": 71,
+    "宁姚": 70,
+    "陈平安": 105,
+    "周米粒": 48,
+    "阮秀": 57,
+    "左右": 24,
+    "陆沉": 3
+  },
+  "fixed_template_units": [
+    "story-backend.json:chapter:14",
+    "story-backend.json:supplement:backend-11-transaction-helper",
+    "story-backend.json:supplement:backend-13-worker-pool"
+  ],
+  "consecutive_chen": [],
+  "consecutive_speaker": [],
+  "duplicate_lines": [],
+  "long_lines": [],
+  "second_turn_chen": 13,
+  "literal_ellipsis": [],
+  "rhythm": {
+    "6": 69,
+    "5": 2,
+    "3": 8
+  },
+  "malformed_units": [],
+  "failures": []
+}

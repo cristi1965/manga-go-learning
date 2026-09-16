@@ -1,0 +1,1261 @@
+{
+  "schema_version": 1,
+  "artifact_version": "15.0.0",
+  "policy": "reuse accepted local masters; zero image API calls",
+  "crop_contracts": {
+    "default": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+    "周米粒": "square-512-face-0.50-0.34-zoom-1.33-circle-v1"
+  },
+  "provenance": {
+    "accepted_portrait_manifest": "work/book/v11-project/evidence/chat-avatar-cache.json",
+    "accepted_scene_register": "work/book/v5-project/images/TOOL_DECISION.md",
+    "scene_usage_plan": "work/book/v5-project/images/scene-plan-v8.md",
+    "diagram_generator": "work/book/v10-project/build/generate_v10_diagrams.py"
+  },
+  "counts": {
+    "chapter_scene": 12,
+    "character_sheet": 1,
+    "chat_avatar_derivative": 13,
+    "cover": 1,
+    "portrait_source": 13,
+    "technical_diagram": 30,
+    "volume_illustration": 3,
+    "total": 73
+  },
+  "diagram_placements": 37,
+  "assets": [
+    {
+      "id": "cover",
+      "kind": "cover",
+      "purpose": "full-page cover",
+      "path": "output/book-v8-assets/cover-print.jpg",
+      "sha256": "6e621d68e781cfd55b047d41d63164edb92519462be2649e1fb8c0c583e98be6",
+      "bytes": 307290,
+      "width_px": 1024,
+      "height_px": 1536,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 local master"
+    },
+    {
+      "id": "character-sheet",
+      "kind": "character_sheet",
+      "purpose": "character overview",
+      "path": "output/book-v8-assets/character-sheet-print.jpg",
+      "sha256": "cb35fa3975d83145c9daad87ff396fe185c0a42ba3d17eb3a548960cc0c3be08",
+      "bytes": 372846,
+      "width_px": 1600,
+      "height_px": 900,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "derived from accepted v8 portrait masters"
+    },
+    {
+      "id": "volume-01",
+      "kind": "volume_illustration",
+      "purpose": "volume 1 opener",
+      "path": "output/book-v8-assets/volume-1.jpg",
+      "sha256": "ce60a40d6ed2337c8f24fb6a95969cb9cab70412354d748eef997e5c67ec67d2",
+      "bytes": 227946,
+      "width_px": 886,
+      "height_px": 1254,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "derived from accepted v8 chapter scenes",
+      "used_by": [
+        "volume-1"
+      ]
+    },
+    {
+      "id": "volume-02",
+      "kind": "volume_illustration",
+      "purpose": "volume 2 opener",
+      "path": "output/book-v8-assets/volume-2.jpg",
+      "sha256": "d3171d13168c1c3749ab172828cb7a8a13e7d960c7610355ddc8827b93e33ca7",
+      "bytes": 252680,
+      "width_px": 886,
+      "height_px": 1254,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "derived from accepted v8 chapter scenes",
+      "used_by": [
+        "volume-2"
+      ]
+    },
+    {
+      "id": "volume-03",
+      "kind": "volume_illustration",
+      "purpose": "volume 3 opener",
+      "path": "output/book-v8-assets/volume-3.jpg",
+      "sha256": "24b95e8f69a68addf929b634cd4b24200937de1754e8b373738bb1862848b233",
+      "bytes": 243733,
+      "width_px": 886,
+      "height_px": 1254,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "derived from accepted v8 chapter scenes",
+      "used_by": [
+        "volume-3"
+      ]
+    },
+    {
+      "id": "scene-01",
+      "kind": "chapter_scene",
+      "purpose": "two-chapter thematic scene",
+      "path": "output/book-v8-assets/scene-1.jpg",
+      "sha256": "fe0a87660644b00100de5beb9dcd628c3770a30a408a71b50da3ec735ac87895",
+      "bytes": 202070,
+      "width_px": 1000,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 local scene master",
+      "used_by": [
+        "chapter-01",
+        "chapter-02"
+      ]
+    },
+    {
+      "id": "scene-02",
+      "kind": "chapter_scene",
+      "purpose": "two-chapter thematic scene",
+      "path": "output/book-v8-assets/scene-2.jpg",
+      "sha256": "8f1b6071457e190f236e4725765c5269666dab3cdde28d768b331e7a7c08b936",
+      "bytes": 209157,
+      "width_px": 1000,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 local scene master",
+      "used_by": [
+        "chapter-03",
+        "chapter-04"
+      ]
+    },
+    {
+      "id": "scene-03",
+      "kind": "chapter_scene",
+      "purpose": "two-chapter thematic scene",
+      "path": "output/book-v8-assets/scene-3.jpg",
+      "sha256": "6317f1c639c41564214f8dfdcc3255f850a59f7a602f6b6ba2c8195079252220",
+      "bytes": 201041,
+      "width_px": 1000,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 local scene master",
+      "used_by": [
+        "chapter-05",
+        "chapter-06"
+      ]
+    },
+    {
+      "id": "scene-04",
+      "kind": "chapter_scene",
+      "purpose": "two-chapter thematic scene",
+      "path": "output/book-v8-assets/scene-4.jpg",
+      "sha256": "12320129149f406c83d7c0008e25507ab019099dc26acb7a730b7518ba362853",
+      "bytes": 258676,
+      "width_px": 1000,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 local scene master",
+      "used_by": [
+        "chapter-07",
+        "chapter-08"
+      ]
+    },
+    {
+      "id": "scene-05",
+      "kind": "chapter_scene",
+      "purpose": "two-chapter thematic scene",
+      "path": "output/book-v8-assets/scene-5.jpg",
+      "sha256": "42e53c5b5a78e0eccdbbbfa0fb384446e8120e084a847b40e5143206ce995ab9",
+      "bytes": 150580,
+      "width_px": 1000,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 local scene master",
+      "used_by": [
+        "chapter-09",
+        "chapter-10"
+      ]
+    },
+    {
+      "id": "scene-06",
+      "kind": "chapter_scene",
+      "purpose": "two-chapter thematic scene",
+      "path": "output/book-v8-assets/scene-6.jpg",
+      "sha256": "0e98057cf4f26e54eee62be85983967ef3fd07e35bb96edc991b6e14dd4f2204",
+      "bytes": 257820,
+      "width_px": 1000,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 local scene master",
+      "used_by": [
+        "chapter-11",
+        "chapter-12"
+      ]
+    },
+    {
+      "id": "scene-07",
+      "kind": "chapter_scene",
+      "purpose": "two-chapter thematic scene",
+      "path": "output/book-v8-assets/scene-7.jpg",
+      "sha256": "c3e13af9bb7eac88c0c53ee6510f67f96d35ce3d0597a53e119a13fd7656fbf0",
+      "bytes": 201520,
+      "width_px": 1000,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 local scene master",
+      "used_by": [
+        "chapter-13",
+        "chapter-14"
+      ]
+    },
+    {
+      "id": "scene-08",
+      "kind": "chapter_scene",
+      "purpose": "two-chapter thematic scene",
+      "path": "output/book-v8-assets/scene-8.jpg",
+      "sha256": "bd9e80bb5e3fd09fe825a3fe2262531d24ffae73be57d428a5408570eb7917cd",
+      "bytes": 245119,
+      "width_px": 1000,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 local scene master",
+      "used_by": [
+        "chapter-15",
+        "chapter-16"
+      ]
+    },
+    {
+      "id": "scene-09",
+      "kind": "chapter_scene",
+      "purpose": "two-chapter thematic scene",
+      "path": "output/book-v8-assets/scene-9.jpg",
+      "sha256": "8d1941a9e2e4625182c9748bd9f2a9ac00ecdacd850c1b18eab7cbca24888ab2",
+      "bytes": 214595,
+      "width_px": 1000,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 local scene master",
+      "used_by": [
+        "chapter-17",
+        "chapter-18"
+      ]
+    },
+    {
+      "id": "scene-10",
+      "kind": "chapter_scene",
+      "purpose": "two-chapter thematic scene",
+      "path": "output/book-v8-assets/scene-10.jpg",
+      "sha256": "ac2f6d815a70e7dc937daec18f3f40af75fb330e8d9d33fe86eed458a66ebdc5",
+      "bytes": 213754,
+      "width_px": 1000,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 local scene master",
+      "used_by": [
+        "chapter-19",
+        "chapter-20"
+      ]
+    },
+    {
+      "id": "scene-11",
+      "kind": "chapter_scene",
+      "purpose": "two-chapter thematic scene",
+      "path": "output/book-v8-assets/scene-11.jpg",
+      "sha256": "730e11c47b829cbf2900bc25b5f97f3c23718371637636e0681117ec8a36dbf2",
+      "bytes": 259628,
+      "width_px": 1000,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 local scene master",
+      "used_by": [
+        "chapter-21",
+        "chapter-22"
+      ]
+    },
+    {
+      "id": "scene-12",
+      "kind": "chapter_scene",
+      "purpose": "two-chapter thematic scene",
+      "path": "output/book-v8-assets/scene-12.jpg",
+      "sha256": "eb777cc243cfad923364900df5f4c2a76a1658a6ce9721cab1d6d1f02fb8c49b",
+      "bytes": 237279,
+      "width_px": 1000,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 local scene master",
+      "used_by": [
+        "chapter-23",
+        "chapter-24"
+      ]
+    },
+    {
+      "id": "portrait-source-阿良",
+      "kind": "portrait_source",
+      "purpose": "avatar source for 阿良",
+      "path": "output/book-v8-assets/aliang-animation-pilot-v8-r2.jpg",
+      "sha256": "2d45b4491b8ad1a79cd930aa8396a4e5219e99ab15463fef571b8e504726f4f3",
+      "bytes": 201133,
+      "width_px": 666,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 portrait master",
+      "used_by": [
+        "chat-avatar-derivative"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2"
+    },
+    {
+      "id": "portrait-source-齐静春",
+      "kind": "portrait_source",
+      "purpose": "avatar source for 齐静春",
+      "path": "output/book-v8-assets/qijingchun-animation-pilot-v8.jpg",
+      "sha256": "8657100ff1663b03d5fd761ff242051a0fc6df014004d88a89d7f230b325d43e",
+      "bytes": 121185,
+      "width_px": 666,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 portrait master",
+      "used_by": [
+        "chat-avatar-derivative"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2"
+    },
+    {
+      "id": "portrait-source-陈平安",
+      "kind": "portrait_source",
+      "purpose": "avatar source for 陈平安",
+      "path": "output/book-v8-assets/chenpingan-animation-v8.jpg",
+      "sha256": "c2de98a8850d7ab750c4be32d803222cf056f96671f0d460529ca8b5709ba552",
+      "bytes": 159268,
+      "width_px": 666,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 portrait master",
+      "used_by": [
+        "chat-avatar-derivative"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2"
+    },
+    {
+      "id": "portrait-source-宁姚",
+      "kind": "portrait_source",
+      "purpose": "avatar source for 宁姚",
+      "path": "output/book-v8-assets/ningyao-animation-pilot-v8.jpg",
+      "sha256": "18e8d7d7eeedb07710c6e8c84c10fd95759ade1f7a8fd6e82cbd468f63e0eb69",
+      "bytes": 165106,
+      "width_px": 666,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 portrait master",
+      "used_by": [
+        "chat-avatar-derivative"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2"
+    },
+    {
+      "id": "portrait-source-崔瀺",
+      "kind": "portrait_source",
+      "purpose": "avatar source for 崔瀺",
+      "path": "output/book-v8-assets/cuican-animation-v8.jpg",
+      "sha256": "6620cd1216a9df9107081539edf818e6051a01d50fd9eb418546968697544742",
+      "bytes": 143849,
+      "width_px": 666,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 portrait master",
+      "used_by": [
+        "chat-avatar-derivative"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2"
+    },
+    {
+      "id": "portrait-source-左右",
+      "kind": "portrait_source",
+      "purpose": "avatar source for 左右",
+      "path": "output/book-v8-assets/zuoyou-inferred-animation-v8.jpg",
+      "sha256": "e63c011d06b2b60fe6840e53d719a64f3d384366898760d2543a5e4a34bc44b0",
+      "bytes": 128514,
+      "width_px": 666,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 portrait master",
+      "used_by": [
+        "chat-avatar-derivative"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2"
+    },
+    {
+      "id": "portrait-source-李宝瓶",
+      "kind": "portrait_source",
+      "purpose": "avatar source for 李宝瓶",
+      "path": "output/book-v8-assets/libaoping-animation-v8.jpg",
+      "sha256": "67fd29e401a3a1c446557c2fcbf1eb4fe5abfab09c6881c5a910aaafcb09168d",
+      "bytes": 152060,
+      "width_px": 666,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 portrait master",
+      "used_by": [
+        "chat-avatar-derivative"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2"
+    },
+    {
+      "id": "portrait-source-阮秀",
+      "kind": "portrait_source",
+      "purpose": "avatar source for 阮秀",
+      "path": "output/book-v8-assets/ruanxiu-animation-v8.jpg",
+      "sha256": "5cad129eeec9579bdf26f2227114402dee305bda31e0933e9e290e103abe66a2",
+      "bytes": 165847,
+      "width_px": 666,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 portrait master",
+      "used_by": [
+        "chat-avatar-derivative"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2"
+    },
+    {
+      "id": "portrait-source-剑灵",
+      "kind": "portrait_source",
+      "purpose": "avatar source for 剑灵",
+      "path": "output/book-v8-assets/swordspirit-animation-pilot-v8.jpg",
+      "sha256": "c2fc61e1fbd60094324b2c4a874acc2f47f14a3e7d8973f1af99134375773575",
+      "bytes": 135958,
+      "width_px": 666,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 portrait master",
+      "used_by": [
+        "chat-avatar-derivative"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2"
+    },
+    {
+      "id": "portrait-source-陆沉",
+      "kind": "portrait_source",
+      "purpose": "avatar source for 陆沉",
+      "path": "output/book-v8-assets/luchen-animation-v8.jpg",
+      "sha256": "6c87e228ea32eb8060a5cfb92926704f55545e4da699355d3494c57491311bdd",
+      "bytes": 137826,
+      "width_px": 666,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 portrait master",
+      "used_by": [
+        "chat-avatar-derivative"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2"
+    },
+    {
+      "id": "portrait-source-顾璨",
+      "kind": "portrait_source",
+      "purpose": "avatar source for 顾璨",
+      "path": "output/book-v8-assets/gucan-animation-v8.jpg",
+      "sha256": "8ca5d8c0c2d132c701ff09a17657c7b7b7a73fbf6504ce8621766726f8f0f743",
+      "bytes": 155765,
+      "width_px": 666,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 portrait master",
+      "used_by": [
+        "chat-avatar-derivative"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2"
+    },
+    {
+      "id": "portrait-source-崔东山",
+      "kind": "portrait_source",
+      "purpose": "avatar source for 崔东山",
+      "path": "output/book-v8-assets/cuidongshan-animation-v8.jpg",
+      "sha256": "f1d4d17b661ce1a7e52700bb19372702eb90717481db4444c92f77fd935a45d9",
+      "bytes": 170119,
+      "width_px": 666,
+      "height_px": 1000,
+      "mode": "RGB",
+      "format": "JPEG",
+      "source": "accepted v8 portrait master",
+      "used_by": [
+        "chat-avatar-derivative"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2"
+    },
+    {
+      "id": "portrait-source-周米粒",
+      "kind": "portrait_source",
+      "purpose": "avatar source for 周米粒",
+      "path": "output/imagegen/v5/zhoumili-v5.png",
+      "sha256": "49c8144e8eb395cb21374aa7bc51d53551f3f0d11521adef5a1f1c30617005cb",
+      "bytes": 2337718,
+      "width_px": 1024,
+      "height_px": 1536,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "retained v5 portrait candidate",
+      "used_by": [
+        "chat-avatar-derivative"
+      ],
+      "crop_contract": "square-512-face-0.50-0.34-zoom-1.33-circle-v1"
+    },
+    {
+      "id": "diagram-agent-tool-skill-mcp-harness",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/agent-tool-skill-mcp-harness.png",
+      "sha256": "9a7bff471f295e1c05c8f8831a87d60495d2bef4714c1d26b801118b3e830fff",
+      "bytes": 116842,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-18"
+      ]
+    },
+    {
+      "id": "diagram-approval-capability-sequence",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/approval-capability-sequence.png",
+      "sha256": "168c97b8b02e0a0dc59851aa277c9779f6c1336e2216348d8037f8e078fc92a0",
+      "bytes": 77789,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-21"
+      ]
+    },
+    {
+      "id": "diagram-book-learning-map",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/book-learning-map.png",
+      "sha256": "8ea72000030547e5c3e95b8f6d1d61908326322e214cb99dee9edf8a420fd2c1",
+      "bytes": 115490,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "learning-map",
+        "chapter-01",
+        "chapter-24"
+      ]
+    },
+    {
+      "id": "diagram-bounded-concurrency-flow",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/bounded-concurrency-flow.png",
+      "sha256": "5d7124f0759ccb2a8c4bb33d07740d9b482d8a25993eeb2fbd98ddbda1c52c85",
+      "bytes": 93967,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-13"
+      ]
+    },
+    {
+      "id": "diagram-cache-aside-sequence",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/cache-aside-sequence.png",
+      "sha256": "dce54c73e2dd5aece589e69c3a6fb0e909dd30e7fceba2eba419cf84bdc7287e",
+      "bytes": 94108,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-12"
+      ]
+    },
+    {
+      "id": "diagram-coding-harness-loop",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/coding-harness-loop.png",
+      "sha256": "5bf95956956ce7ef2b634f00c38729017306be94e5b62929cf657d9e6e06c78f",
+      "bytes": 105996,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-23"
+      ]
+    },
+    {
+      "id": "diagram-context-cancellation-sequence",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/context-cancellation-sequence.png",
+      "sha256": "004c5984b3a1a9abd58fe6d0001fd0826174488a5106e899837fed9230b2e7b0",
+      "bytes": 71565,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-08",
+        "chapter-14"
+      ]
+    },
+    {
+      "id": "diagram-context-security-gates",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/context-security-gates.png",
+      "sha256": "412b639d04c6e921f50cff3f56a8a5cab947df1a575cf6ff77ae760cfd99fe2e",
+      "bytes": 159090,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-20"
+      ]
+    },
+    {
+      "id": "diagram-deployment-migration-flow",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/deployment-migration-flow.png",
+      "sha256": "d6e66721aa6c30d318036e0dddd55aa0e903cec32b2f0dd64da510faac905e8f",
+      "bytes": 100302,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-16"
+      ]
+    },
+    {
+      "id": "diagram-error-contract-flow",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/error-contract-flow.png",
+      "sha256": "c67dc79f7ea1199f320b9055f4b70b095a64907318a655b9f25fbed7851e654a",
+      "bytes": 50779,
+      "width_px": 1568,
+      "height_px": 462,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-06"
+      ]
+    },
+    {
+      "id": "diagram-evidence-replay-matrix",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/evidence-replay-matrix.png",
+      "sha256": "577e9b0f9b54a53584eb8b463d7a0e1dcbef9e7dd0663e68e34f6edbff153fcf",
+      "bytes": 114874,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-22"
+      ]
+    },
+    {
+      "id": "diagram-go-function-anatomy",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/go-function-anatomy.png",
+      "sha256": "e7b39044ca3095401519b564878aed5e98596de7065b2f0ffca1ddac10565f06",
+      "bytes": 47900,
+      "width_px": 1568,
+      "height_px": 450,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-01"
+      ]
+    },
+    {
+      "id": "diagram-go-pointer-copy",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/go-pointer-copy.png",
+      "sha256": "f7e9d0f29f8f2bc3290c8858180c205efd60282df48c2bb90e51bebed0b6145c",
+      "bytes": 84588,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-03"
+      ]
+    },
+    {
+      "id": "diagram-go-project-architecture",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/go-project-architecture.png",
+      "sha256": "c9ced678d7ffe918f9533f8b4eb9875171aa484251adbf82358da5597866934e",
+      "bytes": 101426,
+      "width_px": 1568,
+      "height_px": 1010,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-05",
+        "chapter-09"
+      ]
+    },
+    {
+      "id": "diagram-go-slice-copy",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/go-slice-copy.png",
+      "sha256": "7c0c1b2f7b5caf6a953a342a6814488376ee37b851a1329cef0ac28ee3bab249",
+      "bytes": 93795,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-03"
+      ]
+    },
+    {
+      "id": "diagram-go-value-copy",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/go-value-copy.png",
+      "sha256": "6858f1d2ea23c10e9ec38b051dacc72b468b1ec59386f9298196b3b44f7f6caa",
+      "bytes": 61074,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-03"
+      ]
+    },
+    {
+      "id": "diagram-goroutine-channel-runtime",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/goroutine-channel-runtime.png",
+      "sha256": "04499449243ee51bbf36399bbe74ee42f6b4039272ecb7c603ad4e3bca3f7631",
+      "bytes": 112636,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-07"
+      ]
+    },
+    {
+      "id": "diagram-goroutine-lifecycle-closure",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/goroutine-lifecycle-closure.png",
+      "sha256": "66f9f80e5e6b819bce78cb27abc1df3e49f20e2d7c07e855b5645e3c86bb60e0",
+      "bytes": 70239,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-08"
+      ]
+    },
+    {
+      "id": "diagram-handler-service-repository-flow",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/handler-service-repository-flow.png",
+      "sha256": "d54c9ef3d2be090e10c9ba4e91882e10b911e199e44e47d95e34dc3417aa6273",
+      "bytes": 103258,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-10"
+      ]
+    },
+    {
+      "id": "diagram-harness-seven-domains",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/harness-seven-domains.png",
+      "sha256": "0428ac7e90b710d05a414d86a3720f9962e3aa5641e3490fdeb8dfa537ac6bc6",
+      "bytes": 79856,
+      "width_px": 1568,
+      "height_px": 958,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-18",
+        "chapter-24"
+      ]
+    },
+    {
+      "id": "diagram-idempotency-sequence",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/idempotency-sequence.png",
+      "sha256": "b6cbf966dc904dfacc51a0b66f6da3dae89ca5101ed11f8918b9c00b485a24bf",
+      "bytes": 93078,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-11"
+      ]
+    },
+    {
+      "id": "diagram-interface-capability-contract",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/interface-capability-contract.png",
+      "sha256": "77054c0fe505a92bad0a19a47fc481e7c458fd0a274291474e5cd77df616b1af",
+      "bytes": 93887,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-04"
+      ]
+    },
+    {
+      "id": "diagram-ledger-agent-evidence-path",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/ledger-agent-evidence-path.png",
+      "sha256": "4396f65ed6da2bd2c7a6cb943d69a613d53aad1b6b448adbd630cd80514ee51c",
+      "bytes": 71373,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-24"
+      ]
+    },
+    {
+      "id": "diagram-ledger-agent-main-path",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/ledger-agent-main-path.png",
+      "sha256": "84970f75084bb16389834e4b4e285478fc14d1c8489ded1ca2e62d89215a1584",
+      "bytes": 73486,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-24"
+      ]
+    },
+    {
+      "id": "diagram-llm-workflow-agent-compare",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/llm-workflow-agent-compare.png",
+      "sha256": "5674487fa4d085425a49383d8125702e6e98d182804ac8e4176023497ec5d339",
+      "bytes": 131939,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-17"
+      ]
+    },
+    {
+      "id": "diagram-observability-trace-architecture",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/observability-trace-architecture.png",
+      "sha256": "10f2fc3bdc07c941b63f4d275c99f473505ad9268918d643df9383514a0ca828",
+      "bytes": 87084,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-15",
+        "chapter-22"
+      ]
+    },
+    {
+      "id": "diagram-request-dependency-sequence",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/request-dependency-sequence.png",
+      "sha256": "8030004bef91275e93f5360d4c51faa58ad1562aea92fa85aa709e5e4b65fb13",
+      "bytes": 78633,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-10"
+      ]
+    },
+    {
+      "id": "diagram-run-approval-state-machine",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/run-approval-state-machine.png",
+      "sha256": "0bd8f9f47986c714308cdeb266a70acf8ca0ee1950eec393ecf11e25fdd8cb1a",
+      "bytes": 124345,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-19"
+      ]
+    },
+    {
+      "id": "diagram-sandbox-capability-gates",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/sandbox-capability-gates.png",
+      "sha256": "dd1763a4dac9fbb204334d878f0b192c60e96afca2e16d163df06b2b864b9c27",
+      "bytes": 107498,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-21"
+      ]
+    },
+    {
+      "id": "diagram-struct-json-pipeline",
+      "kind": "technical_diagram",
+      "purpose": "technical explanation",
+      "path": "work/book/v10-project/diagrams/rendered/struct-json-pipeline.png",
+      "sha256": "301c37e57c028fb6d5a155475e0c81a7ab947dc62e71c03b9ba04e4ff65ab575",
+      "bytes": 107384,
+      "width_px": 1800,
+      "height_px": 1100,
+      "mode": "RGB",
+      "format": "PNG",
+      "source": "v10 deterministic rendered diagram",
+      "used_by": [
+        "chapter-02",
+        "chapter-09"
+      ]
+    },
+    {
+      "id": "chat-avatar-阿良",
+      "kind": "chat_avatar_derivative",
+      "purpose": "round chat avatar for 阿良",
+      "path": "work/book/v15-text-review/assets/chat-avatars/阿良-c7de86724bd40304.png",
+      "sha256": "80396975772829154bc5ab0e83dafd20209f024602f465ded6e685a4a8818154",
+      "bytes": 498577,
+      "width_px": 512,
+      "height_px": 512,
+      "mode": "RGBA",
+      "format": "PNG",
+      "source": "deterministic crop from portrait source",
+      "used_by": [
+        "story-dialogue"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+      "source_path": "output/book-v8-assets/aliang-animation-pilot-v8-r2.jpg",
+      "source_sha256": "2d45b4491b8ad1a79cd930aa8396a4e5219e99ab15463fef571b8e504726f4f3"
+    },
+    {
+      "id": "chat-avatar-齐静春",
+      "kind": "chat_avatar_derivative",
+      "purpose": "round chat avatar for 齐静春",
+      "path": "work/book/v15-text-review/assets/chat-avatars/齐静春-b87a37baca1a9f13.png",
+      "sha256": "eac1b631356ad2e7024f1d8d4547f60c93e25391e5a23f92dc3790535f12b5f8",
+      "bytes": 273597,
+      "width_px": 512,
+      "height_px": 512,
+      "mode": "RGBA",
+      "format": "PNG",
+      "source": "deterministic crop from portrait source",
+      "used_by": [
+        "story-dialogue"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+      "source_path": "output/book-v8-assets/qijingchun-animation-pilot-v8.jpg",
+      "source_sha256": "8657100ff1663b03d5fd761ff242051a0fc6df014004d88a89d7f230b325d43e"
+    },
+    {
+      "id": "chat-avatar-陈平安",
+      "kind": "chat_avatar_derivative",
+      "purpose": "round chat avatar for 陈平安",
+      "path": "work/book/v15-text-review/assets/chat-avatars/陈平安-7900ed1ee3359c71.png",
+      "sha256": "530eb1237ba5e03e132b474eac48b6d79b4104de63695d4fea933aeef18dab97",
+      "bytes": 376064,
+      "width_px": 512,
+      "height_px": 512,
+      "mode": "RGBA",
+      "format": "PNG",
+      "source": "deterministic crop from portrait source",
+      "used_by": [
+        "story-dialogue"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+      "source_path": "output/book-v8-assets/chenpingan-animation-v8.jpg",
+      "source_sha256": "c2de98a8850d7ab750c4be32d803222cf056f96671f0d460529ca8b5709ba552"
+    },
+    {
+      "id": "chat-avatar-宁姚",
+      "kind": "chat_avatar_derivative",
+      "purpose": "round chat avatar for 宁姚",
+      "path": "work/book/v15-text-review/assets/chat-avatars/宁姚-1ca9c3a0b6ec2dc9.png",
+      "sha256": "64af2c62966c76f8596169578d06d4fe29c9e56e701b9269fe9d49dbd3920f00",
+      "bytes": 400041,
+      "width_px": 512,
+      "height_px": 512,
+      "mode": "RGBA",
+      "format": "PNG",
+      "source": "deterministic crop from portrait source",
+      "used_by": [
+        "story-dialogue"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+      "source_path": "output/book-v8-assets/ningyao-animation-pilot-v8.jpg",
+      "source_sha256": "18e8d7d7eeedb07710c6e8c84c10fd95759ade1f7a8fd6e82cbd468f63e0eb69"
+    },
+    {
+      "id": "chat-avatar-崔瀺",
+      "kind": "chat_avatar_derivative",
+      "purpose": "round chat avatar for 崔瀺",
+      "path": "work/book/v15-text-review/assets/chat-avatars/崔瀺-b94567857d36d22f.png",
+      "sha256": "252a9bd208ecf4479ffc4bc5061553aac5f2d97a51ac7355d0de2f9854972524",
+      "bytes": 336095,
+      "width_px": 512,
+      "height_px": 512,
+      "mode": "RGBA",
+      "format": "PNG",
+      "source": "deterministic crop from portrait source",
+      "used_by": [
+        "story-dialogue"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+      "source_path": "output/book-v8-assets/cuican-animation-v8.jpg",
+      "source_sha256": "6620cd1216a9df9107081539edf818e6051a01d50fd9eb418546968697544742"
+    },
+    {
+      "id": "chat-avatar-左右",
+      "kind": "chat_avatar_derivative",
+      "purpose": "round chat avatar for 左右",
+      "path": "work/book/v15-text-review/assets/chat-avatars/左右-ef85229ab43c83fd.png",
+      "sha256": "42d21871846aadc062a8f4b0c8f3768e1f98054636387397406b11eb6c0fb15a",
+      "bytes": 298047,
+      "width_px": 512,
+      "height_px": 512,
+      "mode": "RGBA",
+      "format": "PNG",
+      "source": "deterministic crop from portrait source",
+      "used_by": [
+        "story-dialogue"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+      "source_path": "output/book-v8-assets/zuoyou-inferred-animation-v8.jpg",
+      "source_sha256": "e63c011d06b2b60fe6840e53d719a64f3d384366898760d2543a5e4a34bc44b0"
+    },
+    {
+      "id": "chat-avatar-李宝瓶",
+      "kind": "chat_avatar_derivative",
+      "purpose": "round chat avatar for 李宝瓶",
+      "path": "work/book/v15-text-review/assets/chat-avatars/李宝瓶-1ac5f17a39ef0717.png",
+      "sha256": "baad87e6e65dccd5c6b554aea8519e4bac079c9d98c04e038ce4bf2a8124c57b",
+      "bytes": 383538,
+      "width_px": 512,
+      "height_px": 512,
+      "mode": "RGBA",
+      "format": "PNG",
+      "source": "deterministic crop from portrait source",
+      "used_by": [
+        "story-dialogue"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+      "source_path": "output/book-v8-assets/libaoping-animation-v8.jpg",
+      "source_sha256": "67fd29e401a3a1c446557c2fcbf1eb4fe5abfab09c6881c5a910aaafcb09168d"
+    },
+    {
+      "id": "chat-avatar-阮秀",
+      "kind": "chat_avatar_derivative",
+      "purpose": "round chat avatar for 阮秀",
+      "path": "work/book/v15-text-review/assets/chat-avatars/阮秀-3217953e28cfc453.png",
+      "sha256": "8c2e1e3e522d8f2c666ec7c4603683604a0f223e8e9da835fba2c32c265b9994",
+      "bytes": 398944,
+      "width_px": 512,
+      "height_px": 512,
+      "mode": "RGBA",
+      "format": "PNG",
+      "source": "deterministic crop from portrait source",
+      "used_by": [
+        "story-dialogue"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+      "source_path": "output/book-v8-assets/ruanxiu-animation-v8.jpg",
+      "source_sha256": "5cad129eeec9579bdf26f2227114402dee305bda31e0933e9e290e103abe66a2"
+    },
+    {
+      "id": "chat-avatar-剑灵",
+      "kind": "chat_avatar_derivative",
+      "purpose": "round chat avatar for 剑灵",
+      "path": "work/book/v15-text-review/assets/chat-avatars/剑灵-caa034cdc0bba94b.png",
+      "sha256": "72aa74927ea3419b9384a1194e2c4d82a95e93a29b8962ba3341fd1e43aa3ba6",
+      "bytes": 313700,
+      "width_px": 512,
+      "height_px": 512,
+      "mode": "RGBA",
+      "format": "PNG",
+      "source": "deterministic crop from portrait source",
+      "used_by": [
+        "story-dialogue"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+      "source_path": "output/book-v8-assets/swordspirit-animation-pilot-v8.jpg",
+      "source_sha256": "c2fc61e1fbd60094324b2c4a874acc2f47f14a3e7d8973f1af99134375773575"
+    },
+    {
+      "id": "chat-avatar-陆沉",
+      "kind": "chat_avatar_derivative",
+      "purpose": "round chat avatar for 陆沉",
+      "path": "work/book/v15-text-review/assets/chat-avatars/陆沉-d74e698b0fb4f9ae.png",
+      "sha256": "701124684eb90fff049df93a9ecd6c9ecf6770be2dfb060d4c5af0bfc83167ea",
+      "bytes": 353765,
+      "width_px": 512,
+      "height_px": 512,
+      "mode": "RGBA",
+      "format": "PNG",
+      "source": "deterministic crop from portrait source",
+      "used_by": [
+        "story-dialogue"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+      "source_path": "output/book-v8-assets/luchen-animation-v8.jpg",
+      "source_sha256": "6c87e228ea32eb8060a5cfb92926704f55545e4da699355d3494c57491311bdd"
+    },
+    {
+      "id": "chat-avatar-顾璨",
+      "kind": "chat_avatar_derivative",
+      "purpose": "round chat avatar for 顾璨",
+      "path": "work/book/v15-text-review/assets/chat-avatars/顾璨-29e20e1139ee2fd3.png",
+      "sha256": "ab235711d329b0d06d299278a4c0bffcb1770a4301abcf767c871f03d274052c",
+      "bytes": 358085,
+      "width_px": 512,
+      "height_px": 512,
+      "mode": "RGBA",
+      "format": "PNG",
+      "source": "deterministic crop from portrait source",
+      "used_by": [
+        "story-dialogue"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+      "source_path": "output/book-v8-assets/gucan-animation-v8.jpg",
+      "source_sha256": "8ca5d8c0c2d132c701ff09a17657c7b7b7a73fbf6504ce8621766726f8f0f743"
+    },
+    {
+      "id": "chat-avatar-崔东山",
+      "kind": "chat_avatar_derivative",
+      "purpose": "round chat avatar for 崔东山",
+      "path": "work/book/v15-text-review/assets/chat-avatars/崔东山-b6c4f8a7188d63cb.png",
+      "sha256": "264f5611a587853ea9445ae05c12f87719f61f0b2f0adf28b02dc42ceabf2e05",
+      "bytes": 436424,
+      "width_px": 512,
+      "height_px": 512,
+      "mode": "RGBA",
+      "format": "PNG",
+      "source": "deterministic crop from portrait source",
+      "used_by": [
+        "story-dialogue"
+      ],
+      "crop_contract": "square-512-face-0.50-0.23-zoom-1.33-circle-v2",
+      "source_path": "output/book-v8-assets/cuidongshan-animation-v8.jpg",
+      "source_sha256": "f1d4d17b661ce1a7e52700bb19372702eb90717481db4444c92f77fd935a45d9"
+    },
+    {
+      "id": "chat-avatar-周米粒",
+      "kind": "chat_avatar_derivative",
+      "purpose": "round chat avatar for 周米粒",
+      "path": "work/book/v15-text-review/assets/chat-avatars/周米粒-61ad07e7e0a1025b.png",
+      "sha256": "a93f0ad52a1d2aeefe81fcd40b75b69c1701c23c8e82cb4b125f898f45a14b00",
+      "bytes": 413762,
+      "width_px": 512,
+      "height_px": 512,
+      "mode": "RGBA",
+      "format": "PNG",
+      "source": "deterministic crop from portrait source",
+      "used_by": [
+        "story-dialogue"
+      ],
+      "crop_contract": "square-512-face-0.50-0.34-zoom-1.33-circle-v1",
+      "source_path": "output/imagegen/v5/zhoumili-v5.png",
+      "source_sha256": "49c8144e8eb395cb21374aa7bc51d53551f3f0d11521adef5a1f1c30617005cb"
+    }
+  ]
+}

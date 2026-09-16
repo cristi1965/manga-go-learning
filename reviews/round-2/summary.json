@@ -1,0 +1,21 @@
+{
+  "round": 2,
+  "status": "complete",
+  "reviewers": ["domain", "book", "production"],
+  "reviewer_context_ids": {
+    "domain": "v15-r2-domain-blind-20260825-d",
+    "book": "v15-r2-book-blind-20260825-e",
+    "production": "v15-r2-production-local-20260826-g"
+  },
+  "candidate_sha256": "d5bfb31b56e88973ae941f93d67a66d94a34ac56f6899640be12d114fba7af8a",
+  "closed_artifact_sha256": "72cee1f84143f3da139e284a14563967c2038fbbe7e2d83c395d5fe1182ded9e",
+  "blockers_open": 0,
+  "critical_open": 0,
+  "issues_total": 6,
+  "issues_closed": 6,
+  "residual_risks": [
+    "Teaching skeletons are not a runnable companion repository; runtime implementation and fault-injection tests remain external.",
+    "This is a 144-DPI screen-reading edition, not a 300-DPI press proof or tagged accessibility PDF.",
+    "No live novice comprehension study was performed."
+  ]
+}

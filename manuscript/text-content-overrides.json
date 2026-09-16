@@ -1,0 +1,179 @@
+{
+  "chapters": {
+    "1": {
+      "title": "第一章  路边茶棚：读懂一段 Go",
+      "goal": "先跑通一个结账程序：看懂函数收到什么、返回什么，以及钱不够时怎样报错。",
+      "principles": [
+        "main 是程序入口；先运行它，看到真实结果，再往函数里面走。",
+        "读函数先看括号两边：左边是它收到的数字，右边是它交回的结果。",
+        "钱不够时立刻返回 error；付款够时才计算找零。"
+      ],
+      "code": "package main\n\nimport (\n    \"errors\"\n    \"fmt\"\n)\n\nvar (\n    ErrInvalidPrice = errors.New(\"invalid price\")\n    ErrInsufficientPayment = errors.New(\"insufficient payment\")\n)\n\nfunc main() {\n    change, err := settle(7, 10)\n    fmt.Println(change, err)\n}\n\nfunc settle(price, paid int64) (int64, error) {\n    if price <= 0 {\n        return 0, ErrInvalidPrice\n    }\n    if paid < price {\n        return 0, ErrInsufficientPayment\n    }\n    return paid - price, nil\n}",
+      "pitfalls": [
+        "还没运行就逐字抠语法",
+        "只看返回的数字，忘了同时检查 error",
+        "把付款不足当成正常找零零元"
+      ],
+      "task": "把代码存成 main.go，运行 go run main.go；再把付款 10 改成 7 和 5，各运行一次。",
+      "accept": "三次分别看到 3 <nil>、0 <nil>、0 insufficient payment，并能说清为什么。",
+      "mnemonic": "小白先懂：函数要说清收什么、成功交回什么、失败怎么讲。",
+      "transition_in": "山雨刚停，陈平安在路边茶棚用十文买一碗七文的面；这次从结账函数的输入和输出读起。",
+      "self_check": [
+        "程序从哪个函数开始运行？",
+        "价格 7、付款 10 时，settle 返回什么？",
+        "付款只有 5 时，为什么不能继续计算找零？"
+      ],
+      "self_check_answers": [
+        "从 main 函数开始。main 调用 settle，再把结果打印出来。",
+        "返回找零 3 和 nil；nil 表示没有发生错误。",
+        "因为会算出负数，掩盖钱不够这个事实；应该立刻返回 ErrInsufficientPayment。"
+      ],
+      "transition_out": "程序已经能跑，也能把找零或错误讲清；下一章再把同样的清楚带进请求和 JSON。"
+    },
+    "3": {
+      "goal": "先学会用 slice 装一列数据、用 map 按名字查数据，并分清复制一份和共享同一份。",
+      "principles": [
+        "slice 像一扇能看到底层数组的窗；复制 slice 不等于复制窗外的数据。",
+        "append 可能继续使用原来的底层数组，也可能换一块更大的新数组，所以要接住返回值。",
+        "map 写入前必须 make；读取时用第二个返回值判断键是否存在。",
+        "并发读写和锁留到第 7 章，本章只把单线程的数据容器用明白。"
+      ],
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    names := []string{\"陈平安\", \"宁姚\"}\n    names = append(names, \"阿良\")\n\n    scores := make(map[string]int)\n    scores[\"陈平安\"] = 90\n    score, ok := scores[\"陈平安\"]\n\n    fmt.Println(names)\n    fmt.Println(score, ok)\n}",
+      "pitfalls": [
+        "调用 append 后忘了接住返回的新 slice",
+        "向 nil map 写值导致 panic",
+        "读取 map 时只看零值，不检查键是否真的存在"
+      ],
+      "task": "运行示例；给 names 再加一人，给 scores 再加一项，并查询一个不存在的名字。",
+      "accept": "能看到新增姓名；已存在的分数返回值和 true；不存在的名字返回零值和 false。",
+      "self_check": [
+        "为什么 append 的结果要重新赋给 names？",
+        "map 为什么要先 make 再写？",
+        "读取不存在的键时，怎样区分它和真的存了一个零值？"
+      ],
+      "self_check_answers": [
+        "因为 append 可能换一块新的底层数组，返回的 slice 才指向正确结果。",
+        "nil map 可以读但不能写；make 会创建可写的 map。",
+        "接住第二个返回值 ok；ok 为 false 表示键不存在。"
+      ]
+    },
+    "6": {
+      "code": "type HTTPDecision struct {\n    Status int\n    Code string\n    Write bool\n}\n\nfunc mapError(err error) HTTPDecision {\n    switch {\n    case err == nil:\n        return HTTPDecision{200, \"ok\", true}\n    case errors.Is(err, context.Canceled):\n        return HTTPDecision{0, \"request_cancelled\", false}\n    case errors.Is(err, ErrUpstreamTimeout):\n        return HTTPDecision{504, \"upstream_timeout\", true}\n    case errors.Is(err, context.DeadlineExceeded):\n        return HTTPDecision{504, \"deadline_exceeded\", true}\n    case errors.Is(err, ErrMissing):\n        return HTTPDecision{404, \"bill_not_found\", true}\n    case errors.Is(err, ErrInvalidBill):\n        return HTTPDecision{422, \"invalid_bill\", true}\n    default:\n        return HTTPDecision{500, \"internal_error\", true}\n    }\n}",
+      "task": "为 mapError 写表驱动测试，覆盖包装后的 ErrMissing→404、客户端取消、服务 deadline、上游超时和未知错误。",
+      "accept": "errors.Is 能识别包装后的 ErrMissing 并稳定返回 404/bill_not_found；取消不写响应，超时与未知错误各走自己的公开契约。"
+    },
+    "11": {
+      "principles": [
+        "幂等唯一键必须绑定 tenant、认证主体或明确共享范围、动作 scope 与 key；同主体同 key 不同 payload 才稳定返回 409。",
+        "IdempotencyRecord 与 claim 在同一事务里保存 SubjectID 和请求指纹；读取任何 hash/status 前先核对主体边界，避免同租户状态探针。",
+        "原子 Claim 先落 processing；完成后只保存稳定 result ref，不复制副作用结果。",
+        "命中 completed 旧记录时仍按当前 Principal 和当前 Bill 状态重新授权，不能把幂等键当读取凭证。",
+        "数据库唯一约束覆盖 tenant+subject+action+key；跨主体或跨租户碰撞彼此独立，保留期与清理策略书面固定。"
+      ],
+      "code": "type IdempotencyRecord struct {\n    TenantID, SubjectID, Action, Key string\n    RequestHash, Status, ResultRef string\n}\n\nfunc (s *Service) Create(\n    ctx context.Context, p Principal, cmd CreateBill,\n) (Bill, error) {\n    if !p.CanWriteBills() { return Bill{}, ErrForbidden }\n    claim := IdempotencyClaim{\n        TenantID: p.TenantID, SubjectID: p.SubjectID,\n        Action: \"bill:create\", Key: cmd.Key,\n        RequestHash: canonicalHash(cmd),\n    }\n    record, claimed, err := s.idem.Claim(ctx, claim)\n    if err != nil { return Bill{}, err }\n    if !claimed {\n        if record.TenantID != p.TenantID ||\n            record.SubjectID != p.SubjectID {\n            return Bill{}, ErrNotFound\n        }\n        if record.RequestHash != claim.RequestHash {\n            return Bill{}, ErrIdempotencyConflict\n        }\n        if record.Status == \"processing\" {\n            return Bill{}, ErrIdempotencyInProgress\n        }\n        if record.Status != \"completed\" {\n            return Bill{}, ErrIdempotencyRetryable\n        }\n        bill, err := s.bills.GetByRef(ctx, p.TenantID, record.ResultRef)\n        if err != nil { return Bill{}, err }\n        if !s.policy.CanRead(p, bill) { return Bill{}, ErrNotFound }\n        return bill, nil\n    }\n    return s.createAndComplete(ctx, p, record, cmd)\n}",
+      "task": "并发提交同主体同 key 同/异 payload、同租户不同 SubjectID 和跨租户碰撞，再模拟 Commit 回包丢失与完成后撤权。",
+      "accept": "同主体同摘要只写一次、异摘要 409；不同主体各自独立且看不到对方 hash/status；旧结果仍按当前对象权限授权。"
+    },
+    "12": {
+      "principles": [
+        "cache miss 是明确的 key 不存在；超时、断连和饱和是 cache fault，必须进入可观测的降级或拒绝路径，不能伪装成普通 miss 撞向数据库。",
+        "缓存命中必须对 entry.Bill 执行 policy.CanRead(p, bill)，tenant key 不能替代对象级授权。",
+        "数据库回源也先得到 Bill，再执行同一 policy.CanRead；两条路径统一按既定 403/404 策略拒绝。",
+        "缓存条目绑定 membership、policy、object ACL 与 Bill data version；任一版本变化都使旧条目失效。",
+        "写事务原子递增 data/authz version 并写 outbox；SetIfCurrent 用 durable version ledger 做 CAS，拒绝迟到旧回填。"
+      ],
+      "code": "type CacheVersions struct {\n    Membership, Policy, ObjectACL, Data uint64\n}\n\ntype CachedBill struct {\n    Bill Bill\n    Versions CacheVersions\n}\n\nfunc (s *Service) GetBill(\n    ctx context.Context, p Principal, id string,\n) (Bill, error) {\n    key := \"bill:\" + p.TenantID + \":\" + id\n    entry, cacheErr := s.cache.Get(ctx, key)\n    switch {\n    case cacheErr == nil:\n        current, err := s.versions.Current(ctx, p, id)\n        if err != nil { return Bill{}, err }\n        if entry.Versions == current {\n            if !s.policy.CanRead(p, entry.Bill) {\n                return Bill{}, ErrNotFound\n            }\n            return entry.Bill, nil\n        }\n        if err := s.cache.Delete(ctx, key); err != nil {\n            s.metrics.CacheDeleteFault(err)\n        }\n    case errors.Is(cacheErr, ErrCacheMiss):\n        // A true miss may use the bounded DB fill path below.\n    default:\n        s.metrics.CacheReadFault(cacheErr)\n        return Bill{}, errors.Join(ErrCacheUnavailable, cacheErr)\n    }\n\n    bill, err := s.repo.Get(ctx, p.TenantID, id)\n    if err != nil { return Bill{}, err }\n    if !s.policy.CanRead(p, bill) { return Bill{}, ErrNotFound }\n    snapshot, err := s.versions.Current(ctx, p, bill.ID)\n    if err != nil { return Bill{}, err }\n    snapshot.Data = bill.Version\n    if err := s.cache.SetIfCurrent(\n        ctx, key, CachedBill{bill, snapshot},\n    ); err != nil { s.metrics.CacheFillFault(err) }\n    return bill, nil\n}",
+      "task": "为 cache Get 注入 key 不存在、超时、连接重置和饱和四种结果；只有 ErrCacheMiss 可以进入有界 DB 回填，其余故障按容量契约拒绝并记指标。",
+      "accept": "正常命中和真实 miss 都保持对象授权；cache fault 不伪装成 miss、不造成无界 DB 扇出；删除和回填故障均可观测，迟到旧值仍被版本 CAS 拒绝。"
+    },
+    "13": {
+      "self_check": [
+        "并发槽位满时，本章的 Gate 如何处理？",
+        "哪些错误不应重试？",
+        "为什么多层重试会放大流量？"
+      ],
+      "self_check_answers": [
+        "陈平安：并发槽位满时立即返回稳定的过载错误，不等待、不暗中排队；宁姚：对，队列策略留到真正的 Worker Pool 再讲。",
+        "陈平安：校验、权限、永久业务拒绝和结果 unknown 的非幂等写都不能随手重试；宁姚：准确，只给已分类、可恢复且满足幂等语义的错误预算。",
+        "陈平安：入口和下游若各重试 n 次，总调用会相乘而不是相加；宁姚：答对，重试预算必须由外层统一，避免山门口越救越堵。"
+      ],
+      "transition_out": "并发 Gate 已把同时执行的数量和满载拒绝说清；下一步再把真正的有界 Worker Pool 接上，最后用 SSE 把处理状态持续送回客户端。"
+    },
+    "18": {
+      "goal": "对照只读草稿 Tool 与真正写账 Tool，认清副作用、审批、稳定幂等身份和输入输出契约。",
+      "principles": [
+        "Agent 只提议下一步；Tool 执行具体动作；Harness 提供边界、状态、预算和证据。",
+        "Tool 契约必须机器可读地声明 sideEffect、requiresApproval、幂等身份来源以及输入/输出 schema 摘要。",
+        "真正写账的 ledger.create_bill 使用 Harness 持有的 CallID 做幂等身份，不能相信模型在参数里自报一个 key。",
+        "审批绑定 immutable contract/schema/policy snapshot digest；热更新后的当前 schema 不能替换已审批版本。",
+        "MCP 统一连接与发现，不自动提供最小权限、沙箱、审批或业务幂等；Skill 也不是 MCP 标准原语。"
+      ],
+      "code": "[\n  {\"name\": \"create_bill_draft\", \"sideEffect\": \"none\",\n   \"requiresApproval\": false,\n   \"idempotency\": {\"mode\": \"none\"},\n   \"inputSchemaRef\": \"sha256:draft-input-v1\",\n   \"outputSchemaRef\": \"sha256:draft-output-v1\"\n  },\n  {\"name\": \"ledger.create_bill\", \"sideEffect\": \"write\",\n   \"requiresApproval\": true,\n   \"idempotency\": {\n     \"source\": \"harness_call_id\",\n     \"scope\": [\"tenant_id\", \"owner_id\", \"tool\"]\n   },\n   \"contractDigest\": \"sha256:create-bill-contract-v3\",\n   \"inputSchemaRef\": \"sha256:create-bill-input-v3\",\n   \"outputSchemaRef\": \"sha256:create-bill-output-v3\"\n  }\n]",
+      "task": "逐字段比较两个契约：标出哪个能写数据、哪个必须审批、幂等身份由谁提供，以及输入输出 schema 如何固定。",
+      "accept": "只看契约即可判断 ledger.create_bill 会写账且必须审批；稳定身份来自服务端 Harness CallID，草稿 Tool 不能产生账单副作用。"
+    },
+    "19": {
+      "task": "设计练习：画 run-0827 的状态矩阵，标明 cancel、崩溃、lease takeover 后应查的记录。",
+      "accept": "设计评审只检查表中是否标出：CallID 固定、AttemptID 可变、Unknown 先对账、终态不改写、旧 fence 被拒。实现仍须并发与崩溃测试。"
+    },
+    "21": {
+      "principles": [
+        "Harness.Preflight 只生成 canonical command；Executor 是全书唯一副作用入口。",
+        "ReserveAndAuthorize 校验 caller、lease/fence、Step/approval version、cancel 与 handle 绑定，再原子预留预算并生成不可变 ExecutionBinding。",
+        "ExecutionBinding 把 server-held capability、CallID、tenant、command、snapshot、contract 与 server build 绑成一束，贯穿 dispatch、receipt 与 settle。",
+        "恢复 executing/unknown 只用原 Step.CallID 和原 approved snapshot 对账；热更新后的当前 validator 不能替代已审批 schema。",
+        "receipt 驱动 settle；无 receipt 进入 unknown，坏 output 用 approved snapshot 的 output schema 隔离，不能发布 artifact。"
+      ],
+      "code": "type CapabilityHandle string // opaque; payload remains server-side\n\ntype Grant struct {\n    ID, ApprovalID, StepID, PrincipalID, TenantID string\n    Nonce, Audience, ServerIdentity string\n    CommandDigest, SnapshotDigest, ContractDigest string\n    ServerBuild string\n    ExpiresAt time.Time\n    Version int64\n}\n\ntype ExecutionBinding struct {\n    Capability CapabilityHandle\n    TenantID, CallID, Audience, CommandDigest string\n    SnapshotDigest, ContractDigest, ServerBuild string\n}\n\ntype ExecutionClaim struct {\n    LeaseOwner string\n    Fence Fence\n    StepVersion, ApprovalVersion int64\n}\n\nfunc (x *Executor) Execute(\n    ctx context.Context, p Principal, claim ExecutionClaim,\n    handle CapabilityHandle, cmd CanonicalCommand,\n) (ArtifactRef, error) {\n    expected := ExpectedState{\n        LeaseOwner: claim.LeaseOwner, Fence: claim.Fence,\n        StepVersion: claim.StepVersion,\n        GrantVersion: claim.ApprovalVersion,\n        CancelRequested: false,\n    }\n    grant, step, reserved, err := x.store.ReserveAndAuthorize(\n        ctx, p, handle, cmd, expected)\n    if err != nil { return ArtifactRef{}, err }\n    if step.State.NeedsReconcile() {\n        return x.Reconcile(ctx, step.ID, step.CallID, reserved)\n    }\n    attempt, err := x.store.BeginAttempt(ctx, step.ID, reserved)\n    if err != nil { return ArtifactRef{}, err }\n    binding := ExecutionBinding{\n        Capability: handle, TenantID: grant.TenantID,\n        CallID: step.CallID, Audience: grant.Audience,\n        CommandDigest: grant.CommandDigest,\n        SnapshotDigest: grant.SnapshotDigest,\n        ContractDigest: grant.ContractDigest,\n        ServerBuild: grant.ServerBuild,\n    }\n    return x.dispatchAndSettle(\n        ctx, binding, grant, step, attempt, cmd)\n}",
+      "task": "设计测试矩阵：重放 handle，逐一替换身份、CallID、capability、snapshot/contract digest 与 server build；再在四个切点终止 Worker。",
+      "accept": "设计检查：只有完整匹配的 ExecutionBinding 能写一次；错配零新副作用，Unknown 只按原 CallID 与 approved snapshot 对账。"
+    },
+    "22": {
+      "task": "设计练习：画 manifest、三种 replay、EvalProtocol 与预算熔断的证据流；另列未来实验仓库所需 fixture、fake tool 和故障钩子。",
+      "accept": "设计评审只检查图中是否标出：event playback 零副作用、真实重跑另建 Run、manifest 验签/轮换、Eval 对照项；不等于实现已通过。"
+    },
+    "24": {
+      "task": "设计练习：为同/异 owner 复用 entry-0827、同 owner 改摘要、commit 后丢 receipt 三种场景画时序与验收表。",
+      "accept": "设计评审只检查图中是否标出：同 owner 同摘要复用、异摘要冲突、不同 owner 隔离、原 CallID 对账；实现仍须唯一约束与故障测试。"
+    }
+  },
+  "supplements": {
+    "go-real-test-file": {
+      "code": "func TestSettle(t *testing.T) {\n    tests := []struct {\n        name        string\n        price, paid int64\n        wantChange  int64\n        wantErr     error\n    }{\n        {\"exact\", 7, 7, 0, nil},\n        {\"change\", 7, 10, 3, nil},\n        {\"not enough\", 7, 5, 0, ErrInsufficientPayment},\n        {\"invalid price\", 0, 10, 0, ErrInvalidPrice},\n    }\n    for _, tt := range tests {\n        t.Run(tt.name, func(t *testing.T) {\n            got, err := settle(tt.price, tt.paid)\n            if !errors.Is(err, tt.wantErr) {\n                t.Fatalf(\"err=%v, want %v\", err, tt.wantErr)\n            }\n            if got != tt.wantChange {\n                t.Fatalf(\"change=%d, want %d\", got, tt.wantChange)\n            }\n        })\n    }\n}",
+      "exercise": "新建 settle_test.go，用 TestSettle 覆盖刚好付款、三文找零、付款不足和非法价格。",
+      "acceptance": "go test ./... 能发现四个场景；成功路径核对找零，失败路径分别识别 ErrInsufficientPayment 与 ErrInvalidPrice。",
+      "previous_failure": "结账函数能返回找零，但正文示例不会自动报警；删掉找零或错误分支时，需要真正的 _test.go 立刻拦住。",
+      "next_hook": "结账函数的输入和输出守住了；下一章看 CreateBillRequest 交给 JSON 时，字段名字为何会变。"
+    },
+    "backend-14-stream-slow-client": {
+      "code": "func (h *BillEventHandler) Stream(c *gin.Context) {\n    p, ok := PrincipalFrom(c)\n    if !ok { h.writeError(c, ErrUnauthorized); return }\n    ctx := c.Request.Context()\n    billID := c.Param(\"bill_id\")\n    // Atomic snapshot+watch closes the check/register race.\n    access, err := h.authz.WatchBill(ctx, p, billID)\n    if err != nil { h.writeError(c, err); return }\n    defer access.Close()\n    allowed, err := access.Revalidate(ctx)\n    if err != nil || !allowed {\n        h.writeError(c, ErrNotFound); return\n    }\n\n    events, err := h.events.SubscribeBill(\n        ctx, p.TenantID, billID, c.GetHeader(\"Last-Event-ID\"))\n    if err != nil { h.writeError(c, err); return }\n    defer events.Close()\n\n    // Select on events, ctx and access changes.\n    // Revocation revalidates current Bill state, then disconnects.\n    h.writeBillSSE(ctx, c.Writer, events, access)\n}",
+      "bullets": [
+        "入口先从认证中间件取得 Principal；未认证请求在 WatchBill 和 SubscribeBill 之前拒绝。",
+        "本章事件聚合只有 Bill；路由、授权、事件存储与游标全部以 bill_id 为键。",
+        "SSE 设置 no-cache、X-Accel-Buffering:no、心跳、event ID 与游标过期契约。",
+        "每连接 outbound queue 有界；慢客户端按 Bill 事件策略 drop/coalesce/disconnect，不无限占内存。",
+        "订阅授权版本变化；连接中途降权、成员移除或对象转移时重验并断开，不能只在握手时授权。",
+        "断线只结束 Bill 事件订阅；显式取消账单处理使用 bill_id API，并持久化 Bill 状态。"
+      ],
+      "exercise": "测试未认证、合法 Principal、对象降权、跨 bill 游标、断线重连、游标过期和慢读。",
+      "acceptance": "未认证请求零订阅；bill_id 不能加载别的对象，跨账单游标被拒；断线只收口订阅，显式取消才改变 Bill 状态。"
+    },
+    "backend-15-observability-slo": {
+      "code": "type AsyncSLOGate struct {\n    ConfigVersion string\n    Window, TerminalDeadline, MaxSnapshotAge time.Duration\n    BurnShortWindow, BurnLongWindow time.Duration\n    MinEligible uint64\n    MinTerminalSuccess float64\n    MaxTimeToTerminalP95, MaxTimeToTerminalP99 time.Duration\n    MaxBurnRateShort, MaxBurnRateLong float64\n    MaxQueueAge, MaxOutboxAge time.Duration\n    MaxUnknownAge, MaxReconcileAge time.Duration\n    MaxBacklogs [4]uint64\n}\n\ntype AsyncSnapshot struct {\n    ConfigVersion string\n    CapturedAt time.Time\n    Window, TerminalDeadline time.Duration\n    BurnShortWindow, BurnLongWindow time.Duration\n    Eligible, SuccessWithinDeadline uint64\n    TimeToTerminalP95, TimeToTerminalP99 time.Duration\n    BurnRateShort, BurnRateLong float64\n    OldestQueueAge, OldestOutboxAge time.Duration\n    OldestUnknownAge, OldestReconcileAge time.Duration\n    Backlogs [4]uint64\n}\n\nfunc (g AsyncSLOGate) AllowCanary(\n    now time.Time, s AsyncSnapshot,\n) error {\n    if g.MinEligible == 0 || g.MaxSnapshotAge <= 0 ||\n        g.MaxTimeToTerminalP95 <= 0 ||\n        g.MaxTimeToTerminalP99 < g.MaxTimeToTerminalP95 ||\n        g.BurnShortWindow <= 0 ||\n        g.BurnLongWindow <= g.BurnShortWindow ||\n        g.MaxBurnRateShort <= 0 || g.MaxBurnRateLong <= 0 ||\n        s.Eligible == 0 || s.SuccessWithinDeadline > s.Eligible ||\n        s.ConfigVersion != g.ConfigVersion || s.Window != g.Window ||\n        s.TerminalDeadline != g.TerminalDeadline ||\n        s.BurnShortWindow != g.BurnShortWindow ||\n        s.BurnLongWindow != g.BurnLongWindow ||\n        s.CapturedAt.After(now) ||\n        now.Sub(s.CapturedAt) > g.MaxSnapshotAge ||\n        s.Eligible < g.MinEligible {\n        return ErrInsufficientEvidence\n    }\n    for i := range s.Backlogs {\n        if s.Backlogs[i] > g.MaxBacklogs[i] { return ErrAsyncSLO }\n    }\n    successRate := float64(s.SuccessWithinDeadline) / float64(s.Eligible)\n    if successRate < g.MinTerminalSuccess ||\n        s.TimeToTerminalP95 > g.MaxTimeToTerminalP95 ||\n        s.TimeToTerminalP99 > g.MaxTimeToTerminalP99 ||\n        s.BurnRateShort > g.MaxBurnRateShort ||\n        s.BurnRateLong > g.MaxBurnRateLong ||\n        s.OldestQueueAge > g.MaxQueueAge ||\n        s.OldestOutboxAge > g.MaxOutboxAge ||\n        s.OldestUnknownAge > g.MaxUnknownAge ||\n        s.OldestReconcileAge > g.MaxReconcileAge {\n        return ErrAsyncSLO\n    }\n    return nil\n}",
+      "exercise": "依次注入好 p95/坏 p99、短窗和长窗 burn-rate 超限、Worker 停摆、outbox 不发布、unknown/reconciling 堆积，以及窗口或配置缺失。",
+      "acceptance": "零样本、过期/错版快照、缺失 burn-rate 窗口或非法阈值返回 ErrInsufficientEvidence；p99、任一 burn rate 或异步门槛越界返回 ErrAsyncSLO。"
+    },
+    "harness-approval-reservation": {
+      "code": "func (x *Executor) dispatchAndSettle(\n    ctx context.Context, binding ExecutionBinding,\n    grant Grant, step Step, attempt Attempt, cmd CanonicalCommand,\n) (ArtifactRef, error) {\n    snapshot, err := x.snapshots.LoadApproved(\n        ctx, binding.SnapshotDigest)\n    if err != nil || !snapshot.Matches(\n        binding.ContractDigest, binding.ServerBuild) {\n        return ArtifactRef{}, errors.Join(ErrBindingMismatch, err)\n    }\n    expected := ExpectedState{\n        Fence: step.Fence, StepVersion: step.Version,\n        AttemptVersion: attempt.Version, GrantVersion: grant.Version,\n        CancelRequested: false,\n    }\n    dispatched, err := x.store.MarkDispatched(\n        ctx, grant.ID, grant.Nonce, attempt.ID, expected)\n    if err != nil { return ArtifactRef{}, err }\n    expected = dispatched.Expected()\n\n    raw, receipt, runErr := x.sandbox.Run(\n        ctx, binding.Capability, binding.CallID, attempt.ID, cmd)\n    if receipt == nil {\n        markErr := x.store.MarkUnknown(\n            ctx, step.ID, attempt.ID, expected)\n        return ArtifactRef{}, errors.Join(\n            ErrOutcomeUnknown, runErr, markErr)\n    }\n    trusted, err := x.receipts.Validate(receipt, ReceiptBinding{\n        TenantID: binding.TenantID, CallID: binding.CallID,\n        ServerIdentity: grant.ServerIdentity, Audience: binding.Audience,\n        CommandDigest: binding.CommandDigest,\n        SnapshotDigest: binding.SnapshotDigest,\n        ContractDigest: binding.ContractDigest,\n        ServerBuild: binding.ServerBuild,\n        RequireOutcome: true, RequireCommitMarker: true,\n    })\n    if err != nil {\n        markErr := x.store.MarkUnknown(\n            ctx, step.ID, attempt.ID, expected)\n        return ArtifactRef{}, errors.Join(\n            ErrInvalidReceipt, err, runErr, markErr)\n    }\n    x.metrics.RecordRunDiagnostic(runErr)\n    switch trusted.Outcome {\n    case OutcomeSucceeded:\n        if schemaErr := snapshot.OutputSchema.Validate(raw); schemaErr != nil {\n            qerr := x.quarantine.Put(ctx, raw, schemaErr)\n            settleErr := x.store.SettleRejected(\n                ctx, step.ID, grant.ID, trusted, expected)\n            return ArtifactRef{}, errors.Join(\n                ErrInvalidToolOutput, qerr, settleErr)\n        }\n        return x.store.SettleSucceeded(\n            ctx, step.ID, grant.ID, trusted, raw, expected)\n    case OutcomeRejected, OutcomeFailed:\n        settleErr := x.store.SettleFailed(\n            ctx, step.ID, grant.ID, trusted, expected)\n        return ArtifactRef{}, errors.Join(\n            trusted.OutcomeError(), settleErr)\n    default:\n        markErr := x.store.MarkUnknown(\n            ctx, step.ID, attempt.ID, expected)\n        return ArtifactRef{}, errors.Join(ErrInvalidReceipt, markErr)\n    }\n}",
+      "bullets": [
+        "无 receipt 或 receipt 绑定/签名无效：Step 进入 unknown，approval 与预算预留保持占用，等待原 CallID 对账。",
+        "dispatch 前加载 approved snapshot；capability、CallID、tenant、command、snapshot、contract 与 server build 任一错配都零新副作用。",
+        "可信 success receipt：只用 approved snapshot 的 output schema 校验；通过后幂等结算成功，坏 output 隔离并按可信 receipt 结算拒绝。",
+        "可信 failed/rejected receipt：不要求成功形状的 output，按 receipt outcome 幂等结算失败并释放或消费相应预留。",
+        "sandbox.Run 的 runErr 只记录本地传输/运行诊断；存在可信 receipt 时，它不能推翻 receipt 绑定的 outcome。"
+      ],
+      "exercise": "设计四行 outcome 决策表，再替换 capability、audience、tenant、snapshot/contract digest 与 server build，并在审批后热切换 schema A/B。",
+      "acceptance": "只有完整匹配审批版本 A 的 binding 能 dispatch/settle；success output 只按 A 校验；任何错配零新副作用，approval 与预算只结算一次。"
+    }
+  }
+}

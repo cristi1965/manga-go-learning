@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "mode": "book-pdf",
+  "title": "人间铸剑录：Go 后端与 Harness AI 工程全书图解版 v15",
+  "domain": "Go backend and Harness AI engineering",
+  "audience": "有前端经验、希望系统掌握 Go 后端与 Harness AI 工程的中文工程师",
+  "language": "zh-CN",
+  "jurisdiction": "not-applicable",
+  "intended_use": "private study",
+  "source": {
+    "paths": [
+      "manuscript/story-go.json",
+      "manuscript/story-backend.json",
+      "manuscript/story-harness.json",
+      "manuscript/text-content-overrides.json"
+    ],
+    "traceability_required": false,
+    "exclusions": ["原始私人聊天不复制到 PDF 派生项目"]
+  },
+  "style": {
+    "direction": "warm anime-timed WeChat dialogue with restrained editorial structure",
+    "visual_traits": [
+      "round reusable avatars",
+      "left-right chat bubbles",
+      "high-contrast vector text",
+      "one visible failure and one callback per teaching unit"
+    ],
+    "palette": ["warm paper", "charcoal", "wechat green", "mineral blue", "cinnabar", "soft pink"],
+    "composition": "Chen Pingan on the right; mentors and supporting characters on the left",
+    "continuity_anchors": ["accepted local portrait masters", "stable speaker side", "source and derivative hashes"],
+    "avoid": [
+      "new image generation",
+      "pale essential text",
+      "rectangular portrait cards",
+      "silent truncation",
+      "technical list dumps inside chat bubbles"
+    ],
+    "text_in_images": false,
+    "reference_policy": "reuse accepted local masters and describe style as traits"
+  },
+  "book": {
+    "trim_size": "A4",
+    "default_orientation": "portrait",
+    "allow_landscape_diagrams": true,
+    "body_font_min_pt": 9.8,
+    "code_font_min_pt": 9.0,
+    "render_dpi": 144,
+    "require_toc_links": true,
+    "require_bookmarks": true,
+    "expected_chapters": 24,
+    "max_landscape_fraction": 0.4,
+    "toc_max_page": 10
+  },
+  "review": {
+    "required_rounds": 2,
+    "roles": ["domain", "book", "production"],
+    "regulated_domain": false,
+    "require_qualified_professional_each_round": false,
+    "risk_classification": {
+      "decision": "standard",
+      "method": "project contract",
+      "classified_by": "project owner",
+      "rationale": "Private software-engineering study book; no regulated professional advice."
+    }
+  },
+  "incremental": {
+    "enabled": true,
+    "state_file": "build/incremental-state.json",
+    "extra_inputs": [
+      "build_pdf.py",
+      "build_text_review.py",
+      "verify_text_review.py",
+      "verify_pdf.py",
+      "write_asset_manifest.py",
+      "manuscript"
+    ]
+  },
+  "output": {
+    "artifact_version": "15.0.0",
+    "final_pdf": "output/人间铸剑录_v15_完整图解版.pdf",
+    "images_dir": "assets/chat-avatars",
+    "evidence_dir": "evidence"
+  }
+}

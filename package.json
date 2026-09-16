@@ -1,0 +1,12 @@
+{
+  "name": "manga-go-learning-acceptance",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "audit:browser": "node browser_audit.mjs"
+  },
+  "devDependencies": {
+    "axe-core": "4.10.3",
+    "playwright": "1.55.0"
+  }
+}
