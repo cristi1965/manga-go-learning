@@ -1,17 +1,17 @@
 {
   "status": "pass",
   "version": "18.7.0",
-  "generatedAt": "2026-09-16T09:23:21.917Z",
-  "url": "http://127.0.0.1:49359",
+  "generatedAt": "2026-09-17T01:42:17.504Z",
+  "url": "http://127.0.0.1:50530",
   "units": 79,
   "artifactSha256": {
     "VERSION": "64c531a67b4c54a664e1e868e90e3c605a700d0547b9962affe2c404b95f6883",
     "interactive/index.html": "c4a9a0e6db089f1b8e7b1431843479709e67b794a0a386f44bb034253a0438f0",
-    "interactive/app.js": "2a4543ef6b240b311392250d8aa9d21fd3c50ab7d65a8a09ecc2aa6f19bc8d48",
-    "interactive/styles.css": "d2b925208aeb84e3ab1ac4eaaa37e0938336be620bef1e64cc73f9931de21142",
-    "interactive/data/book.json": "6252eb0c8368938ba6d9a1502b0cf08356b4640f78823e15d1a754426b7e5c71",
+    "interactive/app.js": "78b02ad28f18ec5cae564c6a8356cf02f7bc3a4d85d1301d5cf2575eea9d83ef",
+    "interactive/styles.css": "bc085357fc718edee24f7d7e10537f41087537a5094a629da1863ab4f1093c3a",
+    "interactive/data/book.json": "b9f61e29641ae3d53cbe7ee515a330a3712f2345225e421e1a25eb74775562af",
     "runner/main.go": "225763ca5ee4e317cfc19d17cd44a426f8c93091764fcff6e3d2832286549eb9",
-    "browser_audit.mjs": "fdaa4f3e9a80db2be13db7c1aa1dbf728899694dc084e09f9a594cbb2364343c",
+    "browser_audit.mjs": "6a2e54df1326bd12869cee71ed1a32a7e46e5ecb338eaa9d03c21df5407cad30",
     "package.json": "6b997a3796f666524be37d2570530cc5c6d94b6a0ffe5a2fe42bad448d13b60e",
     "package-lock.json": "0b376a2316f008098e032047b02934b859523f3e12bec466f4e15f488011a562"
   },
@@ -4141,7 +4141,7 @@
     }
   },
   "runtime": {
-    "browserVersion": "153.0.8010.36"
+    "browserVersion": "153.0.8010.48"
   },
   "expectedConsoleErrors": [
     "Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)",
@@ -4153,11 +4153,11 @@
   "screenshots": {
     "desktop": {
       "path": "evidence/browser-v18-desktop.png",
-      "sha256": "60d0119d053a46ff895bd4298425296239c17060243623dab5c67dc3bdab92c6"
+      "sha256": "0727628aa4a9243564f212313d0b6c9c67e657e5620ffa92a365e30d0d230836"
     },
     "mobile": {
       "path": "evidence/browser-v18-mobile.png",
-      "sha256": "da7a3ae66b0dc78f799f1f859eb311a8412bd9ecf66fc1a07d9bb46d2ea56830"
+      "sha256": "8fbe5d3283fc0ed5f70d7b63d241a9144ac9929f1caebd41cfa1b03ff4914a6b"
     }
   }
 }

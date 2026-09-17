@@ -144,10 +144,36 @@ await interactionPage.locator('[data-submit-workshop]').click();
 await interactionPage.locator('.workshop-result.success').waitFor();
 const validAccepted = await interactionPage.locator('.workshop-result.success').isVisible();
 const chapter9Solution = `package main
-import "errors"
-var ErrUnauthorized=errors.New("unauthorized");var ErrInvalid=errors.New("invalid")
-type CreateRequest struct{Tenant,ClientUser string;Amount int}
-func validateCreate(r CreateRequest)error{if r.Tenant==""||r.ClientUser!=""{return ErrUnauthorized};if r.Amount<=0{return ErrInvalid};return nil}
+
+import (
+	"encoding/json"
+	"net/http"
+	"strings"
+)
+
+type CreateRunRequest struct {
+	Input string \`json:"input"\`
+}
+
+func HandleCreateRun(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	tenant := strings.TrimSpace(r.Header.Get("X-Tenant-ID"))
+	if tenant == "" {
+		http.Error(w, "missing tenant", http.StatusUnauthorized)
+		return
+	}
+	var body CreateRunRequest
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil || strings.TrimSpace(body.Input) == "" {
+		http.Error(w, "bad input", http.StatusBadRequest)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	_, _ = w.Write([]byte(\`{"status":"accepted"}\`))
+}
 `;
 await interactionPage.locator('[data-code-exercise] .code-editor').fill(chapter9Solution);
 await interactionPage.locator('[data-code-exercise] [data-run-exercise]').click();

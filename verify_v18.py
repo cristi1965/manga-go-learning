@@ -18,7 +18,21 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "evidence" / "v18-engineering-acceptance.json"
-NODE = Path(os.environ.get("MANGA_GO_NODE") or shutil.which("node") or "node")
+def find_node() -> Path:
+    if "MANGA_GO_NODE" in os.environ:
+        return Path(os.environ["MANGA_GO_NODE"])
+    codex_node = Path.home() / ".cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+    if codex_node.is_file():
+        return codex_node
+    nvm_dir = Path.home() / ".nvm/versions/node"
+    if nvm_dir.is_dir():
+        for ver in ("v24", "v22", "v20", "v18"):
+            candidates = sorted(nvm_dir.glob(f"{ver}*/bin/node"), reverse=True)
+            if candidates and candidates[0].is_file():
+                return candidates[0]
+    return Path(shutil.which("node") or "node")
+
+NODE = find_node()
 
 
 def run(command: list[str], cwd: Path = ROOT, timeout: int = 90) -> dict:

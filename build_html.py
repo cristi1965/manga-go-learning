@@ -7,6 +7,8 @@ import subprocess
 import tempfile
 from pathlib import Path
 
+from build_capstone_starter import build_starter_zip
+
 
 PROJECT = Path(__file__).resolve().parent
 VERSION = (PROJECT / "VERSION").read_text(encoding="utf-8").strip()
@@ -1120,131 +1122,782 @@ func TestStreamValuesAndCancel(t *testing.T){ctx,cancel:=context.WithCancel(cont
 }
 
 GO_PRACTICES.update({
-    9: {"title":"守住 HTTP 请求门口","prompt":"拒绝空租户、客户端伪造身份和非法金额。","code":'''package main
+    9: {
+        "title": "守住 HTTP 请求门口",
+        "prompt": "实现 HandleCreateRun：POST 方法、Header 检查租户、解析 JSON 并校验 Input 非空，成功返回 201。",
+        "code": '''package main
+
+import (
+	"encoding/json"
+	"net/http"
+)
+
+type CreateRunRequest struct {
+	Input string `json:"input"`
+}
+
+func HandleCreateRun(w http.ResponseWriter, r *http.Request) {
+	// TODO: 1. 只接受 POST 方法，否则返回 405 MethodNotAllowed
+	//       2. 检查 Header "X-Tenant-ID"，若为空返回 401 Unauthorized
+	//       3. 解析 JSON 请求体，若 input 为空返回 400 BadRequest
+	//       4. 成功时设置 Content-Type: application/json 并写 201 Created，返回 {"status":"accepted"}
+}
+''',
+        "test": '''package main
+
+import (
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
+)
+
+func TestHandleCreateRun(t *testing.T) {
+	req := httptest.NewRequest("GET", "/runs", nil)
+	w := httptest.NewRecorder()
+	HandleCreateRun(w, req)
+	if w.Code != http.StatusMethodNotAllowed {
+		t.Fatalf("want 405, got %d", w.Code)
+	}
+
+	req = httptest.NewRequest("POST", "/runs", strings.NewReader(`{"input":"hello"}`))
+	w = httptest.NewRecorder()
+	HandleCreateRun(w, req)
+	if w.Code != http.StatusUnauthorized {
+		t.Fatalf("want 401, got %d", w.Code)
+	}
+
+	req = httptest.NewRequest("POST", "/runs", strings.NewReader(`{"input":""}`))
+	req.Header.Set("X-Tenant-ID", "tenant-1")
+	w = httptest.NewRecorder()
+	HandleCreateRun(w, req)
+	if w.Code != http.StatusBadRequest {
+		t.Fatalf("want 400, got %d", w.Code)
+	}
+
+	req = httptest.NewRequest("POST", "/runs", strings.NewReader(`{"input":"audit"}`))
+	req.Header.Set("X-Tenant-ID", "tenant-1")
+	w = httptest.NewRecorder()
+	HandleCreateRun(w, req)
+	if w.Code != http.StatusCreated || !strings.Contains(w.Body.String(), "accepted") {
+		t.Fatalf("want 201 accepted, got %d %s", w.Code, w.Body.String())
+	}
+}
+''',
+    },
+    10: {
+        "title": "把业务与存储拆开",
+        "prompt": "实现 Service.CreateRun：参数校验、调用 Store.Exists 防重检测、调用 Store.Save 保存。",
+        "code": '''package main
+
+import (
+	"context"
+	"errors"
+)
+
+var (
+	ErrInvalidRequest = errors.New("invalid request")
+	ErrAlreadyExists  = errors.New("already exists")
+)
+
+type Store interface {
+	Exists(ctx context.Context, tenant, id string) (bool, error)
+	Save(ctx context.Context, tenant, id string, amount int) error
+}
+
+type Service struct {
+	store Store
+}
+
+func (s Service) CreateRun(ctx context.Context, tenant, id string, amount int) error {
+	// TODO: 1. 参数校验：tenant 和 id 不能为空，amount 必须 > 0
+	//       2. 检查防重：调用 s.store.Exists，已存在则返回 ErrAlreadyExists
+	//       3. 落库：调用 s.store.Save 并返回结果
+	return nil
+}
+''',
+        "test": '''package main
+
+import (
+	"context"
+	"errors"
+	"testing"
+)
+
+type mockStore struct {
+	exists map[string]bool
+	saved  map[string]int
+}
+
+func (m *mockStore) Exists(ctx context.Context, tenant, id string) (bool, error) {
+	return m.exists[tenant+":"+id], nil
+}
+
+func (m *mockStore) Save(ctx context.Context, tenant, id string, amount int) error {
+	m.saved[tenant+":"+id] = amount
+	return nil
+}
+
+func TestServiceLayer(t *testing.T) {
+	store := &mockStore{
+		exists: map[string]bool{"t1:r1": true},
+		saved:  make(map[string]int),
+	}
+	svc := Service{store: store}
+	ctx := context.Background()
+
+	if err := svc.CreateRun(ctx, "", "r2", 10); !errors.Is(err, ErrInvalidRequest) {
+		t.Fatalf("want ErrInvalidRequest, got %v", err)
+	}
+	if err := svc.CreateRun(ctx, "t1", "r1", 10); !errors.Is(err, ErrAlreadyExists) {
+		t.Fatalf("want ErrAlreadyExists, got %v", err)
+	}
+	if err := svc.CreateRun(ctx, "t1", "r2", 10); err != nil || store.saved["t1:r2"] != 10 {
+		t.Fatalf("want saved 10, got %v", err)
+	}
+}
+''',
+    },
+    11: {
+        "title": "让重复请求只落一笔",
+        "prompt": "实现 IdempotentStore：组合 tenant+key，相同 input 幂等回放，不同 input 触发冲突错误。",
+        "code": '''package main
+
+import (
+	"errors"
+	"sync"
+)
+
+var ErrIdempotencyConflict = errors.New("idempotency conflict")
+
+type RunRecord struct {
+	RunID string
+	Input string
+}
+
+type IdempotentStore struct {
+	mu      sync.Mutex
+	records map[string]RunRecord
+}
+
+func (s *IdempotentStore) CreateOrGet(tenant, key, runID, input string) (RunRecord, bool, error) {
+	// TODO: 1. 使用 tenant + ":" + key 作为复合唯一键
+	//       2. 若已存在：若 Input 与已有记录不同，返回 ErrIdempotencyConflict；若相同，返回已有记录且 created=false
+	//       3. 若不存在：写入新 RunRecord 并返回 created=true
+	return RunRecord{}, false, nil
+}
+''',
+        "test": '''package main
+
+import (
+	"errors"
+	"testing"
+)
+
+func TestIdempotentStore(t *testing.T) {
+	s := &IdempotentStore{records: make(map[string]RunRecord)}
+	rec1, created, err := s.CreateOrGet("t1", "k1", "r1", "query")
+	if err != nil || !created || rec1.RunID != "r1" {
+		t.Fatalf("first insert failed: %v %v %#v", err, created, rec1)
+	}
+	rec2, created, err := s.CreateOrGet("t1", "k1", "r2", "query")
+	if err != nil || created || rec2.RunID != "r1" {
+		t.Fatalf("replay failed: %v %v %#v", err, created, rec2)
+	}
+	_, _, err = s.CreateOrGet("t1", "k1", "r3", "different")
+	if !errors.Is(err, ErrIdempotencyConflict) {
+		t.Fatalf("want ErrIdempotencyConflict, got %v", err)
+	}
+	rec3, created, err := s.CreateOrGet("t2", "k1", "r4", "query")
+	if err != nil || !created || rec3.RunID != "r4" {
+		t.Fatalf("tenant isolation failed: %v %v %#v", err, created, rec3)
+	}
+}
+''',
+    },
+    12: {
+        "title": "拒绝迟到的旧缓存与并发抢占",
+        "prompt": "实现 AcquireOrRenewLease：租约未过期阻断其他 worker，单调递增 Fencing Token 防范乱序更新。",
+        "code": '''package main
+
+import (
+	"errors"
+	"time"
+)
+
+var (
+	ErrLeaseOccupied = errors.New("lease occupied")
+	ErrStaleFence    = errors.New("stale fence")
+)
+
+type LeaseEntry struct {
+	Owner     string
+	Fence     int64
+	ExpiredAt time.Time
+}
+
+func AcquireOrRenewLease(cur LeaseEntry, reqOwner string, reqFence int64, now time.Time, ttl time.Duration) (LeaseEntry, error) {
+	// TODO: 1. 若当前租约未过期 (now.Before(cur.ExpiredAt)) 且持有者不是 reqOwner，返回 ErrLeaseOccupied
+	//       2. reqFence 必须严格大于 cur.Fence，否则返回 ErrStaleFence
+	//       3. 满足条件则返回续约后的 LeaseEntry（Owner, reqFence, now.Add(ttl)）
+	return LeaseEntry{}, nil
+}
+''',
+        "test": '''package main
+
+import (
+	"errors"
+	"testing"
+	"time"
+)
+
+func TestLeaseAndFence(t *testing.T) {
+	now := time.Now()
+	active := LeaseEntry{Owner: "w1", Fence: 10, ExpiredAt: now.Add(time.Minute)}
+
+	if _, err := AcquireOrRenewLease(active, "w2", 11, now, time.Minute); !errors.Is(err, ErrLeaseOccupied) {
+		t.Fatalf("want ErrLeaseOccupied, got %v", err)
+	}
+	if _, err := AcquireOrRenewLease(active, "w1", 10, now, time.Minute); !errors.Is(err, ErrStaleFence) {
+		t.Fatalf("want ErrStaleFence, got %v", err)
+	}
+	renewed, err := AcquireOrRenewLease(active, "w1", 11, now, time.Minute)
+	if err != nil || renewed.Fence != 11 {
+		t.Fatalf("renew failed: %v %#v", err, renewed)
+	}
+	expired := LeaseEntry{Owner: "w1", Fence: 10, ExpiredAt: now.Add(-time.Second)}
+	taken, err := AcquireOrRenewLease(expired, "w2", 12, now, time.Minute)
+	if err != nil || taken.Owner != "w2" || taken.Fence != 12 {
+		t.Fatalf("takeover failed: %v %#v", err, taken)
+	}
+}
+''',
+    },
+    13: {
+        "title": "给并发设置门票与背压",
+        "prompt": "实现 WorkerGate.Execute：使用非阻塞 select-default 预留槽位，满载立即返回 ErrOverloaded，执行完毕释放。",
+        "code": '''package main
+
 import "errors"
-var ErrUnauthorized=errors.New("unauthorized");var ErrInvalid=errors.New("invalid")
-type CreateRequest struct{Tenant,ClientUser string;Amount int}
-func validateCreate(r CreateRequest) error { // TODO
-    return nil
+
+var ErrOverloaded = errors.New("worker pool overloaded")
+
+type WorkerGate struct {
+	sem chan struct{}
 }
-''',"test":'''package main
-import("errors";"testing")
-func TestValidateCreate(t *testing.T){cs:=[]struct{r CreateRequest;w error}{{CreateRequest{"t1","",10},nil},{CreateRequest{"","",10},ErrUnauthorized},{CreateRequest{"t1","u9",10},ErrUnauthorized},{CreateRequest{"t1","",0},ErrInvalid}};for _,c:=range cs{if !errors.Is(validateCreate(c.r),c.w){t.Fatalf("got %v want %v",validateCreate(c.r),c.w)}}}'''},
-    10: {"title":"把业务与存储拆开","prompt":"让 Service 通过 BillStore 保存账单。","code":'''package main
-type BillStore interface{Save(string,int)error};type Service struct{store BillStore}
-func(s Service)Create(id string,amount int)error { // TODO
-    return nil
+
+func NewWorkerGate(capacity int) *WorkerGate {
+	return &WorkerGate{sem: make(chan struct{}, capacity)}
 }
-''',"test":'''package main
-import "testing"
-type fakeStore struct{calls int;id string;amount int};func(f *fakeStore)Save(id string,a int)error{f.calls++;f.id=id;f.amount=a;return nil}
-func TestService(t *testing.T){f:=&fakeStore{};e:=(Service{f}).Create("b1",7);if e!=nil||f.calls!=1||f.id!="b1"||f.amount!=7{t.Fatalf("%#v %v",f,e)}}'''},
-    11: {"title":"让重复请求只落一笔","prompt":"同一幂等键返回原账单，不重复写入。","code":'''package main
-type Ledger struct{byKey map[string]string;writes int}
-func(l *Ledger)Create(key,id string)string { // TODO
-    return ""
+
+func (g *WorkerGate) Execute(fn func() error) error {
+	// TODO: 1. 使用 select-default 非阻塞预留槽位；若满立即返回 ErrOverloaded
+	//       2. 预留成功后，确保退出时释放槽位
+	//       3. 执行 fn() 并返回其结果
+	return nil
 }
-''',"test":'''package main
-import "testing"
-func TestIdempotency(t *testing.T){l:=&Ledger{};a:=l.Create("k1","b1");b:=l.Create("k1","b2");if a!="b1"||b!="b1"||l.writes!=1{t.Fatalf("%q %q %d",a,b,l.writes)}}'''},
-    12: {"title":"拒绝迟到的旧缓存","prompt":"只有新版本才能更新缓存。","code":'''package main
-type Entry struct{Value string;Version int}
-func putNewer(c map[string]Entry,k string,n Entry)bool { // TODO
-    return false
+''',
+        "test": '''package main
+
+import (
+	"errors"
+	"testing"
+)
+
+func TestWorkerGate(t *testing.T) {
+	gate := NewWorkerGate(1)
+	ran := false
+	err := gate.Execute(func() error {
+		ran = true
+		return gate.Execute(func() error { return nil })
+	})
+	if !ran || !errors.Is(err, ErrOverloaded) {
+		t.Fatalf("want ErrOverloaded, got %v", err)
+	}
+	if err := gate.Execute(func() error { return nil }); err != nil {
+		t.Fatalf("slot not released: %v", err)
+	}
 }
-''',"test":'''package main
-import "testing"
-func TestCache(t *testing.T){c:=map[string]Entry{"b":{"new",2}};if putNewer(c,"b",Entry{"old",1})||c["b"].Value!="new"{t.Fatal("old won")};if !putNewer(c,"b",Entry{"newest",3}){t.Fatal("new lost")}}'''},
-    13: {"title":"给并发设置门票","prompt":"容量满时立即拒绝，不能阻塞。","code":'''package main
-func tryAcquire(s chan struct{})bool { // TODO
-    return false
-}
-func release(s chan struct{}){<-s}
-''',"test":'''package main
-import "testing"
-func TestAdmission(t *testing.T){s:=make(chan struct{},1);if !tryAcquire(s)||tryAcquire(s){t.Fatal("limit")};release(s);if !tryAcquire(s){t.Fatal("reuse")}}'''},
-    14: {"title":"断线后停止发送","prompt":"发送时同时响应 context 取消。","code":'''package main
+''',
+    },
+    14: {
+        "title": "断线后停止发送与游标重放",
+        "prompt": "实现 ReplayEventsAfter：过滤 ID > lastID 的事件，发送时响应 ctx.Done() 客户端断线退出。",
+        "code": '''package main
+
 import "context"
-func send(ctx context.Context,out chan<- string,v string)bool { // TODO
-    return false
+
+type Event struct {
+	ID      int64
+	Payload string
 }
-''',"test":'''package main
-import("context";"testing")
-func TestSend(t *testing.T){out:=make(chan string,1);if !send(context.Background(),out,"x")||<-out!="x"{t.Fatal("send")};ctx,c:=context.WithCancel(context.Background());c();if send(ctx,make(chan string),"x"){t.Fatal("cancel")}}'''},
-    15: {"title":"把一次请求串起来","prompt":"补齐 request_id、bill_id 和 stage。","code":'''package main
-func fields(r,b,s string)map[string]string { // TODO
-    return nil
+
+func ReplayEventsAfter(ctx context.Context, events []Event, lastID int64, out chan<- Event) error {
+	// TODO: 1. 遍历 events，只发送 ID > lastID 的事件
+	//       2. 发送时使用 select，监听 ctx.Done()，若已取消立即返回 ctx.Err()
+	//       3. 全部发送完毕返回 nil
+	return nil
 }
-''',"test":'''package main
+''',
+        "test": '''package main
+
+import (
+	"context"
+	"errors"
+	"testing"
+)
+
+func TestReplayEventsAfter(t *testing.T) {
+	events := []Event{{ID: 1, Payload: "e1"}, {ID: 2, Payload: "e2"}, {ID: 3, Payload: "e3"}}
+	out := make(chan Event, 5)
+
+	if err := ReplayEventsAfter(context.Background(), events, 1, out); err != nil {
+		t.Fatal(err)
+	}
+	if len(out) != 2 || (<-out).ID != 2 || (<-out).ID != 3 {
+		t.Fatal("wrong replayed events")
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	fullOut := make(chan Event)
+	if err := ReplayEventsAfter(ctx, events, 0, fullOut); !errors.Is(err, context.Canceled) {
+		t.Fatalf("want context.Canceled, got %v", err)
+	}
+}
+''',
+    },
+    15: {
+        "title": "把一次请求串起来：结构化追踪",
+        "prompt": "实现 NewAuditEntry：校验 tenant 和 run 追踪上下文非空，记录毫秒耗时与阶段状态。",
+        "code": '''package main
+
+import (
+	"errors"
+	"time"
+)
+
+var ErrMissingTrace = errors.New("missing trace context")
+
+type AuditEntry struct {
+	TenantID string
+	RunID    string
+	Stage    string
+	Status   string
+	Duration int64
+}
+
+func NewAuditEntry(tenant, run, stage, status string, elapsed time.Duration) (AuditEntry, error) {
+	// TODO: 1. tenant 和 run 不能为空，否则返回 ErrMissingTrace
+	//       2. 记录 Duration 为毫秒 (elapsed.Milliseconds())
+	//       3. 构造并返回完整 AuditEntry
+	return AuditEntry{}, nil
+}
+''',
+        "test": '''package main
+
+import (
+	"errors"
+	"testing"
+	"time"
+)
+
+func TestAuditEntry(t *testing.T) {
+	if _, err := NewAuditEntry("", "r1", "worker", "ok", time.Second); !errors.Is(err, ErrMissingTrace) {
+		t.Fatal("expected missing trace")
+	}
+	entry, err := NewAuditEntry("t1", "r1", "worker", "succeeded", 250*time.Millisecond)
+	if err != nil || entry.Duration != 250 || entry.TenantID != "t1" || entry.Stage != "worker" {
+		t.Fatalf("unexpected entry: %#v", entry)
+	}
+}
+''',
+    },
+    16: {
+        "title": "让灰度知道何时停",
+        "prompt": "实现 EvaluateCanary：回滚指令、未完成数据库迁移或错误率超标时准确阻断发布。",
+        "code": '''package main
+
+type CanaryMetrics struct {
+	Requests      int
+	Errors        int
+	Migrated      bool
+	RollbackOrder bool
+}
+
+func EvaluateCanary(m CanaryMetrics, maxRate float64) (bool, string) {
+	// TODO: 1. 若收到回滚指令 (m.RollbackOrder)，返回 false, "rollback"
+	//       2. 若数据库迁移未就绪 (!m.Migrated)，返回 false, "pending-migration"
+	//       3. 若请求数 > 0 且错误率 (Errors/Requests) > maxRate，返回 false, "high-error-rate"
+	//       4. 均满足返回 true, "healthy"
+	return false, ""
+}
+''',
+        "test": '''package main
+
 import "testing"
-func TestFields(t *testing.T){f:=fields("r1","b1","worker");if len(f)!=3||f["request_id"]!="r1"||f["bill_id"]!="b1"||f["stage"]!="worker"{t.Fatalf("%v",f)}}'''},
-    16: {"title":"让灰度知道何时停","prompt":"错误率超标或迁移未就绪都停止。","code":'''package main
-func canaryOK(rate,limit float64,ready bool)bool { // TODO
-    return true
+
+func TestCanaryEvaluation(t *testing.T) {
+	if ok, reason := EvaluateCanary(CanaryMetrics{Requests: 100, Errors: 1, Migrated: true}, 0.02); !ok || reason != "healthy" {
+		t.Fatal("should be healthy")
+	}
+	if ok, reason := EvaluateCanary(CanaryMetrics{Requests: 100, Errors: 5, Migrated: true}, 0.02); ok || reason != "high-error-rate" {
+		t.Fatal("should fail on error rate")
+	}
+	if ok, reason := EvaluateCanary(CanaryMetrics{Requests: 10, Errors: 0, Migrated: false}, 0.02); ok || reason != "pending-migration" {
+		t.Fatal("should fail on migration")
+	}
+	if ok, reason := EvaluateCanary(CanaryMetrics{RollbackOrder: true, Migrated: true}, 0.02); ok || reason != "rollback" {
+		t.Fatal("should fail on rollback")
+	}
 }
-''',"test":'''package main
-import "testing"
-func TestCanary(t *testing.T){if !canaryOK(.01,.02,true)||canaryOK(.03,.02,true)||canaryOK(0,.02,false){t.Fatal("gate")}}'''},
-    17: {"title":"验证工具输出形状","prompt":"缺状态或摘要时关闭失败。","code":'''package main
+''',
+    },
+    17: {
+        "title": "验证模型决策：严格 Fail Closed",
+        "prompt": "实现 ValidateDecision：answer 与 tool 互斥，未知 Kind 与字段混杂必须返回 ErrInvalidDecision。",
+        "code": '''package main
+
 import "errors"
-var ErrBadOutput=errors.New("bad tool output");type ToolResult struct{Status,Digest string}
-func validateToolResult(r ToolResult)error { // TODO
-    return nil
+
+var ErrInvalidDecision = errors.New("invalid decision")
+
+type Decision struct {
+	Kind     string
+	Answer   string
+	ToolName string
 }
-''',"test":'''package main
-import("errors";"testing")
-func TestOutput(t *testing.T){if validateToolResult(ToolResult{"ok","sha256:x"})!=nil{t.Fatal("valid")};for _,r:=range []ToolResult{{"","x"},{"ok",""}}{if !errors.Is(validateToolResult(r),ErrBadOutput){t.Fatal("invalid")}}}'''},
-    18: {"title":"给副作用加审批门","prompt":"写和删需要审批，只读不需要。","code":'''package main
-func needsApproval(effect string)bool { // TODO
-    return false
+
+func ValidateDecision(d Decision) error {
+	// TODO: 1. 若 Kind == "answer"：Answer 不能为空且 ToolName 必须为空
+	//       2. 若 Kind == "tool"：ToolName 不能为空且 Answer 必须为空
+	//       3. 其他任何 Kind 或混合状态均返回 ErrInvalidDecision (Fail Closed)
+	return nil
 }
-''',"test":'''package main
+''',
+        "test": '''package main
+
+import (
+	"errors"
+	"testing"
+)
+
+func TestValidateDecision(t *testing.T) {
+	if err := ValidateDecision(Decision{Kind: "answer", Answer: "Done"}); err != nil {
+		t.Fatal("answer should be valid")
+	}
+	if err := ValidateDecision(Decision{Kind: "tool", ToolName: "read"}); err != nil {
+		t.Fatal("tool should be valid")
+	}
+	for _, bad := range []Decision{
+		{Kind: "answer", Answer: ""},
+		{Kind: "answer", Answer: "ok", ToolName: "leak"},
+		{Kind: "tool", ToolName: ""},
+		{Kind: "tool", ToolName: "read", Answer: "leak"},
+		{Kind: "unknown"},
+	} {
+		if !errors.Is(ValidateDecision(bad), ErrInvalidDecision) {
+			t.Fatalf("expected ErrInvalidDecision for %#v", bad)
+		}
+	}
+}
+''',
+    },
+    18: {
+        "title": "工具沙箱：净化路径防逃逸",
+        "prompt": "实现 ValidateToolPath：净化相对路径，拦截绝对路径与 ../ 目录穿透攻击。",
+        "code": '''package main
+
+import (
+	"errors"
+	"path"
+	"strings"
+)
+
+var ErrPathTraversal = errors.New("path traversal detected")
+
+func ValidateToolPath(raw string) (string, error) {
+	// TODO: 1. 使用 path.Clean 清理路径
+	//       2. 拒绝空路径、以 "/" 开头的绝对路径
+	//       3. 拒绝 ".." 或以 "../" 开头的逃逸路径，返回 ErrPathTraversal
+	//       4. 返回清理后的相对路径
+	return "", nil
+}
+''',
+        "test": '''package main
+
+import (
+	"errors"
+	"testing"
+)
+
+func TestValidateToolPath(t *testing.T) {
+	clean, err := ValidateToolPath("ledger/report.csv")
+	if err != nil || clean != "ledger/report.csv" {
+		t.Fatalf("valid path failed: %v %s", err, clean)
+	}
+	for _, bad := range []string{"", "/etc/passwd", "../secret", "a/../../b"} {
+		if _, err := ValidateToolPath(bad); !errors.Is(err, ErrPathTraversal) {
+			t.Fatalf("expected traversal error for %q, got %v", bad, err)
+		}
+	}
+}
+''',
+    },
+    19: {
+        "title": "一次执行的一生：Step 状态对账",
+        "prompt": "实现 ReconcileStep：已完成收口、超限放弃、失败/孤儿重试，正常调度分配。",
+        "code": '''package main
+
+type StepRecord struct {
+	State    string
+	Attempts int
+}
+
+func ReconcileStep(s StepRecord, maxAttempts int) (action string, retryable bool) {
+	// TODO: 1. 若 State == "completed"，返回 "done", false
+	//       2. 若 Attempts >= maxAttempts，返回 "abandon", false
+	//       3. 若 State == "failed" 或 "running"（崩溃孤儿），返回 "retry", true
+	//       4. 其他情况返回 "dispatch", true
+	return "", false
+}
+''',
+        "test": '''package main
+
 import "testing"
-func TestApproval(t *testing.T){for in,w:=range map[string]bool{"read":false,"write":true,"delete":true,"unknown":true}{if needsApproval(in)!=w{t.Fatal(in)}}}'''},
-    19: {"title":"恢复时沿用原调用号","prompt":"Unknown 复用 CallID，成功不重跑。","code":'''package main
-type Step struct{State,CallID string}
-func reconcile(s Step)(string,bool) { // TODO
-    return "",false
+
+func TestReconcileStep(t *testing.T) {
+	if act, ret := ReconcileStep(StepRecord{State: "completed", Attempts: 1}, 3); act != "done" || ret {
+		t.Fatal("completed failed")
+	}
+	if act, ret := ReconcileStep(StepRecord{State: "failed", Attempts: 3}, 3); act != "abandon" || ret {
+		t.Fatal("abandon failed")
+	}
+	if act, ret := ReconcileStep(StepRecord{State: "running", Attempts: 1}, 3); act != "retry" || !ret {
+		t.Fatal("orphan failed")
+	}
+	if act, ret := ReconcileStep(StepRecord{State: "pending", Attempts: 0}, 3); act != "dispatch" || !ret {
+		t.Fatal("dispatch failed")
+	}
 }
-''',"test":'''package main
-import "testing"
-func TestReconcile(t *testing.T){id,run:=reconcile(Step{"unknown","c7"});if id!="c7"||!run{t.Fatal(id,run)};_,run=reconcile(Step{"succeeded","c7"});if run{t.Fatal("reran")}}'''},
-    20: {"title":"上下文不能超预算","prompt":"按顺序收材料，超预算就停。","code":'''package main
-func assemble(parts []string,budget int)[]string { // TODO
-    return nil
+''',
+    },
+    20: {
+        "title": "上下文预算裁剪",
+        "prompt": "实现 AssembleContext：按顺序累计字符，遇到超出 charBudget 立即停止追加。",
+        "code": '''package main
+
+type ContextPart struct {
+	Role     string
+	Content  string
+	Priority int
 }
-''',"test":'''package main
-import "testing"
-func TestBudget(t *testing.T){g:=assemble([]string{"spec","code","logs"},8);if len(g)!=2||g[0]!="spec"||g[1]!="code"||len(assemble([]string{"long"},3))!=0{t.Fatalf("%v",g)}}'''},
-    21: {"title":"默认拒绝陌生工具","prompt":"工具在白名单，写操作还要审批。","code":'''package main
-func allowed(name string,write,approved bool,allow map[string]bool)bool { // TODO
-    return false
+
+func AssembleContext(parts []ContextPart, charBudget int) []string {
+	// TODO: 1. 遍历 parts，累计字符长度
+	//       2. 若已用字符数 + len(p.Content) > charBudget，立即 break 退出
+	//       3. 返回所有装配好的 Content 切片
+	return nil
 }
-''',"test":'''package main
+''',
+        "test": '''package main
+
 import "testing"
-func TestAllowed(t *testing.T){a:=map[string]bool{"search":true,"deploy":true};if !allowed("search",false,false,a)||allowed("deploy",true,false,a)||!allowed("deploy",true,true,a)||allowed("shell",false,false,a){t.Fatal("policy")}}'''},
-    22: {"title":"重试不能超过总账","prompt":"次数、时间和类型都满足才重试。","code":'''package main
-func mayRetry(attempt,max,elapsed,budget int,retryable bool)bool { // TODO
-    return true
+
+func TestAssembleContext(t *testing.T) {
+	parts := []ContextPart{
+		{Role: "system", Content: "sys", Priority: 1},
+		{Role: "user", Content: "hello", Priority: 2},
+		{Role: "context", Content: "data", Priority: 3},
+	}
+	out := AssembleContext(parts, 8)
+	if len(out) != 2 || out[0] != "sys" || out[1] != "hello" {
+		t.Fatalf("budget 8 failed: %#v", out)
+	}
+	if len(AssembleContext(parts, 2)) != 0 {
+		t.Fatal("should reject overbudget")
+	}
 }
-''',"test":'''package main
-import "testing"
-func TestRetry(t *testing.T){if !mayRetry(1,3,20,100,true)||mayRetry(3,3,20,100,true)||mayRetry(1,3,100,100,true)||mayRetry(1,3,20,100,false){t.Fatal("budget")}}'''},
-    23: {"title":"候选改动必须过四道门","prompt":"隔离、测试、审查、人工确认缺一不可。","code":'''package main
-func promotable(i,t,r,a bool)bool { // TODO
-    return true
+''',
+    },
+    21: {
+        "title": "工具权限与审批防线",
+        "prompt": "实现 AuthorizeTool：工具必须在白名单内，写操作必须附带 approved 审批确认。",
+        "code": '''package main
+
+type ToolPolicy struct {
+	AllowList map[string]bool
+	WriteOps  map[string]bool
 }
-''',"test":'''package main
-import "testing"
-func TestPromote(t *testing.T){if !promotable(true,true,true,true){t.Fatal("good")};for _,c:=range [][4]bool{{false,true,true,true},{true,false,true,true},{true,true,false,true},{true,true,true,false}}{if promotable(c[0],c[1],c[2],c[3]){t.Fatal(c)}}}'''},
-    24: {"title":"验收最终执行回执","prompt":"身份、调用号、结果和摘要必须匹配。","code":'''package main
-type Receipt struct{Tenant,CallID,Outcome,Digest string}
-func acceptReceipt(r Receipt,tenant,callID string)bool { // TODO
-    return true
+
+func AuthorizeTool(p ToolPolicy, tool string, approved bool) bool {
+	// TODO: 1. 工具必须存在于 AllowList 中且值为 true
+	//       2. 若工具在 WriteOps 中为写操作，必须 approved==true
+	//       3. 满足返回 true，否则 false
+	return false
 }
-''',"test":'''package main
+''',
+        "test": '''package main
+
 import "testing"
-func TestReceipt(t *testing.T){g:=Receipt{"t1","c1","succeeded","sha256:x"};if !acceptReceipt(g,"t1","c1"){t.Fatal("good")};for _,r:=range []Receipt{{"t2","c1","succeeded","x"},{"t1","c2","succeeded","x"},{"t1","c1","unknown","x"},{"t1","c1","succeeded",""}}{if acceptReceipt(r,"t1","c1"){t.Fatal(r)}}}'''},
+
+func TestAuthorizeTool(t *testing.T) {
+	p := ToolPolicy{
+		AllowList: map[string]bool{"query_balance": true, "transfer_money": true},
+		WriteOps:  map[string]bool{"transfer_money": true},
+	}
+	if !AuthorizeTool(p, "query_balance", false) {
+		t.Fatal("read op without approval should be allowed")
+	}
+	if AuthorizeTool(p, "transfer_money", false) {
+		t.Fatal("write op without approval must be blocked")
+	}
+	if !AuthorizeTool(p, "transfer_money", true) {
+		t.Fatal("approved write op should pass")
+	}
+	if AuthorizeTool(p, "exec_shell", true) {
+		t.Fatal("unregistered tool must be blocked")
+	}
+}
+''',
+    },
+    22: {
+        "title": "重试预算与错误可重试性",
+        "prompt": "实现 ShouldRetry：429 与 5xx 放行重试，4xx 客户端错误与超预算快速失败。",
+        "code": '''package main
+
+func ShouldRetry(status, attempt, maxAttempts int, elapsedMS, budgetMS int) bool {
+	// TODO: 1. attempt 必须 < maxAttempts 且 elapsedMS 必须 < budgetMS
+	//       2. 只有 429 和 5xx（如 500, 502, 503）允许重试；400/401/403/404 等客户端错误不可重试
+	//       3. 均满足返回 true，否则 false
+	return false
+}
+''',
+        "test": '''package main
+
+import "testing"
+
+func TestShouldRetry(t *testing.T) {
+	if !ShouldRetry(429, 1, 3, 50, 200) || !ShouldRetry(503, 2, 3, 50, 200) {
+		t.Fatal("retryable cases failed")
+	}
+	if ShouldRetry(400, 1, 3, 50, 200) || ShouldRetry(403, 1, 3, 50, 200) {
+		t.Fatal("client errors must not retry")
+	}
+	if ShouldRetry(503, 3, 3, 50, 200) || ShouldRetry(503, 1, 3, 200, 200) {
+		t.Fatal("over budget must not retry")
+	}
+}
+''',
+    },
+    23: {
+        "title": "双重评测门禁：基准与安全红线",
+        "prompt": "实现 PassEvaluationGate：安全违规 0 容忍、测试全过且得分达标方可晋级。",
+        "code": '''package main
+
+type EvalReport struct {
+	Score              float64
+	SecurityViolations int
+	TestsPassed        bool
+}
+
+func PassEvaluationGate(report EvalReport, minScore float64) bool {
+	// TODO: 1. 安全违规必须为 0（零容忍）
+	//       2. 所有单元测试必须通过 (TestsPassed == true)
+	//       3. 基准打分必须 >= minScore
+	//       4. 三者兼备返回 true，否则 false
+	return false
+}
+''',
+        "test": '''package main
+
+import "testing"
+
+func TestPassEvaluationGate(t *testing.T) {
+	if !PassEvaluationGate(EvalReport{Score: 85.0, SecurityViolations: 0, TestsPassed: true}, 80.0) {
+		t.Fatal("should pass gate")
+	}
+	if PassEvaluationGate(EvalReport{Score: 99.0, SecurityViolations: 1, TestsPassed: true}, 80.0) {
+		t.Fatal("security violation must fail closed")
+	}
+	if PassEvaluationGate(EvalReport{Score: 85.0, SecurityViolations: 0, TestsPassed: false}, 80.0) {
+		t.Fatal("failing tests must fail gate")
+	}
+	if PassEvaluationGate(EvalReport{Score: 75.0, SecurityViolations: 0, TestsPassed: true}, 80.0) {
+		t.Fatal("score below threshold must fail")
+	}
+}
+''',
+    },
+    24: {
+        "title": "结业总装：调度执行并签署审计回执",
+        "prompt": "实现 CoordinateAndReceipt：跨模块串联请求校验、任务执行、失败收口与成功时的 SHA-256 审计摘要签署。",
+        "code": '''package main
+
+import (
+	"crypto/sha256"
+	"errors"
+	"fmt"
+)
+
+var ErrInvalidRun = errors.New("invalid run parameters")
+
+type RunRequest struct {
+	TenantID string
+	RunID    string
+	Input    string
+}
+
+type RunReceipt struct {
+	TenantID string
+	RunID    string
+	CallID   string
+	Outcome  string
+	Digest   string
+}
+
+func CoordinateAndReceipt(req RunRequest, callID string, execute func(string) (string, error)) (RunReceipt, error) {
+	// TODO: 结业总装协调器：
+	// 1. 校验 req.TenantID, req.RunID, callID 均不能为空，否则返回 ErrInvalidRun
+	// 2. 调用 execute(req.Input)
+	// 3. 若 execute 出错，Outcome="failed"，Digest 为空的 RunReceipt
+	// 4. 若 execute 成功，Outcome="succeeded"，计算输出内容的 sha256 摘要（格式为 "sha256:十六进制"）
+	// 5. 返回装配完成的最终审计回执
+	return RunReceipt{}, nil
+}
+''',
+        "test": '''package main
+
+import (
+	"crypto/sha256"
+	"errors"
+	"fmt"
+	"testing"
+)
+
+func TestCoordinateAndReceipt(t *testing.T) {
+	_, err := CoordinateAndReceipt(RunRequest{TenantID: "", RunID: "r1"}, "c1", func(string) (string, error) { return "ok", nil })
+	if !errors.Is(err, ErrInvalidRun) {
+		t.Fatalf("want ErrInvalidRun, got %v", err)
+	}
+
+	rec, err := CoordinateAndReceipt(RunRequest{TenantID: "t1", RunID: "r1", Input: "audit"}, "c1", func(in string) (string, error) {
+		return "ledger output: " + in, nil
+	})
+	expectedDigest := fmt.Sprintf("sha256:%x", sha256.Sum256([]byte("ledger output: audit")))
+	if err != nil || rec.Outcome != "succeeded" || rec.Digest != expectedDigest || rec.TenantID != "t1" || rec.CallID != "c1" {
+		t.Fatalf("success run failed: %#v, err: %v", rec, err)
+	}
+
+	failRec, err := CoordinateAndReceipt(RunRequest{TenantID: "t1", RunID: "r1"}, "c1", func(string) (string, error) {
+		return "", errors.New("boom")
+	})
+	if err != nil || failRec.Outcome != "failed" || failRec.Digest != "" {
+		t.Fatalf("failed run failed: %#v, err: %v", failRec, err)
+	}
+}
+''',
+    },
 })
 
 GO_PRACTICE_SOLUTIONS = {
@@ -1287,63 +1940,396 @@ func stream(ctx context.Context,values []int)<-chan int{out:=make(chan int);go f
 
 GO_PRACTICE_SOLUTIONS.update({
     9: '''package main
-import "errors"
-var ErrUnauthorized=errors.New("unauthorized");var ErrInvalid=errors.New("invalid")
-type CreateRequest struct{Tenant,ClientUser string;Amount int}
-func validateCreate(r CreateRequest)error{if r.Tenant==""||r.ClientUser!=""{return ErrUnauthorized};if r.Amount<=0{return ErrInvalid};return nil}
+
+import (
+	"encoding/json"
+	"net/http"
+	"strings"
+)
+
+type CreateRunRequest struct {
+	Input string `json:"input"`
+}
+
+func HandleCreateRun(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	tenant := strings.TrimSpace(r.Header.Get("X-Tenant-ID"))
+	if tenant == "" {
+		http.Error(w, "missing tenant", http.StatusUnauthorized)
+		return
+	}
+	var body CreateRunRequest
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil || strings.TrimSpace(body.Input) == "" {
+		http.Error(w, "bad input", http.StatusBadRequest)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	_, _ = w.Write([]byte(`{"status":"accepted"}`))
+}
 ''',
     10: '''package main
-type BillStore interface{Save(string,int)error};type Service struct{store BillStore}
-func(s Service)Create(id string,amount int)error{return s.store.Save(id,amount)}
+
+import (
+	"context"
+	"errors"
+)
+
+var (
+	ErrInvalidRequest = errors.New("invalid request")
+	ErrAlreadyExists  = errors.New("already exists")
+)
+
+type Store interface {
+	Exists(ctx context.Context, tenant, id string) (bool, error)
+	Save(ctx context.Context, tenant, id string, amount int) error
+}
+
+type Service struct {
+	store Store
+}
+
+func (s Service) CreateRun(ctx context.Context, tenant, id string, amount int) error {
+	if tenant == "" || id == "" || amount <= 0 {
+		return ErrInvalidRequest
+	}
+	exists, err := s.store.Exists(ctx, tenant, id)
+	if err != nil {
+		return err
+	}
+	if exists {
+		return ErrAlreadyExists
+	}
+	return s.store.Save(ctx, tenant, id, amount)
+}
 ''',
     11: '''package main
-type Ledger struct{byKey map[string]string;writes int}
-func(l *Ledger)Create(key,id string)string{if l.byKey==nil{l.byKey=map[string]string{}};if old,ok:=l.byKey[key];ok{return old};l.byKey[key]=id;l.writes++;return id}
+
+import (
+	"errors"
+	"sync"
+)
+
+var ErrIdempotencyConflict = errors.New("idempotency conflict")
+
+type RunRecord struct {
+	RunID string
+	Input string
+}
+
+type IdempotentStore struct {
+	mu      sync.Mutex
+	records map[string]RunRecord
+}
+
+func (s *IdempotentStore) CreateOrGet(tenant, key, runID, input string) (RunRecord, bool, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.records == nil {
+		s.records = make(map[string]RunRecord)
+	}
+	composite := tenant + ":" + key
+	if old, ok := s.records[composite]; ok {
+		if old.Input != input {
+			return RunRecord{}, false, ErrIdempotencyConflict
+		}
+		return old, false, nil
+	}
+	rec := RunRecord{RunID: runID, Input: input}
+	s.records[composite] = rec
+	return rec, true, nil
+}
 ''',
     12: '''package main
-type Entry struct{Value string;Version int}
-func putNewer(c map[string]Entry,k string,n Entry)bool{if old,ok:=c[k];ok&&n.Version<old.Version{return false};c[k]=n;return true}
+
+import (
+	"errors"
+	"time"
+)
+
+var (
+	ErrLeaseOccupied = errors.New("lease occupied")
+	ErrStaleFence    = errors.New("stale fence")
+)
+
+type LeaseEntry struct {
+	Owner     string
+	Fence     int64
+	ExpiredAt time.Time
+}
+
+func AcquireOrRenewLease(cur LeaseEntry, reqOwner string, reqFence int64, now time.Time, ttl time.Duration) (LeaseEntry, error) {
+	if now.Before(cur.ExpiredAt) && cur.Owner != reqOwner && cur.Owner != "" {
+		return LeaseEntry{}, ErrLeaseOccupied
+	}
+	if reqFence <= cur.Fence {
+		return LeaseEntry{}, ErrStaleFence
+	}
+	return LeaseEntry{Owner: reqOwner, Fence: reqFence, ExpiredAt: now.Add(ttl)}, nil
+}
 ''',
     13: '''package main
-func tryAcquire(s chan struct{})bool{select{case s<-struct{}{}:return true;default:return false}};func release(s chan struct{}){<-s}
+
+import "errors"
+
+var ErrOverloaded = errors.New("worker pool overloaded")
+
+type WorkerGate struct {
+	sem chan struct{}
+}
+
+func NewWorkerGate(capacity int) *WorkerGate {
+	return &WorkerGate{sem: make(chan struct{}, capacity)}
+}
+
+func (g *WorkerGate) Execute(fn func() error) error {
+	select {
+	case g.sem <- struct{}{}:
+		defer func() { <-g.sem }()
+		return fn()
+	default:
+		return ErrOverloaded
+	}
+}
 ''',
     14: '''package main
+
 import "context"
-func send(ctx context.Context,out chan<- string,v string)bool{select{case <-ctx.Done():return false;case out<-v:return true}}
+
+type Event struct {
+	ID      int64
+	Payload string
+}
+
+func ReplayEventsAfter(ctx context.Context, events []Event, lastID int64, out chan<- Event) error {
+	for _, e := range events {
+		if e.ID > lastID {
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			case out <- e:
+			}
+		}
+	}
+	return nil
+}
 ''',
     15: '''package main
-func fields(r,b,s string)map[string]string{return map[string]string{"request_id":r,"bill_id":b,"stage":s}}
+
+import (
+	"errors"
+	"time"
+)
+
+var ErrMissingTrace = errors.New("missing trace context")
+
+type AuditEntry struct {
+	TenantID string
+	RunID    string
+	Stage    string
+	Status   string
+	Duration int64
+}
+
+func NewAuditEntry(tenant, run, stage, status string, elapsed time.Duration) (AuditEntry, error) {
+	if tenant == "" || run == "" {
+		return AuditEntry{}, ErrMissingTrace
+	}
+	return AuditEntry{
+		TenantID: tenant,
+		RunID:    run,
+		Stage:    stage,
+		Status:   status,
+		Duration: elapsed.Milliseconds(),
+	}, nil
+}
 ''',
     16: '''package main
-func canaryOK(rate,limit float64,ready bool)bool{return ready&&rate<=limit}
+
+type CanaryMetrics struct {
+	Requests      int
+	Errors        int
+	Migrated      bool
+	RollbackOrder bool
+}
+
+func EvaluateCanary(m CanaryMetrics, maxRate float64) (bool, string) {
+	if m.RollbackOrder {
+		return false, "rollback"
+	}
+	if !m.Migrated {
+		return false, "pending-migration"
+	}
+	if m.Requests > 0 && float64(m.Errors)/float64(m.Requests) > maxRate {
+		return false, "high-error-rate"
+	}
+	return true, "healthy"
+}
 ''',
     17: '''package main
+
 import "errors"
-var ErrBadOutput=errors.New("bad tool output");type ToolResult struct{Status,Digest string}
-func validateToolResult(r ToolResult)error{if r.Status==""||r.Digest==""{return ErrBadOutput};return nil}
+
+var ErrInvalidDecision = errors.New("invalid decision")
+
+type Decision struct {
+	Kind     string
+	Answer   string
+	ToolName string
+}
+
+func ValidateDecision(d Decision) error {
+	switch d.Kind {
+	case "answer":
+		if d.Answer != "" && d.ToolName == "" {
+			return nil
+		}
+	case "tool":
+		if d.ToolName != "" && d.Answer == "" {
+			return nil
+		}
+	}
+	return ErrInvalidDecision
+}
 ''',
     18: '''package main
-func needsApproval(effect string)bool{return effect!="read"}
+
+import (
+	"errors"
+	"path"
+	"strings"
+)
+
+var ErrPathTraversal = errors.New("path traversal detected")
+
+func ValidateToolPath(raw string) (string, error) {
+	if raw == "" || strings.HasPrefix(raw, "/") {
+		return "", ErrPathTraversal
+	}
+	cleaned := path.Clean(raw)
+	if cleaned == ".." || strings.HasPrefix(cleaned, "../") {
+		return "", ErrPathTraversal
+	}
+	return cleaned, nil
+}
 ''',
     19: '''package main
-type Step struct{State,CallID string}
-func reconcile(s Step)(string,bool){if s.State=="unknown"{return s.CallID,true};return s.CallID,false}
+
+type StepRecord struct {
+	State    string
+	Attempts int
+}
+
+func ReconcileStep(s StepRecord, maxAttempts int) (action string, retryable bool) {
+	if s.State == "completed" {
+		return "done", false
+	}
+	if s.Attempts >= maxAttempts {
+		return "abandon", false
+	}
+	if s.State == "failed" || s.State == "running" {
+		return "retry", true
+	}
+	return "dispatch", true
+}
 ''',
     20: '''package main
-func assemble(parts []string,budget int)[]string{out:=[]string{};used:=0;for _,p:=range parts{if used+len(p)>budget{break};out=append(out,p);used+=len(p)};return out}
+
+type ContextPart struct {
+	Role     string
+	Content  string
+	Priority int
+}
+
+func AssembleContext(parts []ContextPart, charBudget int) []string {
+	var out []string
+	used := 0
+	for _, p := range parts {
+		if used+len(p.Content) > charBudget {
+			break
+		}
+		out = append(out, p.Content)
+		used += len(p.Content)
+	}
+	return out
+}
 ''',
     21: '''package main
-func allowed(name string,write,approved bool,allow map[string]bool)bool{return allow[name]&&(!write||approved)}
+
+type ToolPolicy struct {
+	AllowList map[string]bool
+	WriteOps  map[string]bool
+}
+
+func AuthorizeTool(p ToolPolicy, tool string, approved bool) bool {
+	if !p.AllowList[tool] {
+		return false
+	}
+	if p.WriteOps[tool] && !approved {
+		return false
+	}
+	return true
+}
 ''',
     22: '''package main
-func mayRetry(attempt,max,elapsed,budget int,retryable bool)bool{return retryable&&attempt<max&&elapsed<budget}
+
+func ShouldRetry(status, attempt, maxAttempts int, elapsedMS, budgetMS int) bool {
+	if attempt >= maxAttempts || elapsedMS >= budgetMS {
+		return false
+	}
+	return status == 429 || (status >= 500 && status < 600)
+}
 ''',
     23: '''package main
-func promotable(i,t,r,a bool)bool{return i&&t&&r&&a}
+
+type EvalReport struct {
+	Score              float64
+	SecurityViolations int
+	TestsPassed        bool
+}
+
+func PassEvaluationGate(report EvalReport, minScore float64) bool {
+	return report.SecurityViolations == 0 && report.TestsPassed && report.Score >= minScore
+}
 ''',
     24: '''package main
-type Receipt struct{Tenant,CallID,Outcome,Digest string}
-func acceptReceipt(r Receipt,tenant,callID string)bool{return r.Tenant==tenant&&r.CallID==callID&&r.Outcome=="succeeded"&&r.Digest!=""}
+
+import (
+	"crypto/sha256"
+	"errors"
+	"fmt"
+)
+
+var ErrInvalidRun = errors.New("invalid run parameters")
+
+type RunRequest struct {
+	TenantID string
+	RunID    string
+	Input    string
+}
+
+type RunReceipt struct {
+	TenantID string
+	RunID    string
+	CallID   string
+	Outcome  string
+	Digest   string
+}
+
+func CoordinateAndReceipt(req RunRequest, callID string, execute func(string) (string, error)) (RunReceipt, error) {
+	if req.TenantID == "" || req.RunID == "" || callID == "" {
+		return RunReceipt{}, ErrInvalidRun
+	}
+	out, err := execute(req.Input)
+	if err != nil {
+		return RunReceipt{TenantID: req.TenantID, RunID: req.RunID, CallID: callID, Outcome: "failed"}, nil
+	}
+	digest := fmt.Sprintf("sha256:%x", sha256.Sum256([]byte(out)))
+	return RunReceipt{TenantID: req.TenantID, RunID: req.RunID, CallID: callID, Outcome: "succeeded", Digest: digest}, nil
+}
 ''',
 })
 
@@ -1439,6 +2425,22 @@ PRACTICE_COACHING = {
     4: ("固定测试会把 fakeReader 传给 readName。", ["接口只写调用方真正需要的方法。", "方法签名必须和 fakeReader.Get 完全一致。", "定义 type Reader interface { Get(string) (string, error) }。"]),
     7: ("固定测试会重复启动 1000 个 goroutine，并用 -race 查数据竞争。", ["WaitGroup 只负责等人，不负责保护 total。", "在 total++ 前后加同一把 Mutex。", "Lock 后递增，并在 Unlock 后让 goroutine 结束。"]),
     8: ("固定测试会提前取消，并要求输出 channel 很快关闭。", ["由创建 channel 的 goroutine 负责 close。", "发送不能只写 out <- value。", "用 select 同时等待 ctx.Done() 和 out <- value。"]),
+    9: ("固定测试会检查 HTTP 方法 (405)、租户 Header (401)、空输入 (400) 与成功创建 (201)。", ["先检查 r.Method 是否为 http.MethodPost，不符返回 405。", "从 r.Header.Get(\"X-Tenant-ID\") 取租户身份，缺失返回 401。", "用 json.NewDecoder(r.Body).Decode 解析请求体并校验 Input。"]),
+    10: ("固定测试会注入 mockStore，验证参数校验、重复拦截与分层数据传递。", ["入参为空或金额非正时返回 ErrInvalidRequest。", "调用 s.store.Exists 检测唯一记录，已存在返回 ErrAlreadyExists。", "正常情况调用 s.store.Save 并如实返回结果。"]),
+    11: ("固定测试会验证复合键隔离、相同键幂等回放、不同载荷冲突与多租户隔离。", ["用 tenant + \":\" + key 构成字典复合唯一键。", "已存在时若 Input 不同返回 ErrIdempotencyConflict，相同返回旧记录且 created=false。", "操作 records 时注意并发互斥加锁。"]),
+    12: ("固定测试会验证租约占用拦截、单调递增 Fencing Token 与过期安全接管。", ["租约未过期且持有者非当前 worker 时返回 ErrLeaseOccupied。", "请求的 reqFence 必须严格大于当前 cur.Fence，否则返回 ErrStaleFence。", "校验通过后返回续约后的 LeaseEntry 并延长有效时长。"]),
+    13: ("固定测试会验证 Worker 槽位网关：满载立即返回 ErrOverloaded，执行完毕安全释放。", ["使用 select-default 尝试向缓冲 channel 存入门票。", "槽位满时走 default 分支立即返回 ErrOverloaded。", "门票预留成功后用 defer 释放，并执行目标函数。"]),
+    14: ("固定测试会验证 SSE 游标增量过滤 (ID > lastID) 与客户端断线取消退出。", ["遍历 events 列表，只挑出 ID > lastID 的增量事件。", "向通道推送时用 select 同时监听 ctx.Done()。", "一旦检测到 context 取消，立即返回 ctx.Err()。"]),
+    15: ("固定测试会校验租户与 Run 追踪上下文字段非空，并将耗时换算为毫秒。", ["检查 tenant 和 run 追踪标识，任一缺失返回 ErrMissingTrace。", "调用 elapsed.Milliseconds() 将时间换算为毫秒整数。", "构造并返回包含各阶段元数据的完整 AuditEntry。"]),
+    16: ("固定测试会验证灰度发布门禁：回滚指令、未就绪迁移或错误率超标时准确熔断。", ["收到回滚指令时立即返回 false 与 rollback 原因。", "数据库迁移未就绪时阻断上线。", "有请求且错误率超阈值时返回 high-error-rate，一切正常返回 healthy。"]),
+    17: ("固定测试会验证决策状态机 Fail Closed：答案与工具互斥，拒绝未知 Kind 与混合参数。", ["使用 switch 严格匹配 Kind 为 answer 或 tool。", "answer 类型要求 Answer 非空且 ToolName 为空。", "tool 类型要求 ToolName 非空且 Answer 为空，其余均返回 ErrInvalidDecision。"]),
+    18: ("固定测试会使用 path.Clean 净化路径，并拦截绝对路径与目录逃逸攻击。", ["拒绝空路径以及以 / 开头的绝对路径。", "调用 path.Clean 净化冗余层级。", "检查净化后的路径是否为 .. 或以 ../ 开头，违规返回 ErrPathTraversal。"]),
+    19: ("固定测试会验证 Step 状态机对账：完成收口、超限放弃、失败/孤儿重试与待调度分发。", ["已完成状态直接标记 done 且不可重试。", "重试次数达到上限标记 abandon 并终止。", "失败或运行中（孤儿）标记 retry 并允许重试。"]),
+    20: ("固定测试会验证按优先级和字符预算装配提示词，超预算立即停止追加。", ["遍历消息切片，累计已占用的字符总数。", "当前已用长度加上当前消息若超出预算则 break 退出。", "将入选消息加入结果切片并返回。"]),
+    21: ("固定测试会验证白名单拦截，以及对只读工具放行、写操作必须提供审批确认的策略。", ["首先校验目标工具是否存在于 AllowList 白名单中。", "若工具属于 WriteOps 写操作，必须附带 approved==true。", "仅在白名单且满足写审批条件时返回 true。"]),
+    22: ("固定测试会验证重试预算：429 与 5xx 允许重试，4xx 客户端错误与超预算快速失败。", ["重试次数或耗时超预算时立即返回 false。", "针对 429 与 500~599 服务端瞬态错误放行重试。", "针对 400~499 客户端错误不予重试，避免无效重试。"]),
+    23: ("固定测试会验证双重门禁：安全违规 0 容忍、单元测试全过与基准达标缺一不可。", ["安全违规数 SecurityViolations 必须严格为 0。", "所有单元测试必须为通过状态 TestsPassed==true。", "评测基准得分必须达到最低阈值 minScore。"]),
+    24: ("固定测试会验证结业作品端到端调度器：参数校验、执行调用、失败收口与成功时签署 SHA-256 审计摘要。", ["校验 TenantID, RunID 与调用号非空，缺失返回 ErrInvalidRun。", "调用执行函数，失败时记录 Outcome=\"failed\"。", "成功时用 crypto/sha256 计算输出摘要，产出完整的审计回执。"]),
 }
 
 EXTRA_GLOSSARY = {
@@ -1607,15 +2609,25 @@ def workshop_payload(index: int, chapter: dict) -> dict:
         }
     if index == 24:
         payload["capstone"] = {
-            "title": "结业作品：可审计的账单 Harness",
-            "brief": "把前三卷的本领合成一个能运行、能失败、能追责的小项目。先做最小版本，再逐道加门。",
+            "title": "结业作品：可审计的账单 Harness (Ledger Agent)",
+            "brief": "把前三卷的工程能力合成一个可下载、可运行、可自测的企业级智能体服务。支持一键下载完整 Starter 源码包并在本地运行竞态检测。",
+            "downloadUrl": "downloads/ledger-agent-starter.zip",
+            "downloadName": "ledger-agent-starter.zip",
+            "architecture": [
+                "1. HTTP 接入层：租户认证、严格 JSON、429 背压与 SSE 实时事件",
+                "2. 领域状态机：并发安全的 Run/Step 状态持久化、租约与 Fencing 递增",
+                "3. 幂等与隔离：tenant_id + idempotency_key 联合唯一约束与防重碰撞",
+                "4. 执行工作池：带容量上限的非阻塞 Worker 槽位调度与超时级联取消",
+                "5. 安全工具沙箱：os.Root 路径穿越防护、只读/写副作用权限审批",
+                "6. Provider 适配：严格 Decision 解码、Fail Closed 与本地确定性 Mock",
+                "7. 离线安全评测：基准用例打分与恶意越权调用独立红线门禁",
+            ],
             "deliverables": [
-                "README：画出请求、业务、存储、工具执行和回执五段链路",
-                "Go API：创建与查询账单，包含认证、校验、错误映射和幂等键",
-                "可靠性：并发上限、context 取消、事务与版本化缓存测试",
-                "可观测性：request_id、bill_id、run_id、call_id 能串起一次执行",
-                "Harness：工具白名单、写操作审批、重试预算和 Unknown 对账",
-                "验收证据：go test、go test -race、失败样例与最终回执摘要",
+                "完整代码包：解压即跑的 Go 1.24+ 生产级微服务骨架（包含 Makefile / verify.sh）",
+                "跨章装配链路：由第 9~23 章所写核心决策代码逐一拼接而成的真实系统",
+                "端到端集成测试：go test -race ./... 验证高并发、网络超时与异常注入",
+                "安全评测门禁：go run ./cmd/server eval 执行红蓝对抗与合规打分",
+                "离线验收证明：本地生成包含 SHA-256 签名的工程交付收据 (Receipt)",
             ],
         }
     return payload
@@ -2031,6 +3043,7 @@ def main() -> None:
     })
     RUNNER_EXERCISES_OUT.write_text(json.dumps(runner_exercises, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     RUNNER_RUBRICS_OUT.write_text(json.dumps({f"chapter-{index}": [[field[1]] for field in value[:3]] for index, value in STRUCTURED_PRACTICES.items()}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    build_starter_zip()
     print(json.dumps({"status": "pass", "output": str(DATA_OUT), "stats": payload["stats"]}, ensure_ascii=False))
 
 

@@ -3,13 +3,13 @@
   "claim": "engineering acceptance",
   "score": 100,
   "version": "18.7.0",
-  "generatedAt": "2026-09-16T09:24:49.929000+00:00",
+  "generatedAt": "2026-09-17T01:43:41.612178+00:00",
   "environment": {
     "python": "3.12.14",
     "go": "go version go1.25.5 darwin/arm64",
     "platform": "darwin",
-    "runnerPort": 49359,
-    "runnerPid": 35767
+    "runnerPort": 50530,
+    "runnerPid": 21726
   },
   "checks": [
     {
@@ -169,112 +169,112 @@
       "case": "exercise-9",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:7e29c06af93cc913386634563d3a7727064d328be4749da9249d34558ed5b996",
+      "digest": "sha256:31f5a317b103a118d4f7cbf332d5d73e56362cdefdba4d2d27c5ff393a18b99c",
       "runProof": true
     },
     {
       "case": "exercise-10",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:acee51450394371b92a4c84ebec8080333a1e90bf9b0b2000b70ba7b846dc0d5",
+      "digest": "sha256:cc1883309bf11ab39c5954a984af61992d7a8247fc7234fb670c7c7750a844d3",
       "runProof": true
     },
     {
       "case": "exercise-11",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:654dad75329342a52193848da0bb0a08ca895a1d9528af4b70a62f8eaf2a0d60",
+      "digest": "sha256:6d97f6fd2fcf987fc823565e35a37064fae4a0cf70b57d91379b5d77b1f0404d",
       "runProof": true
     },
     {
       "case": "exercise-12",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:be0b013e8f8fd61b731d9174665b94160352b83f71d3dc42a15c38f083137a41",
+      "digest": "sha256:be3e2fe879ac81f8a0bfcf62196cba1164ffc208e140394a0650587ce03da50a",
       "runProof": true
     },
     {
       "case": "exercise-13",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:8188faf33836b62bb8a377f85ae59993de5264490025afdb1beeaa30f3b4aee3",
+      "digest": "sha256:041ecae56198ab6399cf99dcdb8d5a55d9f2950fccb68b9eab29589a3a417392",
       "runProof": true
     },
     {
       "case": "exercise-14",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:69be65db20a2b828f3cab44826a1c91e24b3479c175d89feb77ca548f19f4cf9",
+      "digest": "sha256:7e1b5762c7013de8cce4ef24cd747fc0abc7ad591149ad1e7079caa3659d5028",
       "runProof": true
     },
     {
       "case": "exercise-15",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:76246e08c3bbe60ebc882c1cdafea922c7d6c748df7db5606e7d7f8771c70804",
+      "digest": "sha256:3011dd2c1a0ea4f3135d2584c160d6c122ff2769ebaba52af220505639a72705",
       "runProof": true
     },
     {
       "case": "exercise-16",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:91817f6187fe2c74f642696e25b3eea680e7dcddf75f82d6b5509a6aad9f6787",
+      "digest": "sha256:76da2c10cd03bdd5eaa6a999e9dfa3bf4594c0c87169e7cd9e96a8348c18b5ae",
       "runProof": true
     },
     {
       "case": "exercise-17",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:8ceb476ec04085d70452812e6a0dff1dcd6b294b2fb11baa462c34031e2c92d6",
+      "digest": "sha256:9925136aa5711072817e73a51772f18701ca026a18b81c84a353279a2da17440",
       "runProof": true
     },
     {
       "case": "exercise-18",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:4c9e815aba93a6173df38d8feda2b2c02386c25a6a89a9faecd202cb55976d35",
+      "digest": "sha256:3961e5efc330b6ba7cd661d0cddf5fb02a33c0c58b4ff93d67b033b0df0ee11c",
       "runProof": true
     },
     {
       "case": "exercise-19",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:097473d92ef6ba2b77e75d521c48420dddd29974c1ef2feb2f51161c14772010",
+      "digest": "sha256:da50383608b0425e91a29bda4fbf90318daa81edf45e8b265b7d925d30d2a5c7",
       "runProof": true
     },
     {
       "case": "exercise-20",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:9f458e0e448fafb393e356bd8efc084262f5b6af49d560f05052e90a67b6c994",
+      "digest": "sha256:754b9e344d74a60d45e5669573cb9caf9524c01b7efdbbbbac852090153d5f03",
       "runProof": true
     },
     {
       "case": "exercise-21",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:beca961cab4f0ab29dc4f03959c0a86b0aba2d81e6eb204abd00d69898973be1",
+      "digest": "sha256:cbc8435f9b823d56db0cbf5370a7cc80a67654fb75965d60400c08518e7a0932",
       "runProof": true
     },
     {
       "case": "exercise-22",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:a7c8cd8811de11864dfb86d863190bdc74811d5351d34a8498e6cbe21f7bb2f2",
+      "digest": "sha256:ca8c8dcc031e22f69e513d8cfa6e8ab7c0e0eb76f8971b0252786467063c4318",
       "runProof": true
     },
     {
       "case": "exercise-23",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:e6fd9773a6f63010291b552c987c7ad6f32d77b4ec639891a04c35c6cdf7b9e9",
+      "digest": "sha256:137b49db9fea30fae1a57abe204ce832598be9c1a5468cd29604fa3fc62e4643",
       "runProof": true
     },
     {
       "case": "exercise-24",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:cf1819c2c064febfd15777e6864112bd8b6d49258b59caa399cc9fd0467fe3d3",
+      "digest": "sha256:3844ae4ecec8ba10a8908dee016084fda0030bc622d3758aaf40d819cae948c3",
       "runProof": true
     },
     {
@@ -605,7 +605,7 @@
     {
       "case": "project-completion-valid",
       "status": 200,
-      "digest": "sha256:327f1a0229510ca32fe158b2f945cd07493ff39d2be231356792454f98c24761"
+      "digest": "sha256:6dbec1fe1cf5d908fcbd5f81f577b99de7818cd7f94942364e98fc2a12f7de18"
     },
     {
       "case": "project-completion-no-challenge",
@@ -635,25 +635,25 @@
   },
   "sha256": {
     "VERSION": "64c531a67b4c54a664e1e868e90e3c605a700d0547b9962affe2c404b95f6883",
-    "build_html.py": "98b926382467f3f31c6fed935306ecf5b8a12a9069278e3aa685fd68a911718e",
-    "verify_v18.py": "4fd63354d794a5d993bedbb2ca9fd0ea17de6a36ef73e1677578a1fc7d54f9ea",
+    "build_html.py": "f5fe7721d93a7a2944946387dce199ffc790e8c3ff789f017bca068d47c54adc",
+    "verify_v18.py": "7aaa99b7f7ce0fb3623b69d66bf0032a9cb9948b000082b8c58b33050c244d9b",
     "verify-v18.sh": "044dd8b323ba6d35f18f3e681227d0afc15165cd1b1763be49996eaa66037686",
     "interactive/index.html": "c4a9a0e6db089f1b8e7b1431843479709e67b794a0a386f44bb034253a0438f0",
-    "interactive/app.js": "2a4543ef6b240b311392250d8aa9d21fd3c50ab7d65a8a09ecc2aa6f19bc8d48",
-    "interactive/styles.css": "d2b925208aeb84e3ab1ac4eaaa37e0938336be620bef1e64cc73f9931de21142",
-    "interactive/data/book.json": "6252eb0c8368938ba6d9a1502b0cf08356b4640f78823e15d1a754426b7e5c71",
+    "interactive/app.js": "78b02ad28f18ec5cae564c6a8356cf02f7bc3a4d85d1301d5cf2575eea9d83ef",
+    "interactive/styles.css": "bc085357fc718edee24f7d7e10537f41087537a5094a629da1863ab4f1093c3a",
+    "interactive/data/book.json": "b9f61e29641ae3d53cbe7ee515a330a3712f2345225e421e1a25eb74775562af",
     "runner/main.go": "225763ca5ee4e317cfc19d17cd44a426f8c93091764fcff6e3d2832286549eb9",
     "runner/main_test.go": "4babbcf0d39e6121f6e4906f59bf736ed6447b84b77538c19abc08bec70e9421",
-    "runner/exercises.json": "aede258ced9d27ae511778875f6b8c1a5542504f05c1c1d826e6295e9199aed7",
+    "runner/exercises.json": "25b80fb5dbddd2f1f04e2636122c1aa995c5042a815e54e9e31e01c28e4aa53d",
     "runner/rubrics.json": "26c004e11b36b0e164b0dbbd3f82a5df259011f0e9252f3a51ebf8ba79b2fe72",
     "labs/harness-lab/go.mod": "40b1455a3c7ad1499c0ea2a9a3f06778d57daec835890d8638a1fa4ea20be9ba",
     "labs/harness-lab/harness.go": "07807ad2e04d20227a4c1ef17c37943b80b16300113c59b13bfb4fbf0fa654ec",
     "labs/harness-lab/harness_test.go": "7a5f4153d52e3840b2d263229f2b058a267aaa1984bc6a65d61cb697ff818dae",
-    "browser_audit.mjs": "fdaa4f3e9a80db2be13db7c1aa1dbf728899694dc084e09f9a594cbb2364343c",
+    "browser_audit.mjs": "6a2e54df1326bd12869cee71ed1a32a7e46e5ecb338eaa9d03c21df5407cad30",
     "enterprise_learning_audit.mjs": "b0e14ed05ba55004fc28029f41643bc066d754005fc29da2651707e921f3c5e7",
     "package.json": "6b997a3796f666524be37d2570530cc5c6d94b6a0ffe5a2fe42bad448d13b60e",
     "package-lock.json": "0b376a2316f008098e032047b02934b859523f3e12bec466f4e15f488011a562",
-    "evidence/browser-v18.json": "998cc27c4a688e4568b1f954af9b5e3d03d7c05558b4bbd2dc34dfff841005a2",
+    "evidence/browser-v18.json": "e3b2f12b5a3a8abe84140ee07695c9dd0b0d8f3ef06292e8b3ef94d2cd0934b0",
     "labs/ledger-agent/README.md": "7566eb6ab3aa528a7d3e0384d18f479228fba486bd2da9d611c511b7b72a1eb4",
     "labs/ledger-agent/cmd/server/main.go": "1fae0195d46f92d2e5d7024805cad25cfe10980d5fa7385d209a180763256016",
     "labs/ledger-agent/eval.go": "7db5927eb1ab18dc7767b3ae756c695369f8de01e5c7c6d7adf7ee19c06883ea",
