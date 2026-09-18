@@ -1,12 +1,12 @@
 {
   "status": "pass",
   "version": "18.7.0",
-  "generatedAt": "2026-09-18T04:33:10.534Z",
-  "url": "http://127.0.0.1:59065",
+  "generatedAt": "2026-09-18T10:24:54.310Z",
+  "url": "http://127.0.0.1:60999",
   "units": 79,
   "artifactSha256": {
     "VERSION": "64c531a67b4c54a664e1e868e90e3c605a700d0547b9962affe2c404b95f6883",
-    "interactive/index.html": "6cc0e0d7c311b03b2dc53f4feea383a21975e48ca3497e3b40ad1a3735bb30d6",
+    "interactive/index.html": "a73b8cf9b38802344283d5d502ec7aeee26c88b8b2c3c5c8e6591933daf21994",
     "interactive/app.js": "79aa1e43b7ee3cf6b289e1ad69f45f75a5354002ff5c8cc70d87c08f4e97a358",
     "interactive/styles.css": "d5748129345d0c43aa235ac94d221f02918a4145ca9f9d3d91245cf4776e4bae",
     "interactive/data/book.json": "b9f61e29641ae3d53cbe7ee515a330a3712f2345225e421e1a25eb74775562af",
@@ -4153,11 +4153,11 @@
   "screenshots": {
     "desktop": {
       "path": "evidence/browser-v18-desktop.png",
-      "sha256": "2751522c3e26b8dde9ac645992be2b08163295370c65860f869b264678bba37c"
+      "sha256": "8968cbe804b8adb97644a86ee57f9bda20e2963bca1cf81e6718b3668d33671a"
     },
     "mobile": {
       "path": "evidence/browser-v18-mobile.png",
-      "sha256": "73c9a9515cd2e106f3ca138f7e77e454e0079d26081d82467633e09769214efd"
+      "sha256": "ab5e287517bc265f03e6b335909aa17fe12e3f8adb603422ab5357fe193e0a0d"
     }
   }
 }

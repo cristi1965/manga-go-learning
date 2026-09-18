@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f5f1e9">
-  <title>漫画Go学习 · Go 后端与 Harness AI 互动学堂</title>
+  <title>Go</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css?v=18.7.0">
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="#top" aria-label="回到首页"><span class="brand-mark">Go</span><span><strong>漫画Go学习</strong><small>Go 后端与 Harness AI</small></span></a>
+    <a class="brand" href="#top" aria-label="回到首页"><span class="brand-mark">Go</span><span><strong>Go</strong><small>Go 后端与系统工程</small></span></a>
     <div class="top-actions">
       <button class="icon-button menu-button" id="menuToggle" title="打开目录" aria-label="打开目录" aria-controls="chapterSidebar" aria-expanded="false">☰</button>
       <button class="icon-button" id="searchToggle" title="搜索章节" aria-label="搜索章节">⌕</button>
@@ -21,7 +21,7 @@
 
   <div class="app-shell" id="top">
     <aside class="sidebar" id="chapterSidebar" aria-label="章节导航">
-      <div class="sidebar-head"><span>修行目录</span><button class="sidebar-collapse" id="sidebarCollapse" title="收起目录" aria-label="收起目录">‹</button></div>
+      <div class="sidebar-head"><span>目录</span><button class="sidebar-collapse" id="sidebarCollapse" title="收起目录" aria-label="收起目录">‹</button></div>
       <div id="chapterNav" class="chapter-nav"></div>
       <div class="sidebar-foot"><span class="status-dot"></span><span id="savedStatus">进度保存在本机</span></div>
     </aside>
@@ -30,14 +30,14 @@
     <main class="main-content">
       <section class="welcome" id="welcome">
         <div class="welcome-copy">
-          <p class="eyebrow">互动学堂</p>
-          <h1>漫画Go学习<br><em>从看懂到会做</em></h1>
+          <p class="eyebrow">系统工程实战</p>
+          <h1>Go<br><em>从原理到工程实战</em></h1>
           <p class="lead">不是翻页背术语，而是跟着一场场事故，观察边界、改代码、验收结果。</p>
           <div class="welcome-actions"><button class="primary-button" id="startButton">从第一章开始 <span>→</span></button><button class="text-button" id="continueButton">继续上次进度</button></div>
           <div class="learning-paths" aria-label="选择学习路线"><button data-start-chapter="1"><b>Go 基础速通</b><span>第 1–8 章 · 中秋冲刺</span></button><button data-start-chapter="9"><b>并发与后端架构</b><span>第 9–16 章 · 国庆攻坚</span></button><button data-start-unit="supplement-go-ai-01"><b>Go + AI 智能体微服务</b><span>8 个必修核心里程碑</span></button><button data-start-chapter="17"><b>Harness AI 系统工程</b><span>高阶评测与防御收口</span></button></div>
           <div class="stat-strip"><span><strong id="statChapters">24</strong> 章</span><span><strong id="statSupplements">47</strong> 个选修补页</span><span><strong id="statDialogues">424</strong> 句对话</span></div>
         </div>
-        <div class="welcome-scene" aria-hidden="true"><div class="mountain mountain-one"></div><div class="mountain mountain-two"></div><div class="scene-table"></div><div class="scene-figure figure-al"></div><div class="scene-figure figure-chen"></div><div class="scene-dog">◡</div><div class="scene-note">小白先懂<br><b>再到工程</b></div></div>
+        <div class="welcome-scene" aria-hidden="true"><div class="mountain mountain-one"></div><div class="mountain mountain-two"></div><div class="scene-table"></div><div class="scene-figure figure-al"></div><div class="scene-figure figure-chen"></div><div class="scene-dog">◡</div><div class="scene-note">原理机制<br><b>再到工程</b></div></div>
       </section>
 
       <section class="unit-view hidden" id="unitView">
