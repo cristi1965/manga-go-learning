@@ -62,6 +62,27 @@ function progress() {
   $('#progressLabel').textContent = `${value}%`;
   $('#progressButton').setAttribute('aria-label', `总进度 ${value}%，主线 ${count}/${state.data.chapters.length}，项目 ${projectDone}/${projects.length}，待复习 ${state.wrong.length} 题`);
   $('.progress-ring').style.setProperty('--progress', `${value}%`);
+
+  const midDone = [1,2,3,4,5,6,7,8].filter((num) => state.completed.has(`chapter-${num}`)).length;
+  const natDone = (count - midDone) + projectDone;
+  const totalTarget = 24 + projects.length; // 32
+  const currentTotal = count + projectDone;
+  const fill = $('#holidayProgressFill');
+  if (fill) fill.style.width = `${Math.min(100, Math.round((currentTotal / totalTarget) * 100))}%`;
+  const targetText = $('#holidayTargetText');
+  if (targetText) targetText.textContent = `${currentTotal}/${totalTarget} 里程碑已完成 (${Math.round((currentTotal / totalTarget) * 100)}%)`;
+  const midElem = $('#stepMidAutumn');
+  if (midElem) {
+    midElem.className = `holiday-step ${midDone === 8 ? 'done' : 'active'}`;
+    const desc = $('#midAutumnStatus');
+    if (desc) desc.textContent = midDone === 8 ? '✓ 已全部通关 (8/8 章)' : `正在冲刺：已完成 ${midDone}/8 章`;
+  }
+  const natElem = $('#stepNational');
+  if (natElem) {
+    natElem.className = `holiday-step ${natDone === 24 ? 'done' : (midDone === 8 ? 'active' : '')}`;
+    const desc = $('#nationalStatus');
+    if (desc) desc.textContent = natDone === 24 ? '✓ 已全链路通关 (24/24 关卡)' : (midDone === 8 ? `正在攻坚：已完成 ${natDone}/24 关卡` : `等待中秋阶段通关后开启 · 已完成 ${natDone}/24 关卡`);
+  }
 }
 
 function saveState() {

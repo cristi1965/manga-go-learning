@@ -1,14 +1,14 @@
 {
   "status": "pass",
   "version": "18.7.0",
-  "generatedAt": "2026-09-18T10:45:28.198Z",
-  "url": "http://127.0.0.1:59359",
+  "generatedAt": "2026-09-18T11:53:30.342Z",
+  "url": "http://127.0.0.1:63988",
   "units": 79,
   "artifactSha256": {
     "VERSION": "64c531a67b4c54a664e1e868e90e3c605a700d0547b9962affe2c404b95f6883",
-    "interactive/index.html": "a73b8cf9b38802344283d5d502ec7aeee26c88b8b2c3c5c8e6591933daf21994",
-    "interactive/app.js": "79aa1e43b7ee3cf6b289e1ad69f45f75a5354002ff5c8cc70d87c08f4e97a358",
-    "interactive/styles.css": "364ec04601b45203a15143ecdab76129449e78cbced2577b31a0128cdf47e2ff",
+    "interactive/index.html": "171f59499968c7da6bf0d60ddb1249452567b36c2855bb3305e06ca8aea17d2e",
+    "interactive/app.js": "5bff31447c9407c12fce3d93c5bce532e999312a2f74813baa0a5e5bff0636be",
+    "interactive/styles.css": "cccdd50d409ba39a7f98910a9f945fc889d081525d66cf1382454ddfca8e93e1",
     "interactive/data/book.json": "b9f61e29641ae3d53cbe7ee515a330a3712f2345225e421e1a25eb74775562af",
     "runner/main.go": "225763ca5ee4e317cfc19d17cd44a426f8c93091764fcff6e3d2832286549eb9",
     "browser_audit.mjs": "6a2e54df1326bd12869cee71ed1a32a7e46e5ecb338eaa9d03c21df5407cad30",
@@ -4153,11 +4153,11 @@
   "screenshots": {
     "desktop": {
       "path": "evidence/browser-v18-desktop.png",
-      "sha256": "bbaf22315b4343ee808c9f90f164bf2a872a4f6e709605ad3954955223d1af07"
+      "sha256": "8968cbe804b8adb97644a86ee57f9bda20e2963bca1cf81e6718b3668d33671a"
     },
     "mobile": {
       "path": "evidence/browser-v18-mobile.png",
-      "sha256": "9ddc940ff2d14250dbc21df60390eb4fe61f33f6f3f87bfc6ad2f48b5937841b"
+      "sha256": "8a70ad7f086e8551e78b2ebd3f0443680c2c27ef7c1ae20a0acb53647947a4c9"
     }
   }
 }
