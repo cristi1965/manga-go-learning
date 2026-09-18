@@ -3,13 +3,13 @@
   "claim": "engineering acceptance",
   "score": 100,
   "version": "18.7.0",
-  "generatedAt": "2026-09-18T10:26:14.863981+00:00",
+  "generatedAt": "2026-09-18T10:46:59.096533+00:00",
   "environment": {
     "python": "3.12.14",
     "go": "go version go1.25.5 darwin/arm64",
     "platform": "darwin",
-    "runnerPort": 60999,
-    "runnerPid": 67796
+    "runnerPort": 59359,
+    "runnerPid": 92243
   },
   "checks": [
     {
@@ -605,7 +605,7 @@
     {
       "case": "project-completion-valid",
       "status": 200,
-      "digest": "sha256:6dbec1fe1cf5d908fcbd5f81f577b99de7818cd7f94942364e98fc2a12f7de18"
+      "digest": "sha256:3fb35e618a69753ebd7bf603db766d46ab54accea16c763586154edce23a9c46"
     },
     {
       "case": "project-completion-no-challenge",
@@ -640,7 +640,7 @@
     "verify-v18.sh": "044dd8b323ba6d35f18f3e681227d0afc15165cd1b1763be49996eaa66037686",
     "interactive/index.html": "a73b8cf9b38802344283d5d502ec7aeee26c88b8b2c3c5c8e6591933daf21994",
     "interactive/app.js": "79aa1e43b7ee3cf6b289e1ad69f45f75a5354002ff5c8cc70d87c08f4e97a358",
-    "interactive/styles.css": "d5748129345d0c43aa235ac94d221f02918a4145ca9f9d3d91245cf4776e4bae",
+    "interactive/styles.css": "364ec04601b45203a15143ecdab76129449e78cbced2577b31a0128cdf47e2ff",
     "interactive/data/book.json": "b9f61e29641ae3d53cbe7ee515a330a3712f2345225e421e1a25eb74775562af",
     "runner/main.go": "225763ca5ee4e317cfc19d17cd44a426f8c93091764fcff6e3d2832286549eb9",
     "runner/main_test.go": "4babbcf0d39e6121f6e4906f59bf736ed6447b84b77538c19abc08bec70e9421",
@@ -653,7 +653,7 @@
     "enterprise_learning_audit.mjs": "b0e14ed05ba55004fc28029f41643bc066d754005fc29da2651707e921f3c5e7",
     "package.json": "6b997a3796f666524be37d2570530cc5c6d94b6a0ffe5a2fe42bad448d13b60e",
     "package-lock.json": "0b376a2316f008098e032047b02934b859523f3e12bec466f4e15f488011a562",
-    "evidence/browser-v18.json": "f03e5a2d7368c987c012b42b6d6ef96b88344269bd38356402388d3a43edf8b0",
+    "evidence/browser-v18.json": "eb9361960ed2b417f4015a8fe99f56b8393c99f3bd7afa297f34133a241ee80c",
     "labs/ledger-agent/README.md": "7566eb6ab3aa528a7d3e0384d18f479228fba486bd2da9d611c511b7b72a1eb4",
     "labs/ledger-agent/cmd/server/main.go": "1fae0195d46f92d2e5d7024805cad25cfe10980d5fa7385d209a180763256016",
     "labs/ledger-agent/eval.go": "7db5927eb1ab18dc7767b3ae756c695369f8de01e5c7c6d7adf7ee19c06883ea",
