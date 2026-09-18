@@ -3,13 +3,13 @@
   "claim": "engineering acceptance",
   "score": 100,
   "version": "18.7.0",
-  "generatedAt": "2026-09-17T16:14:40.628122+00:00",
+  "generatedAt": "2026-09-18T02:32:17.536557+00:00",
   "environment": {
     "python": "3.12.14",
     "go": "go version go1.25.5 darwin/arm64",
     "platform": "darwin",
-    "runnerPort": 58472,
-    "runnerPid": 19552
+    "runnerPort": 58432,
+    "runnerPid": 26298
   },
   "checks": [
     {
@@ -605,7 +605,7 @@
     {
       "case": "project-completion-valid",
       "status": 200,
-      "digest": "sha256:962968d0ffaf0eb189ae14898fae5f72ca64f8ec823f760e17d56adfa9b0452f"
+      "digest": "sha256:d7c37f0fd861d7952fd762d268476ba7986888330cb9f965a8672feeed742311"
     },
     {
       "case": "project-completion-no-challenge",
@@ -638,9 +638,9 @@
     "build_html.py": "f5fe7721d93a7a2944946387dce199ffc790e8c3ff789f017bca068d47c54adc",
     "verify_v18.py": "7aaa99b7f7ce0fb3623b69d66bf0032a9cb9948b000082b8c58b33050c244d9b",
     "verify-v18.sh": "044dd8b323ba6d35f18f3e681227d0afc15165cd1b1763be49996eaa66037686",
-    "interactive/index.html": "c4a9a0e6db089f1b8e7b1431843479709e67b794a0a386f44bb034253a0438f0",
-    "interactive/app.js": "78b02ad28f18ec5cae564c6a8356cf02f7bc3a4d85d1301d5cf2575eea9d83ef",
-    "interactive/styles.css": "e13e012c5ea3addfbb2bcaf91d818149e6dcf1e9a1dd77b195079d43e058afc4",
+    "interactive/index.html": "7c437067d6fbd8b5f981886fd4e7c418682f006e56c95ed20c56bf62b3444971",
+    "interactive/app.js": "1fe5a89a21765df39291fb6c1f5c8c9fe69c6873a7df87584a1405f9a2adefdb",
+    "interactive/styles.css": "d5748129345d0c43aa235ac94d221f02918a4145ca9f9d3d91245cf4776e4bae",
     "interactive/data/book.json": "b9f61e29641ae3d53cbe7ee515a330a3712f2345225e421e1a25eb74775562af",
     "runner/main.go": "225763ca5ee4e317cfc19d17cd44a426f8c93091764fcff6e3d2832286549eb9",
     "runner/main_test.go": "4babbcf0d39e6121f6e4906f59bf736ed6447b84b77538c19abc08bec70e9421",
@@ -653,7 +653,7 @@
     "enterprise_learning_audit.mjs": "b0e14ed05ba55004fc28029f41643bc066d754005fc29da2651707e921f3c5e7",
     "package.json": "6b997a3796f666524be37d2570530cc5c6d94b6a0ffe5a2fe42bad448d13b60e",
     "package-lock.json": "0b376a2316f008098e032047b02934b859523f3e12bec466f4e15f488011a562",
-    "evidence/browser-v18.json": "c5e05a4f4a6bec98a9bb71618c8d06a80ddb4d5a2dca69dd9fd9627b991b93de",
+    "evidence/browser-v18.json": "7279f1f5dcba5cab009ca5c5cfeb1004558c5b445b71feab9fc1966223098d9d",
     "labs/ledger-agent/README.md": "7566eb6ab3aa528a7d3e0384d18f479228fba486bd2da9d611c511b7b72a1eb4",
     "labs/ledger-agent/cmd/server/main.go": "1fae0195d46f92d2e5d7024805cad25cfe10980d5fa7385d209a180763256016",
     "labs/ledger-agent/eval.go": "7db5927eb1ab18dc7767b3ae756c695369f8de01e5c7c6d7adf7ee19c06883ea",

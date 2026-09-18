@@ -1,14 +1,14 @@
 {
   "status": "pass",
   "version": "18.7.0",
-  "generatedAt": "2026-09-17T16:13:23.891Z",
-  "url": "http://127.0.0.1:58472",
+  "generatedAt": "2026-09-18T02:30:56.807Z",
+  "url": "http://127.0.0.1:58432",
   "units": 79,
   "artifactSha256": {
     "VERSION": "64c531a67b4c54a664e1e868e90e3c605a700d0547b9962affe2c404b95f6883",
-    "interactive/index.html": "c4a9a0e6db089f1b8e7b1431843479709e67b794a0a386f44bb034253a0438f0",
-    "interactive/app.js": "78b02ad28f18ec5cae564c6a8356cf02f7bc3a4d85d1301d5cf2575eea9d83ef",
-    "interactive/styles.css": "e13e012c5ea3addfbb2bcaf91d818149e6dcf1e9a1dd77b195079d43e058afc4",
+    "interactive/index.html": "7c437067d6fbd8b5f981886fd4e7c418682f006e56c95ed20c56bf62b3444971",
+    "interactive/app.js": "1fe5a89a21765df39291fb6c1f5c8c9fe69c6873a7df87584a1405f9a2adefdb",
+    "interactive/styles.css": "d5748129345d0c43aa235ac94d221f02918a4145ca9f9d3d91245cf4776e4bae",
     "interactive/data/book.json": "b9f61e29641ae3d53cbe7ee515a330a3712f2345225e421e1a25eb74775562af",
     "runner/main.go": "225763ca5ee4e317cfc19d17cd44a426f8c93091764fcff6e3d2832286549eb9",
     "browser_audit.mjs": "6a2e54df1326bd12869cee71ed1a32a7e46e5ecb338eaa9d03c21df5407cad30",
@@ -4157,7 +4157,7 @@
     },
     "mobile": {
       "path": "evidence/browser-v18-mobile.png",
-      "sha256": "60c9598f18fcebd96386e43c8a981f9642c7f41469c2c39fafc627540ee5fbaf"
+      "sha256": "06add7a143a77bf070e81fe3c651167e8d887c338a65941912a57d4055ca91e9"
     }
   }
 }

@@ -165,3 +165,21 @@ body.dark { --paper: #1b2425; --paper-strong: #253132; --ink: #eaf0e9; --muted: 
 .project-lab h3 { margin: 0 0 7px; font-size: 20px; }.project-lab p { margin: 0; color: var(--muted); }
 .project-lab-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 16px; }.project-lab-actions a { color: var(--blue); font-weight: 700; }
 .project-lab .run-result { margin-top: 14px; }
+
+/* Custom refined scrollbars */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--line) 60%, transparent); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* Capstone resume highlights card */
+.capstone-resume-box { margin-top: 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); overflow: hidden; }
+.capstone-resume-toggle { min-height: 44px; padding: 12px 16px; font-weight: 750; font-size: 14px; cursor: pointer; color: var(--ink); background: color-mix(in srgb, var(--teal) 30%, var(--paper)); display: flex; align-items: center; user-select: none; }
+.capstone-resume-toggle:hover { color: var(--blue); }
+.capstone-resume-body { padding: 16px; border-top: 1px solid var(--line); display: grid; gap: 12px; }
+.capstone-resume-text { margin: 0; padding: 14px; border-radius: 6px; background: var(--paper-strong); border: 1px solid var(--line); font: 13px/1.6 "SFMono-Regular", Consolas, monospace; color: var(--ink); white-space: pre-wrap; word-break: break-word; }
+.copy-resume-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; padding: 10px 18px; border: 1px solid var(--blue); border-radius: 6px; background: var(--blue); color: #fffdf8; font-weight: 700; font-size: 13px; cursor: pointer; justify-self: start; transition: filter .15s ease; }
+.copy-resume-btn:hover { filter: brightness(.92); }
+.copy-resume-btn:focus-visible { outline: 3px solid color-mix(in srgb, var(--blue) 65%, transparent); outline-offset: 2px; }
+.dark .copy-resume-btn { color: #172426; }
+
