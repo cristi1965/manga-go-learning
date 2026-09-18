@@ -1,13 +1,13 @@
 {
   "status": "pass",
   "version": "18.7.0",
-  "generatedAt": "2026-09-18T02:30:56.807Z",
-  "url": "http://127.0.0.1:58432",
+  "generatedAt": "2026-09-18T04:33:10.534Z",
+  "url": "http://127.0.0.1:59065",
   "units": 79,
   "artifactSha256": {
     "VERSION": "64c531a67b4c54a664e1e868e90e3c605a700d0547b9962affe2c404b95f6883",
-    "interactive/index.html": "7c437067d6fbd8b5f981886fd4e7c418682f006e56c95ed20c56bf62b3444971",
-    "interactive/app.js": "1fe5a89a21765df39291fb6c1f5c8c9fe69c6873a7df87584a1405f9a2adefdb",
+    "interactive/index.html": "6cc0e0d7c311b03b2dc53f4feea383a21975e48ca3497e3b40ad1a3735bb30d6",
+    "interactive/app.js": "79aa1e43b7ee3cf6b289e1ad69f45f75a5354002ff5c8cc70d87c08f4e97a358",
     "interactive/styles.css": "d5748129345d0c43aa235ac94d221f02918a4145ca9f9d3d91245cf4776e4bae",
     "interactive/data/book.json": "b9f61e29641ae3d53cbe7ee515a330a3712f2345225e421e1a25eb74775562af",
     "runner/main.go": "225763ca5ee4e317cfc19d17cd44a426f8c93091764fcff6e3d2832286549eb9",
@@ -4157,7 +4157,7 @@
     },
     "mobile": {
       "path": "evidence/browser-v18-mobile.png",
-      "sha256": "06add7a143a77bf070e81fe3c651167e8d887c338a65941912a57d4055ca91e9"
+      "sha256": "73c9a9515cd2e106f3ca138f7e77e454e0079d26081d82467633e09769214efd"
     }
   }
 }
