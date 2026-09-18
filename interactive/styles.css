@@ -201,5 +201,63 @@ body.dark { --paper: #1b2425; --paper-strong: #253132; --ink: #eaf0e9; --muted: 
 .holiday-step b { display: block; color: var(--ink); font-size: 12px; }
 .holiday-step p { margin: 2px 0 0; color: var(--muted); font-size: 11px; line-height: 1.4; }
 @media (max-width: 650px) { .holiday-milestones { grid-template-columns: 1fr; } }
+/* Today's recommendation row */
+.today-recommend { padding-top: 8px; border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent); font-size: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-height: 32px; }
+.today-rec-label { color: var(--muted); }
+.today-rec-link { border: 0; background: transparent; color: var(--blue); font-weight: 700; font-size: 12px; padding: 0; cursor: pointer; text-align: left; }
+.today-rec-link:hover { text-decoration: underline; }
+.today-rec-done { color: var(--green-deep); font-weight: 700; }
 
+/* Compact / Boss-Key mode */
+body.compact .welcome-scene,
+body.compact .holiday-sprint-card,
+body.compact .tradingagents-banner,
+body.compact .learning-paths,
+body.compact .stat-strip,
+body.compact .incident-card,
+body.compact .lead { display: none !important; }
+body.compact .welcome { grid-template-columns: 1fr; min-height: auto; }
+body.compact .welcome h1 { font-size: clamp(22px, 3vw, 30px); }
+body.compact .topbar { height: 52px; }
+body.compact .app-shell { min-height: calc(100vh - 52px); }
+body.compact .sidebar { top: 52px; height: calc(100vh - 52px); }
+body.compact .eyebrow { display: none; }
+body.compact .main-content { padding-top: 24px; padding-bottom: 40px; }
+body.compact .welcome-actions { margin-top: 12px; }
+body.compact .unit-header { padding-bottom: 12px; }
+body.compact #compactToggle { color: var(--blue); border-color: var(--blue); }
 
+/* TradingAgents Banner */
+.tradingagents-banner { margin-top: 20px; padding: 20px 22px; border: 1px solid var(--line); border-left: 4px solid var(--blue); border-radius: var(--radius); background: linear-gradient(135deg, color-mix(in srgb, var(--teal) 35%, var(--paper-strong)) 0%, var(--paper-strong) 100%); box-shadow: var(--shadow); }
+.ta-badge-wrap { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.ta-badge { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; color: #fffdf8; background: var(--blue); }
+.ta-sub { font-size: 11px; color: var(--muted); font-weight: 600; }
+.tradingagents-banner h3 { margin: 0 0 6px; font-size: 18px; color: var(--ink); }
+.tradingagents-banner p { margin: 0 0 16px; font-size: 13px; color: var(--muted); line-height: 1.6; }
+.ta-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.ta-link { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 8px; color: var(--blue); text-decoration: none; font-size: 13px; font-weight: 600; background: var(--paper-strong); }
+.ta-link:hover { border-color: var(--blue); }
+
+/* TradingAgents Dialog */
+.ta-dialog { width: min(820px, calc(100vw - 32px)); border: 1px solid var(--line); border-radius: 16px; padding: 0; color: var(--ink); background: var(--paper-strong); box-shadow: 0 25px 90px rgba(0,0,0,.28); }
+.ta-dialog::backdrop { background: rgba(20, 28, 29, .45); backdrop-filter: blur(4px); }
+.ta-dialog-content { display: grid; }
+.ta-dialog-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding: 20px 24px; border-bottom: 1px solid var(--line); }
+.ta-dialog-head h2 { margin: 6px 0 0; font-size: 20px; line-height: 1.3; }
+.ta-dialog-body { padding: 24px; max-height: calc(85vh - 100px); overflow-y: auto; display: grid; gap: 20px; }
+.ta-callout { padding: 14px 18px; border-radius: 10px; background: color-mix(in srgb, var(--teal) 50%, var(--paper)); border-left: 4px solid var(--green-deep); font-size: 13px; line-height: 1.65; }
+.ta-callout b { display: block; color: var(--ink); margin-bottom: 4px; font-size: 14px; }
+.ta-callout p { margin: 0; color: var(--muted); }
+.ta-arch-flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; align-items: stretch; margin: 4px 0; }
+.ta-flow-step { padding: 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); display: grid; align-content: flex-start; gap: 6px; }
+.ta-flow-step.highlight { border-color: var(--blue); background: color-mix(in srgb, var(--teal) 40%, var(--paper-strong)); box-shadow: 0 4px 14px rgba(43,85,94,.12); }
+.ta-flow-step .step-num { font-size: 11px; font-weight: 800; color: var(--blue); }
+.ta-flow-step b { font-size: 13px; color: var(--ink); line-height: 1.3; }
+.ta-flow-step p { margin: 0; font-size: 11px; color: var(--muted); line-height: 1.45; }
+.ta-flow-arrow { display: none; }
+@media (max-width: 768px) { .ta-arch-flow { grid-template-columns: 1fr; } }
+.ta-code-box { border: 1px solid #405251; border-radius: 10px; overflow: hidden; background: #101a1b; }
+.ta-code-title { padding: 10px 16px; border-bottom: 1px solid #2e3e3d; display: flex; justify-content: space-between; align-items: center; color: #a9bbb6; font-size: 12px; }
+.ta-code-title b { color: #91dfc3; }
+.ta-code-box pre { margin: 0; padding: 16px; overflow-x: auto; color: #e7eee8; font: 12.5px/1.6 "SFMono-Regular", Consolas, monospace; }
+.ta-dialog-footer { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding-top: 10px; border-top: 1px solid var(--line); }

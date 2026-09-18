@@ -2621,12 +2621,14 @@ def workshop_payload(index: int, chapter: dict) -> dict:
                 "5. 安全工具沙箱：os.Root 路径穿越防护、只读/写副作用权限审批",
                 "6. Provider 适配：严格 Decision 解码、Fail Closed 与本地确定性 Mock",
                 "7. 离线安全评测：基准用例打分与恶意越权调用独立红线门禁",
+                "8. 金融实战联动：对接 TradingAgents 多智能体投研系统，Go 作为低延迟交易网关、CAS 租约 Fencing 与复式记账底座",
             ],
             "deliverables": [
                 "完整代码包：解压即跑的 Go 1.24+ 生产级微服务骨架（包含 Makefile / verify.sh）",
                 "跨章装配链路：由第 9~23 章所写核心决策代码逐一拼接而成的真实系统",
                 "端到端集成测试：go test -race ./... 验证高并发、网络超时与异常注入",
                 "安全评测门禁：go run ./cmd/server eval 执行红蓝对抗与合规打分",
+                "金融多智能体联动：提供对接 TradingAgents（基本面/技术面/情绪分析师）的 Go 网关契约与测试样例",
                 "离线验收证明：本地生成包含 SHA-256 签名的工程交付收据 (Receipt)",
             ],
         }

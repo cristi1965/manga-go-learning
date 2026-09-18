@@ -83,6 +83,20 @@ function progress() {
     const desc = $('#nationalStatus');
     if (desc) desc.textContent = natDone === 24 ? '✓ 已全链路通关 (24/24 关卡)' : (midDone === 8 ? `正在攻坚：已完成 ${natDone}/24 关卡` : `等待中秋阶段通关后开启 · 已完成 ${natDone}/24 关卡`);
   }
+  // Today's recommendation
+  const todayElem = $('#todayRecommend');
+  if (todayElem && state.data) {
+    const nextChapter = state.data.chapters.find((ch) => !state.completed.has(ch.id));
+    const nextProject = state.units.find((u) => u.projectLab && !state.completed.has(u.id));
+    if (!nextChapter && !nextProject) {
+      todayElem.innerHTML = '<span class="today-rec-done">🎉 全链路通关！</span>';
+    } else {
+      const target = nextChapter || nextProject;
+      const label = nextChapter ? `第 ${nextChapter.number} 章 · ${esc(nextChapter.shortTitle)}` : `里程碑 · ${esc(nextProject.title)}`;
+      todayElem.innerHTML = `<span class="today-rec-label">今日建议：</span><button class="today-rec-link" data-today-unit="${target.id}">${label} →</button>`;
+      todayElem.querySelector('[data-today-unit]')?.addEventListener('click', () => openUnit(target.id));
+    }
+  }
 }
 
 function saveState() {
@@ -310,9 +324,9 @@ function renderExercise(unit) {
   const resultId = `run-result-${unit.id}`;
   const hintHtml = exercise?.hints?.length ? `<details class="exercise-hints"><summary>卡住了？按顺序看提示</summary><ol>${exercise.hints.map((hint) => `<li>${esc(hint)}</li>`).join('')}</ol></details>` : '';
   const codeExercise = exercise ? `<div class="code-exercise" data-code-exercise><div><h3>${esc(exercise.title)}</h3><p>${esc(exercise.prompt)}</p><p class="test-intent"><b>固定测试会检查什么：</b>${esc(exercise.testIntent || '')}</p></div><textarea class="code-editor" aria-label="${esc(exercise.title)}代码编辑器" aria-describedby="${resultId}" spellcheck="false" wrap="off">${esc(saved?.code || exercise.code)}</textarea>${hintHtml}<div class="code-actions"><button class="run-code" data-run-exercise>运行固定测试</button><button class="text-button" data-reset-exercise>恢复初始代码</button></div><div id="${resultId}" class="run-result ${saved?.codeOk ? 'success' : 'hidden'}" aria-live="polite" tabindex="-1"><div><b>测试结果</b><span>${saved?.codeOk ? esc(saved.codeDigest) : ''}</span></div><p class="failure-guide"></p><pre>${saved?.codeOk ? 'PASS（已保存本次代码的验收摘要）' : ''}</pre></div></div>` : '';
-  const resumePitch = `【核心项目架构：高可用 Go 智能体微服务系统 (Ledger Agent)】
-· 基于 Go 1.24+ 纯标准库独立设计高并发智能体微服务，实现租户级并发隔离、容量上限非阻塞 Worker 槽位控制与动态过载背压。
-· 落地分布式 Lease 续约与递增 Fencing Token 防幽灵写入，结合 Postgres/Sqlite 原生事务守住资金与凭证一致性。
+  const resumePitch = `【核心项目架构：高可用 Go 智能体微服务系统 (Ledger Agent + TradingAgents 金融实战)】
+· 基于 Go 1.24+ 纯标准库独立设计高并发智能体微服务，无缝联动 TradingAgents 金融多智能体系统，实现租户级并发隔离、容量上限非阻塞 Worker 槽位控制与动态过载背压。
+· 落地分布式 Lease 续约与递增 Fencing Token 防幽灵写入，为多智能体（基本面/技术面/情绪/风控师）交易决策提供确定性安全屏障。
 · 建立生产级 LLM 契约边界：严格 JSON 反序列化未知字段防御（DisallowUnknownFields+EOF）、Fail Closed 安全熔断及沙箱只读/写动作审批。
 · 跨网络端到端交付：集成 SSE 实时事件流与断线补偿游标，通过包含正常、并发争抢、幂等重试、超时故障注入的自动化测试套件。`;
   const capstone = unit.workshop?.capstone ? `<section class="capstone-brief"><p class="code-first-label">企业级作品集交付 (Capstone Portfolio)</p><h3>${esc(unit.workshop.capstone.title)}</h3><p class="capstone-desc">${esc(unit.workshop.capstone.brief)}</p><div class="capstone-actions"><a href="${esc(unit.workshop.capstone.downloadUrl || 'downloads/ledger-agent-starter.zip')}" download class="capstone-download-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>下载完整工程 Starter (${esc(unit.workshop.capstone.downloadName || 'ledger-agent-starter.zip')})</a><span class="capstone-tag">Go 1.24+ · 纯标准库 · 独立微服务</span></div><div class="capstone-arch"><h4>系统架构与全链路装配</h4><ul>${(unit.workshop.capstone.architecture || []).map((item) => `<li>${esc(item)}</li>`).join('')}</ul></div><div class="capstone-checklist"><h4>交付与验收清单</h4><ol>${unit.workshop.capstone.deliverables.map((item) => `<li>${esc(item)}</li>`).join('')}</ol></div><details class="capstone-resume-box"><summary class="capstone-resume-toggle">🛠️ 项目技术架构亮点与核心设计（点击展开，可直接复制）</summary><div class="capstone-resume-body"><pre class="capstone-resume-text">${esc(resumePitch)}</pre><button class="copy-resume-btn" type="button">复制技术架构亮点</button></div></details></section>` : '';
@@ -642,10 +656,27 @@ async function boot() {
   $('#progressButton').addEventListener('click', openReview);
   $('#themeToggle').addEventListener('click', () => { document.body.classList.toggle('dark'); localStorage.setItem('jianjian-theme', document.body.classList.contains('dark') ? 'dark' : 'light'); });
   if (localStorage.getItem('jianjian-theme') === 'dark') document.body.classList.add('dark');
+  $('#compactToggle').addEventListener('click', () => { document.body.classList.toggle('compact'); showToast(document.body.classList.contains('compact') ? '专注模式已开启 · Alt+C 切换' : '已退出专注模式'); });
   $('#sidebarCollapse').addEventListener('click', () => $('.sidebar').classList.toggle('collapsed'));
   $('#menuToggle').addEventListener('click', toggleSidebar);
   $('#sidebarOverlay').addEventListener('click', () => closeSidebar({restoreFocus: true}));
   $('.brand').addEventListener('click', (event) => { event.preventDefault(); showWelcome(); });
+  const taDialog = $('#tradingagentsDialog');
+  $('#openTradingAgentsBtn')?.addEventListener('click', () => taDialog?.showModal());
+  $('#closeTradingAgentsDialog')?.addEventListener('click', () => taDialog?.close());
+  $('#copyTradingAgentsArch')?.addEventListener('click', async () => {
+    const archSummary = `【Go + TradingAgents 金融多智能体工程集成架构】
+1. 多智能体决策层 (TradingAgents - Python/LLM)：Fundamental, Technical, Sentiment 多分析师协作生成交易提议。
+2. 生产级安全网关 (Go 纯标准库)：Fail-Closed 严格 JSON 反序列化 (DisallowUnknownFields+EOF)，未知字段与非法枚举立即拒绝。
+3. 状态一致性屏障 (Go)：CAS 租约 (Lease) 与单调递增 Fencing Token，杜绝网络抖动与幽灵旧 Worker 重复下单。
+4. 账本与事件溯源 (Go Ledger Agent)：复式记账留痕，幂等防重保障，SSE 毫秒级推送执行与推演事件。`;
+    try {
+      await navigator.clipboard.writeText(archSummary);
+      showToast('系统集成架构说明已复制');
+    } catch (_e) {
+      showToast('复制失败，请手动复制');
+    }
+  });
   closeSidebar();
   $('#unitView').addEventListener('click', (event) => { if (event.target.closest('a')) return; });
   const initial = location.hash.slice(1); if (initial && state.units.some((unit) => unit.id === initial)) openUnit(initial, initial === localStorage.getItem('manga-go-last-unit') ? (localStorage.getItem('manga-go-last-stage') || 'understand') : 'understand');
@@ -654,7 +685,48 @@ async function boot() {
     if (id === 'top') showWelcome();
     else if (id && state.units[state.currentIndex]?.id !== id && state.units.some((unit) => unit.id === id)) openUnit(id);
   });
-  document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeSidebar({restoreFocus: true}); if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); openSearch(); } });
+  document.addEventListener('keydown', (event) => {
+    // Boss Key: Alt+C toggles compact office-stealth view
+    if (event.altKey && event.key.toLowerCase() === 'c') {
+      event.preventDefault();
+      document.body.classList.toggle('compact');
+      showToast(document.body.classList.contains('compact') ? '专注模式 · Esc 可关闭侧边栏' : '已退出专注模式');
+      return;
+    }
+    if (event.key === 'Escape') closeSidebar({restoreFocus: true});
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); openSearch(); }
+    // Code editor: Tab → indent, Shift+Tab → dedent
+    if (event.key === 'Tab' && event.target.matches('.code-editor')) {
+      event.preventDefault();
+      const el = event.target;
+      const start = el.selectionStart;
+      const end = el.selectionEnd;
+      if (event.shiftKey) {
+        // Dedent: remove up to 2 spaces or 1 tab at start of selected lines
+        const before = el.value.slice(0, start);
+        const lineStart = before.lastIndexOf('\n') + 1;
+        const lineText = el.value.slice(lineStart, lineStart + 2);
+        const toRemove = lineText.startsWith('\t') ? 1 : lineText.startsWith('  ') ? 2 : lineText.startsWith(' ') ? 1 : 0;
+        if (toRemove > 0) {
+          el.value = el.value.slice(0, lineStart) + el.value.slice(lineStart + toRemove);
+          el.selectionStart = Math.max(lineStart, start - toRemove);
+          el.selectionEnd = Math.max(lineStart, end - toRemove);
+        }
+      } else {
+        el.value = el.value.slice(0, start) + '\t' + el.value.slice(end);
+        el.selectionStart = el.selectionEnd = start + 1;
+      }
+      return;
+    }
+    // Code editor: Cmd/Ctrl+Enter → click the run button
+    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter' && event.target.matches('.code-editor')) {
+      event.preventDefault();
+      const runBtn = event.target.closest('[data-code-exercise],[data-project-exercise]')?.querySelector('[data-run-exercise]')
+        || event.target.closest('.code-exercise,.lab-callout')?.querySelector('.lab-run,.run-code');
+      runBtn?.click();
+      return;
+    }
+  });
   revalidation.then(() => {
     saveState(); renderNav();
     const current = state.units[state.currentIndex];

@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/rand"
 	"crypto/sha256"
+	_ "embed"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -26,6 +27,13 @@ import (
 	"syscall"
 	"time"
 )
+
+//go:embed exercises.json
+var embeddedExercises []byte
+
+//go:embed rubrics.json
+var embeddedRubrics []byte
+
 
 const maxOutput = 32 << 10
 const maxCode = 64 << 10
@@ -171,20 +179,12 @@ func main() {
 	if err := json.Unmarshal(data, &content); err != nil {
 		log.Fatal(err)
 	}
-	exerciseData, err := os.ReadFile(filepath.Join(root, "runner", "exercises.json"))
-	if err != nil {
-		log.Fatal(err)
-	}
 	exercises := make(map[string]codeExercise)
-	if err := json.Unmarshal(exerciseData, &exercises); err != nil {
-		log.Fatal(err)
-	}
-	rubricData, err := os.ReadFile(filepath.Join(root, "runner", "rubrics.json"))
-	if err != nil {
+	if err := json.Unmarshal(embeddedExercises, &exercises); err != nil {
 		log.Fatal(err)
 	}
 	rubrics := make(map[string][][]string)
-	if err := json.Unmarshal(rubricData, &rubrics); err != nil {
+	if err := json.Unmarshal(embeddedRubrics, &rubrics); err != nil {
 		log.Fatal(err)
 	}
 
