@@ -324,11 +324,11 @@ function renderExercise(unit) {
   const resultId = `run-result-${unit.id}`;
   const hintHtml = exercise?.hints?.length ? `<details class="exercise-hints"><summary>卡住了？按顺序看提示</summary><ol>${exercise.hints.map((hint) => `<li>${esc(hint)}</li>`).join('')}</ol></details>` : '';
   const codeExercise = exercise ? `<div class="code-exercise" data-code-exercise><div><h3>${esc(exercise.title)}</h3><p>${esc(exercise.prompt)}</p><p class="test-intent"><b>固定测试会检查什么：</b>${esc(exercise.testIntent || '')}</p></div><textarea class="code-editor" aria-label="${esc(exercise.title)}代码编辑器" aria-describedby="${resultId}" spellcheck="false" wrap="off">${esc(saved?.code || exercise.code)}</textarea>${hintHtml}<div class="code-actions"><button class="run-code" data-run-exercise>运行固定测试</button><button class="text-button" data-reset-exercise>恢复初始代码</button></div><div id="${resultId}" class="run-result ${saved?.codeOk ? 'success' : 'hidden'}" aria-live="polite" tabindex="-1"><div><b>测试结果</b><span>${saved?.codeOk ? esc(saved.codeDigest) : ''}</span></div><p class="failure-guide"></p><pre>${saved?.codeOk ? 'PASS（已保存本次代码的验收摘要）' : ''}</pre></div></div>` : '';
-  const resumePitch = `【核心项目架构：高可用 Go 智能体微服务系统 (Ledger Agent + TradingAgents 金融实战)】
-· 基于 Go 1.24+ 纯标准库独立设计高并发智能体微服务，无缝联动 TradingAgents 金融多智能体系统，实现租户级并发隔离、容量上限非阻塞 Worker 槽位控制与动态过载背压。
-· 落地分布式 Lease 续约与递增 Fencing Token 防幽灵写入，为多智能体（基本面/技术面/情绪/风控师）交易决策提供确定性安全屏障。
+  const resumePitch = `【核心项目架构：高可用 Go 智能体微服务与 Wails 桌面端系统 (Ledger Agent × TradingAgents)】
+· 基于 Go 1.24+ 纯标准库结合 Wails v2 框架，构建跨平台轻量级 AI 金融交易桌面系统，单二进制嵌入前端资源，内存占用相比传统 Electron 降低 80%。
+· 打造 Go 原生与多智能体（TradingAgents）异构联动架构：Go 作为核心调度层与风控网关，提供 CAS 租约 Fencing、租户级并发隔离与过载背压。
 · 建立生产级 LLM 契约边界：严格 JSON 反序列化未知字段防御（DisallowUnknownFields+EOF）、Fail Closed 安全熔断及沙箱只读/写动作审批。
-· 跨网络端到端交付：集成 SSE 实时事件流与断线补偿游标，通过包含正常、并发争抢、幂等重试、超时故障注入的自动化测试套件。`;
+· 跨网络与进程端到端交付：通过 Wails IPC 双向绑定与 SSE 毫秒级流式推演，集成包含正常、并发争抢、幂等重试、超时故障注入的自动化测试套件。`;
   const capstone = unit.workshop?.capstone ? `<section class="capstone-brief"><p class="code-first-label">企业级作品集交付 (Capstone Portfolio)</p><h3>${esc(unit.workshop.capstone.title)}</h3><p class="capstone-desc">${esc(unit.workshop.capstone.brief)}</p><div class="capstone-actions"><a href="${esc(unit.workshop.capstone.downloadUrl || 'downloads/ledger-agent-starter.zip')}" download class="capstone-download-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>下载完整工程 Starter (${esc(unit.workshop.capstone.downloadName || 'ledger-agent-starter.zip')})</a><span class="capstone-tag">Go 1.24+ · 纯标准库 · 独立微服务</span></div><div class="capstone-arch"><h4>系统架构与全链路装配</h4><ul>${(unit.workshop.capstone.architecture || []).map((item) => `<li>${esc(item)}</li>`).join('')}</ul></div><div class="capstone-checklist"><h4>交付与验收清单</h4><ol>${unit.workshop.capstone.deliverables.map((item) => `<li>${esc(item)}</li>`).join('')}</ol></div><details class="capstone-resume-box"><summary class="capstone-resume-toggle">🛠️ 项目技术架构亮点与核心设计（点击展开，可直接复制）</summary><div class="capstone-resume-body"><pre class="capstone-resume-text">${esc(resumePitch)}</pre><button class="copy-resume-btn" type="button">复制技术架构亮点</button></div></details></section>` : '';
   const projectLab = unit.projectLab ? `<div class="project-lab" data-project-lab><div><p class="code-first-label">同一个项目，继续往前</p><h3>${esc(unit.projectLab.title)}</h3><p>把当前提交编译进 Ledger Agent，再运行本节具名测试，确认这条生产边界成立。通过结果会成为本节完成条件。</p></div><div class="project-lab-actions"><button class="run-code" data-run-project="${esc(unit.projectLab.id)}">运行企业实验</button><a href="${esc(unit.projectLab.path)}" target="_blank">查看项目源码</a></div><div class="run-result ${saved?.labOk ? 'success' : 'hidden'}" aria-live="polite" tabindex="-1"><div><b>项目测试</b><span>${saved?.labOk ? esc(saved.labDigest) : ''}</span></div><pre>${saved?.labOk ? 'PASS（已保存本版本的项目验收）' : ''}</pre></div></div>` : '';
   const workshop = unit.workshop ? `<div class="workshop" data-workshop><div><h3>${esc(unit.workshop.title)}</h3><p>${esc(unit.workshop.prompt)}</p></div>${capstone}${codeExercise}<div class="workshop-fields">${unit.workshop.fields.map((field, index) => `<label><b>${index + 1}. ${esc(field.label)}</b>${field.kind === 'text' ? `<textarea data-workshop-field="${index}" rows="3" placeholder="${esc(field.placeholder)}">${esc(saved?.answers?.[index] || '')}</textarea>` : `<select data-workshop-field="${index}"><option value="">请选择</option>${field.options.map((option) => `<option value="${esc(option)}" ${saved?.answers?.[index] === option ? 'selected' : ''}>${esc(option)}</option>`).join('')}</select>`}</label>`).join('')}</div><button class="answer-button" data-submit-workshop>提交工程演练</button><div class="workshop-result ${saved?.workshopOk ? 'success' : ''}" aria-live="polite">${saved?.workshopOk ? `<b>已通过</b><span>${esc(saved.workshopDigest)}</span>` : ''}</div></div>` : '';
@@ -665,14 +665,15 @@ async function boot() {
   $('#openTradingAgentsBtn')?.addEventListener('click', () => taDialog?.showModal());
   $('#closeTradingAgentsDialog')?.addEventListener('click', () => taDialog?.close());
   $('#copyTradingAgentsArch')?.addEventListener('click', async () => {
-    const archSummary = `【Go + TradingAgents 金融多智能体工程集成架构】
-1. 多智能体决策层 (TradingAgents - Python/LLM)：Fundamental, Technical, Sentiment 多分析师协作生成交易提议。
-2. 生产级安全网关 (Go 纯标准库)：Fail-Closed 严格 JSON 反序列化 (DisallowUnknownFields+EOF)，未知字段与非法枚举立即拒绝。
-3. 状态一致性屏障 (Go)：CAS 租约 (Lease) 与单调递增 Fencing Token，杜绝网络抖动与幽灵旧 Worker 重复下单。
-4. 账本与事件溯源 (Go Ledger Agent)：复式记账留痕，幂等防重保障，SSE 毫秒级推送执行与推演事件。`;
+    const archSummary = `【TradingAgents: AI 多智能体 + Go 后端 + Wails 桌面端集成架构】
+1. AI 决策层 (TradingAgents - Python/LLM)：基本面、技术面、新闻情绪、宏观经济多智能体协同推演。
+2. Go 高并发风控网关 (Go Backend)：Fail-Closed 严格 JSON 校验 (DisallowUnknownFields+EOF)，未知字段与非法枚举立即拒绝。
+3. 状态一致性屏障 (Go CAS Lease & Fencing)：单账户并发锁与单调递增 Fencing Token，杜绝网络抖动与幽灵旧 Worker 重复下单。
+4. 账本与事件溯源 (Go Ledger Agent)：复式记账原子落盘，SQLite/DuckDB 高性能存储，幂等防重保障。
+5. Go Wails 原生桌面端 (Wails v2)：纯 Go 单二进制内嵌前端资产，零内存膨胀（仅数十 MB），IPC 双向事件通道直通原生界面。`;
     try {
       await navigator.clipboard.writeText(archSummary);
-      showToast('系统集成架构说明已复制');
+      showToast('全栈集成架构说明已复制');
     } catch (_e) {
       showToast('复制失败，请手动复制');
     }
