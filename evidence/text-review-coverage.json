@@ -1,14 +1,14 @@
 {
   "status": "pass",
-  "source": "work/book/v14-project/build/build_book.py",
-  "source_sha256": "c013644972440a99e83980adecae2a36506bc201168947014c9790b6db767cf9",
-  "content_overrides_sha256": "b719359235afbe6288adeebae75e606a1a72d6a8d8dc36ec720aaf2c851d9e93",
-  "output": "work/book/v15-text-review/output/人间铸剑录_v15_幼稚化ELI5_完整文字审稿版.md",
-  "output_sha256": "8a5d1dee4edb1716f49f068af43b74b990860fe86a07e3661c4cc6569bced775",
+  "source": "manuscript/source-model.json",
+  "source_sha256": "f56e6c2a3d8c789374af7aa7a11973da207d118d5652d76b8dc94665742320f3",
+  "content_overrides_sha256": "50efb6168cb9bb98f851f252c98ca95045b40e6b4ddf7198e9a0c53a1f2f236f",
+  "output": "output/人间铸剑录_v15_幼稚化ELI5_完整文字审稿版.md",
+  "output_sha256": "6d3d959b4857fa7a0550cc06fba7761d3c468c69d56e55ca08243abbe53ba5f3",
   "chapters": 24,
   "supplements": 47,
   "source_dialogue_turns": 308,
-  "dialogue_turns": 401,
+  "dialogue_turns": 425,
   "code_blocks": 64,
   "beginner_sections": 71,
   "analogy_sections": 71,
@@ -16,17 +16,17 @@
   "pdf_changed": false,
   "ppt_changed": false,
   "story_layer_sha256": {
-    "story-go.json": "0ca0e9c42f7fc6a03feca48930bc27025d18de36a3a860836d14571c7a8fdf1f",
-    "story-backend.json": "ee6b313b2dceef792486cad25c8ea4af97ce55e7924796bb04dab01f46fd280e",
-    "story-harness.json": "32ae8c43e823d83e8a14ba3ec17843fb8f3ab64438fe559196b4503d608b10ad"
+    "story-go.json": "0be7aa1cbb0fd2057b084b88f412fa3901bbaa6cd99f679bf01ea95756c0a4fb",
+    "story-backend.json": "82999d9ea7e433b6f1a787078d9d003bb0ce8a6edfa46b746fe7ff559f9839d7",
+    "story-harness.json": "69bec56bbd4a8bfc9a534a18b68cc2604453aaf51cd323df4bb3bcab28dc889f"
   },
   "story_chapters": 24,
   "story_supplements": 47,
-  "story_dialogue_turns": 401,
+  "story_dialogue_turns": 425,
   "story_longest_turn": {
     "kind": "chapter",
-    "id": "18",
-    "chars": 39,
-    "text": "真正写账的是 ledger.create_bill；Harness 先做门禁。"
+    "id": "19",
+    "chars": 40,
+    "text": "口诀归口诀，到了 Go 引擎手里，全得拆成 Run、Step 和 CallID。"
   }
 }

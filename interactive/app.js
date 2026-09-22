@@ -13,6 +13,7 @@ const state = {
 
 const $ = (selector) => document.querySelector(selector);
 const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+const richText = (value) => esc(value).replace(/`([^`\n]+)`/g, '<code>$1</code>');
 
 function flattenUnits(data) {
   const units = [];
@@ -31,7 +32,7 @@ function avatar(data, speaker) {
 function dialogueHtml(data, lines) {
   return `<div class="chat-list">${lines.map(({speaker, text}) => {
     const learner = speaker === '陈平安';
-    return `<div class="chat-row ${learner ? 'learner' : ''}" data-speaker="${esc(speaker)}"><div class="chat-person">${avatar(data, speaker)}<span class="speaker">${esc(speaker)}</span></div><div class="bubble">${esc(text)}</div></div>`;
+    return `<div class="chat-row ${learner ? 'learner' : ''}" data-speaker="${esc(speaker)}"><div class="chat-person">${avatar(data, speaker)}<span class="speaker">${esc(speaker)}</span></div><div class="bubble">${richText(text)}</div></div>`;
   }).join('')}</div>`;
 }
 
@@ -115,18 +116,18 @@ function saveState() {
 }
 
 function renderIncident(unit) {
-  $('#incidentCard').innerHTML = `<div class="card-kicker">闯祸现场 · 先看发生了什么</div>${(unit.opening || [unit.goal || unit.kicker]).map((paragraph) => `<p>${esc(paragraph)}</p>`).join('')}`;
+  $('#incidentCard').innerHTML = `<div class="card-kicker">闯祸现场 · 先看发生了什么</div>${(unit.opening || [unit.goal || unit.kicker]).map((paragraph) => `<p>${richText(paragraph)}</p>`).join('')}`;
 }
 
 function renderChat(unit) {
   const dialogue = unit.dialogue || [];
-  $('#chatCard').innerHTML = `<h2 class="sr-only">本章内容</h2><div class="chat-title"><h3>人物对话</h3><span>${dialogue.length} 句</span></div>${dialogueHtml(state.data, dialogue)}<div class="chat-close"><b>这一幕的结论</b><span>${esc(unit.closing || unit.accept)}</span></div>`;
+  $('#chatCard').innerHTML = `<h2 class="sr-only">本章内容</h2><div class="chat-title"><h3>人物对话</h3><span>${dialogue.length} 句</span></div>${dialogueHtml(state.data, dialogue)}<div class="chat-close"><b>这一幕的结论</b><span>${richText(unit.closing || unit.accept)}</span></div>`;
 }
 
 function renderMemory(unit) {
-  $('#memoryCard').innerHTML = `<h3>小白先懂</h3><p class="memory-quote">“${esc(unit.mnemonic || unit.kicker)}”</p><p class="memory-analogy">${esc(unit.analogy || unit.goal)}</p>`;
+  $('#memoryCard').innerHTML = `<h3>小白先懂</h3><p class="memory-quote">“${richText(unit.mnemonic || unit.kicker)}”</p><p class="memory-analogy">${richText(unit.analogy || unit.goal)}</p>`;
   const glossary = unit.glossary?.length ? unit.glossary : [{term: '本节先不加黑话', meaning: '沿着事故和代码往下走。'}];
-  $('#glossaryCard').innerHTML = `<h3>黑话翻译</h3><ul class="glossary-list">${glossary.map(({term, meaning}) => `<li><b>${esc(term)}</b><span>${esc(meaning)}</span></li>`).join('')}</ul>`;
+  $('#glossaryCard').innerHTML = `<h3>黑话翻译</h3><ul class="glossary-list">${glossary.map(({term, meaning}) => `<li><b>${esc(term)}</b><span>${richText(meaning)}</span></li>`).join('')}</ul>`;
 }
 
 function renderFlow(unit) {
@@ -277,7 +278,7 @@ function renderCode(unit) {
 function renderTechnical(unit) {
   const principles = unit.principles || [];
   const pitfalls = unit.pitfalls || [];
-  $('#technicalCard').innerHTML = `<div class="section-heading"><h3>技术真相</h3><small>这里不卖萌，只守边界</small></div><ul class="bullet-list">${principles.map((item) => `<li>${esc(item)}</li>`).join('')}</ul><details><summary>最容易怎么翻车</summary>${pitfalls.length ? `<ul class="bullet-list">${pitfalls.map((item) => `<li>${esc(item)}</li>`).join('')}</ul>` : '<p class="muted">本补页不另起炉灶，先把上一个边界钉牢。</p>'}</details>`;
+  $('#technicalCard').innerHTML = `<div class="section-heading"><h3>技术真相</h3><small>这里不卖萌，只守边界</small></div><ul class="bullet-list">${principles.map((item) => `<li>${richText(item)}</li>`).join('')}</ul><details><summary>最容易怎么翻车</summary>${pitfalls.length ? `<ul class="bullet-list">${pitfalls.map((item) => `<li>${richText(item)}</li>`).join('')}</ul>` : '<p class="muted">本补页不另起炉灶，先把上一个边界钉牢。</p>'}</details>`;
 }
 
 function quizHtml(unit) {
@@ -286,10 +287,10 @@ function quizHtml(unit) {
     const response = state.responses[key];
     const hasResponse = Number.isInteger(response);
     const correct = hasResponse && response === quiz.correctIndex;
-    const choices = quiz.choices.map((choice, choiceIndex) => `<label><input type="radio" name="${esc(key)}" value="${choiceIndex}" ${response === choiceIndex ? 'checked' : ''}><span>${esc(choice)}</span></label>`).join('');
+    const choices = quiz.choices.map((choice, choiceIndex) => `<label><input type="radio" name="${esc(key)}" value="${choiceIndex}" ${response === choiceIndex ? 'checked' : ''}><span>${richText(choice)}</span></label>`).join('');
     const reason = quiz.feedback?.[response] || '';
-    const feedback = hasResponse ? `<b>${correct ? '答对了' : '还差一步'}</b>${!correct && reason ? `<p>${esc(reason)}</p>` : ''}<p>${esc(quiz.answer)}</p>` : '';
-    return `<fieldset class="quiz-item ${state.wrong.includes(key) ? 'review' : ''} ${hasResponse ? 'open' : ''}" data-quiz="${index}" data-key="${key}" tabindex="-1"><legend class="quiz-question">${index + 1}. ${esc(quiz.question)}</legend><div class="quiz-choices">${choices}</div><button class="answer-button" data-submit-answer>${hasResponse ? '重新提交' : '提交答案'}</button><div class="answer" aria-live="polite">${feedback}</div></fieldset>`;
+    const feedback = hasResponse ? `<b>${correct ? '答对了' : '还差一步'}</b>${!correct && reason ? `<p>${richText(reason)}</p>` : ''}<p>${richText(quiz.answer)}</p>` : '';
+    return `<fieldset class="quiz-item ${state.wrong.includes(key) ? 'review' : ''} ${hasResponse ? 'open' : ''}" data-quiz="${index}" data-key="${key}" tabindex="-1"><legend class="quiz-question">${index + 1}. ${richText(quiz.question)}</legend><div class="quiz-choices">${choices}</div><button class="answer-button" data-submit-answer>${hasResponse ? '重新提交' : '提交答案'}</button><div class="answer" aria-live="polite">${feedback}</div></fieldset>`;
   }).join('');
 }
 
@@ -312,7 +313,7 @@ function bindQuiz(container, unit) {
     item.classList.toggle('review', !correct);
     item.classList.add('open');
     const reason = quiz.feedback?.[Number(selected.value)] || '';
-    item.querySelector('.answer').innerHTML = `<b>${correct ? '答对了' : '还差一步'}</b>${!correct && reason ? `<p>${esc(reason)}</p>` : ''}<p>${esc(quiz.answer)}</p>`;
+    item.querySelector('.answer').innerHTML = `<b>${correct ? '答对了' : '还差一步'}</b>${!correct && reason ? `<p>${richText(reason)}</p>` : ''}<p>${richText(quiz.answer)}</p>`;
     saveState(); renderNav();
     showToast(correct ? '答对了，已记入掌握证据' : '已加入复习，看看解析再试一次');
   }));
@@ -322,18 +323,18 @@ function renderExercise(unit) {
   const saved = state.practices[unit.id];
   const exercise = unit.projectExercise || unit.workshop?.codeExercise;
   const resultId = `run-result-${unit.id}`;
-  const hintHtml = exercise?.hints?.length ? `<details class="exercise-hints"><summary>卡住了？按顺序看提示</summary><ol>${exercise.hints.map((hint) => `<li>${esc(hint)}</li>`).join('')}</ol></details>` : '';
-  const codeExercise = exercise ? `<div class="code-exercise" data-code-exercise><div><h3>${esc(exercise.title)}</h3><p>${esc(exercise.prompt)}</p><p class="test-intent"><b>固定测试会检查什么：</b>${esc(exercise.testIntent || '')}</p></div><textarea class="code-editor" aria-label="${esc(exercise.title)}代码编辑器" aria-describedby="${resultId}" spellcheck="false" wrap="off">${esc(saved?.code || exercise.code)}</textarea>${hintHtml}<div class="code-actions"><button class="run-code" data-run-exercise>运行固定测试</button><button class="text-button" data-reset-exercise>恢复初始代码</button></div><div id="${resultId}" class="run-result ${saved?.codeOk ? 'success' : 'hidden'}" aria-live="polite" tabindex="-1"><div><b>测试结果</b><span>${saved?.codeOk ? esc(saved.codeDigest) : ''}</span></div><p class="failure-guide"></p><pre>${saved?.codeOk ? 'PASS（已保存本次代码的验收摘要）' : ''}</pre></div></div>` : '';
+  const hintHtml = exercise?.hints?.length ? `<details class="exercise-hints"><summary>卡住了？按顺序看提示</summary><ol>${exercise.hints.map((hint) => `<li>${richText(hint)}</li>`).join('')}</ol></details>` : '';
+  const codeExercise = exercise ? `<div class="code-exercise" data-code-exercise><div><h3>${esc(exercise.title)}</h3><p>${richText(exercise.prompt)}</p><p class="test-intent"><b>固定测试会检查什么：</b>${richText(exercise.testIntent || '')}</p></div><textarea class="code-editor" aria-label="${esc(exercise.title)}代码编辑器" aria-describedby="${resultId}" spellcheck="false" wrap="off">${esc(saved?.code || exercise.code)}</textarea>${hintHtml}<div class="code-actions"><button class="run-code" data-run-exercise>运行固定测试</button><button class="text-button" data-reset-exercise>恢复初始代码</button></div><div id="${resultId}" class="run-result ${saved?.codeOk ? 'success' : 'hidden'}" aria-live="polite" tabindex="-1"><div><b>测试结果</b><span>${saved?.codeOk ? esc(saved.codeDigest) : ''}</span></div><p class="failure-guide"></p><pre>${saved?.codeOk ? 'PASS（已保存本次代码的验收摘要）' : ''}</pre></div></div>` : '';
   const resumePitch = `【核心项目架构：高可用 Go 智能体微服务与 Wails 桌面端系统 (Ledger Agent × TradingAgents)】
 · 基于 Go 1.24+ 纯标准库结合 Wails v2 框架，构建跨平台轻量级 AI 金融交易桌面系统，单二进制嵌入前端资源，内存占用相比传统 Electron 降低 80%。
 · 打造 Go 原生与多智能体（TradingAgents）异构联动架构：Go 作为核心调度层与风控网关，提供 CAS 租约 Fencing、租户级并发隔离与过载背压。
 · 建立生产级 LLM 契约边界：严格 JSON 反序列化未知字段防御（DisallowUnknownFields+EOF）、Fail Closed 安全熔断及沙箱只读/写动作审批。
 · 跨网络与进程端到端交付：通过 Wails IPC 双向绑定与 SSE 毫秒级流式推演，集成包含正常、并发争抢、幂等重试、超时故障注入的自动化测试套件。`;
-  const capstone = unit.workshop?.capstone ? `<section class="capstone-brief"><p class="code-first-label">企业级作品集交付 (Capstone Portfolio)</p><h3>${esc(unit.workshop.capstone.title)}</h3><p class="capstone-desc">${esc(unit.workshop.capstone.brief)}</p><div class="capstone-actions"><a href="${esc(unit.workshop.capstone.downloadUrl || 'downloads/ledger-agent-starter.zip')}" download class="capstone-download-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>下载完整工程 Starter (${esc(unit.workshop.capstone.downloadName || 'ledger-agent-starter.zip')})</a><span class="capstone-tag">Go 1.24+ · 纯标准库 · 独立微服务</span></div><div class="capstone-arch"><h4>系统架构与全链路装配</h4><ul>${(unit.workshop.capstone.architecture || []).map((item) => `<li>${esc(item)}</li>`).join('')}</ul></div><div class="capstone-checklist"><h4>交付与验收清单</h4><ol>${unit.workshop.capstone.deliverables.map((item) => `<li>${esc(item)}</li>`).join('')}</ol></div><details class="capstone-resume-box"><summary class="capstone-resume-toggle">🛠️ 项目技术架构亮点与核心设计（点击展开，可直接复制）</summary><div class="capstone-resume-body"><pre class="capstone-resume-text">${esc(resumePitch)}</pre><button class="copy-resume-btn" type="button">复制技术架构亮点</button></div></details></section>` : '';
+  const capstone = unit.workshop?.capstone ? `<section class="capstone-brief"><p class="code-first-label">企业级作品集交付 (Capstone Portfolio)</p><h3>${esc(unit.workshop.capstone.title)}</h3><p class="capstone-desc">${richText(unit.workshop.capstone.brief)}</p><div class="capstone-actions"><a href="${esc(unit.workshop.capstone.downloadUrl || 'downloads/ledger-agent-starter.zip')}" download class="capstone-download-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>下载完整工程 Starter (${esc(unit.workshop.capstone.downloadName || 'ledger-agent-starter.zip')})</a><span class="capstone-tag">Go 1.24+ · 纯标准库 · 独立微服务</span></div><div class="capstone-arch"><h4>系统架构与全链路装配</h4><ul>${(unit.workshop.capstone.architecture || []).map((item) => `<li>${richText(item)}</li>`).join('')}</ul></div><div class="capstone-checklist"><h4>交付与验收清单</h4><ol>${unit.workshop.capstone.deliverables.map((item) => `<li>${richText(item)}</li>`).join('')}</ol></div><details class="capstone-resume-box"><summary class="capstone-resume-toggle">🛠️ 项目技术架构亮点与核心设计（点击展开，可直接复制）</summary><div class="capstone-resume-body"><pre class="capstone-resume-text">${esc(resumePitch)}</pre><button class="copy-resume-btn" type="button">复制技术架构亮点</button></div></details></section>` : '';
   const projectLab = unit.projectLab ? `<div class="project-lab" data-project-lab><div><p class="code-first-label">同一个项目，继续往前</p><h3>${esc(unit.projectLab.title)}</h3><p>把当前提交编译进 Ledger Agent，再运行本节具名测试，确认这条生产边界成立。通过结果会成为本节完成条件。</p></div><div class="project-lab-actions"><button class="run-code" data-run-project="${esc(unit.projectLab.id)}">运行企业实验</button><a href="${esc(unit.projectLab.path)}" target="_blank">查看项目源码</a></div><div class="run-result ${saved?.labOk ? 'success' : 'hidden'}" aria-live="polite" tabindex="-1"><div><b>项目测试</b><span>${saved?.labOk ? esc(saved.labDigest) : ''}</span></div><pre>${saved?.labOk ? 'PASS（已保存本版本的项目验收）' : ''}</pre></div></div>` : '';
-  const workshop = unit.workshop ? `<div class="workshop" data-workshop><div><h3>${esc(unit.workshop.title)}</h3><p>${esc(unit.workshop.prompt)}</p></div>${capstone}${codeExercise}<div class="workshop-fields">${unit.workshop.fields.map((field, index) => `<label><b>${index + 1}. ${esc(field.label)}</b>${field.kind === 'text' ? `<textarea data-workshop-field="${index}" rows="3" placeholder="${esc(field.placeholder)}">${esc(saved?.answers?.[index] || '')}</textarea>` : `<select data-workshop-field="${index}"><option value="">请选择</option>${field.options.map((option) => `<option value="${esc(option)}" ${saved?.answers?.[index] === option ? 'selected' : ''}>${esc(option)}</option>`).join('')}</select>`}</label>`).join('')}</div><button class="answer-button" data-submit-workshop>提交工程演练</button><div class="workshop-result ${saved?.workshopOk ? 'success' : ''}" aria-live="polite">${saved?.workshopOk ? `<b>已通过</b><span>${esc(saved.workshopDigest)}</span>` : ''}</div></div>` : '';
+  const workshop = unit.workshop ? `<div class="workshop" data-workshop><div><h3>${esc(unit.workshop.title)}</h3><p>${richText(unit.workshop.prompt)}</p></div>${capstone}${codeExercise}<div class="workshop-fields">${unit.workshop.fields.map((field, index) => `<label><b>${index + 1}. ${esc(field.label)}</b>${field.kind === 'text' ? `<textarea data-workshop-field="${index}" rows="3" placeholder="${esc(field.placeholder)}">${esc(saved?.answers?.[index] || '')}</textarea>` : `<select data-workshop-field="${index}"><option value="">请选择</option>${field.options.map((option) => `<option value="${esc(option)}" ${saved?.answers?.[index] === option ? 'selected' : ''}>${esc(option)}</option>`).join('')}</select>`}</label>`).join('')}</div><button class="answer-button" data-submit-workshop>提交工程演练</button><div class="workshop-result ${saved?.workshopOk ? 'success' : ''}" aria-live="polite">${saved?.workshopOk ? `<b>已通过</b><span>${esc(saved.workshopDigest)}</span>` : ''}</div></div>` : '';
   const projectExercise = unit.projectExercise ? codeExercise : '';
-  $('#exerciseCard').innerHTML = `<div class="section-heading"><h2>动手与验收</h2><small>答题和工程演练都通过，才算完成</small></div><div class="pitfall-grid"><div class="pitfall-panel"><h3>跟着做</h3><p>${esc(unit.task)}</p></div><div class="task-panel"><h3>做到什么算过关</h3><p>${esc(unit.accept)}</p></div></div>${projectExercise}${projectLab}${workshop}<div class="quiz-list">${quizHtml(unit)}</div>`;
+  $('#exerciseCard').innerHTML = `<div class="section-heading"><h2>动手与验收</h2><small>答题和工程演练都通过，才算完成</small></div><div class="pitfall-grid"><div class="pitfall-panel"><h3>跟着做</h3><p>${richText(unit.task)}</p></div><div class="task-panel"><h3>做到什么算过关</h3><p>${richText(unit.accept)}</p></div></div>${projectExercise}${projectLab}${workshop}<div class="quiz-list">${quizHtml(unit)}</div>`;
   bindQuiz($('#exerciseCard'), unit);
   $('#exerciseCard').querySelector('.copy-resume-btn')?.addEventListener('click', async () => {
     try {
@@ -491,9 +492,9 @@ async function revalidateCompletedEvidence() {
 
 function supplementHtml(supplement) {
   const chat = dialogueHtml(state.data, supplement.dialogue);
-  const glossary = supplement.glossary.length ? `<ul class="glossary-list">${supplement.glossary.slice(0, 5).map(({term, meaning}) => `<li><b>${esc(term)}</b><span>${esc(meaning)}</span></li>`).join('')}</ul>` : '<p class="muted">这一节先不加新词，重点看它如何收住上一处事故。</p>';
+  const glossary = supplement.glossary.length ? `<ul class="glossary-list">${supplement.glossary.slice(0, 5).map(({term, meaning}) => `<li><b>${esc(term)}</b><span>${richText(meaning)}</span></li>`).join('')}</ul>` : '<p class="muted">这一节先不加新词，重点看它如何收住上一处事故。</p>';
   const code = supplement.code ? `<section class="code-card supplement-code">${codeLessonHtml(supplement)}</section>` : '';
-  return `<details class="supplement-card" id="${esc(supplement.id)}"><summary>选修补页 · ${esc(supplement.title)} <span>＋</span></summary><div class="supplement-inner"><div class="incident-card"><div class="card-kicker">${esc(supplement.kicker)}</div>${supplement.opening.map((p) => `<p>${esc(p)}</p>`).join('')}</div><div class="chat-card">${chat}<div class="chat-close"><b>这一幕的结论</b><span>${esc(supplement.closing)}</span></div></div><div class="memory-card"><h3>像什么</h3><p class="memory-analogy">${esc(supplement.analogy)}</p></div><div class="glossary-card"><h3>黑话翻译</h3>${glossary}</div>${code}<div class="pitfall-grid"><div class="pitfall-panel"><h3>动手</h3><p>${esc(supplement.task)}</p></div><div class="task-panel"><h3>过关</h3><p>${esc(supplement.accept)}</p></div></div><div class="quiz-list supplement-quiz">${quizHtml(supplement)}</div></div></details>`;
+  return `<details class="supplement-card" id="${esc(supplement.id)}"><summary>选修补页 · ${esc(supplement.title)} <span>＋</span></summary><div class="supplement-inner"><div class="incident-card"><div class="card-kicker">${richText(supplement.kicker)}</div>${supplement.opening.map((p) => `<p>${richText(p)}</p>`).join('')}</div><div class="chat-card">${chat}<div class="chat-close"><b>这一幕的结论</b><span>${richText(supplement.closing)}</span></div></div><div class="memory-card"><h3>像什么</h3><p class="memory-analogy">${richText(supplement.analogy)}</p></div><div class="glossary-card"><h3>黑话翻译</h3>${glossary}</div>${code}<div class="pitfall-grid"><div class="pitfall-panel"><h3>动手</h3><p>${richText(supplement.task)}</p></div><div class="task-panel"><h3>过关</h3><p>${richText(supplement.accept)}</p></div></div><div class="quiz-list supplement-quiz">${quizHtml(supplement)}</div></div></details>`;
 }
 
 function renderSupplements(unit) {
@@ -515,12 +516,12 @@ function openUnit(id, stage = 'understand') {
   $('#unitView').classList.remove('hidden');
   $('#unitVolume').textContent = unit.volume?.title || 'Go 后端与 Harness AI';
   $('#unitTitle').textContent = unit.kind === 'chapter' ? unit.shortTitle : `补页 · ${unit.title}`;
-  $('#unitGoal').textContent = unit.kind === 'chapter' ? `目标：${unit.goal}` : unit.kicker;
+  $('#unitGoal').innerHTML = unit.kind === 'chapter' ? `<b>目标：</b>${richText(unit.goal)}` : richText(unit.kicker);
   const learning = unit.learning || {level: 3, label: '进阶', required: unit.kind === 'chapter', estimatedMinutes: 20, prerequisite: ''};
   const timeLabel = learning.readingMinutes ? `阅读 ${learning.readingMinutes} 分钟 · 动手 ${learning.practiceMinutes} 分钟` : `约 ${learning.estimatedMinutes} 分钟`;
   $('#unitMeta').innerHTML = `<span>难度 ${'●'.repeat(learning.level)}${'○'.repeat(5 - learning.level)} · ${esc(learning.label)}</span><span>${learning.required ? '主线' : '选修'} · ${timeLabel}</span><span>${esc(learning.prerequisite)}</span>`;
-  $('#lkj').textContent = unit.transitionIn || '';
-  $('#transitionOut').textContent = unit.transitionOut || unit.nextHook || '';
+  $('#transitionIn').innerHTML = unit.transitionIn ? `<span class="transition-tag">承前</span><span>${richText(unit.transitionIn)}</span>` : '';
+  $('#transitionOut').innerHTML = (unit.transitionOut || unit.nextHook) ? `<span class="transition-tag">启后</span><span>${richText(unit.transitionOut || unit.nextHook)}</span>` : '';
   renderIncident(unit); renderChat(unit); renderMemory(unit); renderFlow(unit); renderTechnical(unit); renderCode(unit); renderExercise(unit); renderSupplements(unit); renderNav();
   setStage(stage, false);
   $('#completeButton').innerHTML = state.completed.has(unit.id) ? '本节已完成 <span>✓</span>' : '标记本节完成 <span>✓</span>';
@@ -680,11 +681,18 @@ async function boot() {
   });
   closeSidebar();
   $('#unitView').addEventListener('click', (event) => { if (event.target.closest('a')) return; });
-  const initial = location.hash.slice(1); if (initial && state.units.some((unit) => unit.id === initial)) openUnit(initial, initial === localStorage.getItem('manga-go-last-unit') ? (localStorage.getItem('manga-go-last-stage') || 'understand') : 'understand');
+  const hashRaw = location.hash.slice(1);
+  const [initial, hashQuery] = hashRaw.split('?');
+  const queryParams = new URLSearchParams(hashQuery || location.search);
+  if (queryParams.get('dark') === '1') document.body.classList.add('dark');
+  const requestedStage = queryParams.get('stage') || (initial === localStorage.getItem('manga-go-last-unit') ? (localStorage.getItem('manga-go-last-stage') || 'understand') : 'understand');
+  if (initial && state.units.some((unit) => unit.id === initial)) openUnit(initial, requestedStage);
   window.addEventListener('hashchange', () => {
-    const id = location.hash.slice(1);
+    const raw = location.hash.slice(1);
+    const [id, q] = raw.split('?');
+    const stage = new URLSearchParams(q).get('stage') || 'understand';
     if (id === 'top') showWelcome();
-    else if (id && state.units[state.currentIndex]?.id !== id && state.units.some((unit) => unit.id === id)) openUnit(id);
+    else if (id && state.units.some((unit) => unit.id === id)) openUnit(id, stage);
   });
   document.addEventListener('keydown', (event) => {
     // Boss Key: Alt+C toggles compact office-stealth view

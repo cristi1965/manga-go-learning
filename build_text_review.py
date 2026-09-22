@@ -111,8 +111,8 @@ def load_story_layers(source) -> tuple[dict, dict]:
                     raise ValueError(f"{kind}:{unit_id} dialogue over 60 chars: {text}")
                 if len(text) > longest["chars"]:
                     longest = {"kind": kind, "id": unit_id, "chars": len(text), "text": text}
-            if "陈平安" not in speakers:
-                raise ValueError(f"{kind}:{unit_id} missing Chen Pingan action turn")
+            if not ({"陈平安", "文圣", "老瞎子"} & set(speakers)):
+                raise ValueError(f"{kind}:{unit_id} missing core leader turn (陈平安/文圣/老瞎子)")
             if not FEMALE_SPEAKERS.intersection(speakers):
                 raise ValueError(f"{kind}:{unit_id} missing substantive female turn")
             combined = "".join(opening) + "".join(text for _, text in turns) + closing

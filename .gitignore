@@ -7,3 +7,4 @@ node_modules/
 # Local runtime artifacts
 *.log
 *.pid
+scratch/
