@@ -1,0 +1,1269 @@
+{
+  "units": {
+    "chapter-1": {
+      "title": "第一章  从结账程序读懂函数",
+      "shortTitle": "从结账程序读懂函数",
+      "goal": "运行结账程序，再改变价格和付款额，分清正常结果与错误。",
+      "mnemonic": "先看输入，再查错误，最后用结果。",
+      "analogy": "结账时先确认价格有效、付款够用，才能计算找零。函数也按这个顺序做检查。",
+      "principles": [
+        "main 是程序入口。它调用 settle，把价格和付款额传进去，再打印两个返回值。",
+        "参数写在函数名后的括号里，返回值类型写在参数括号后；本例返回找零和 error。",
+        "先拒绝非法价格，再检查付款是否足够。出错就立即返回，付款够时才相减。"
+      ],
+      "pitfalls": [
+        "还没运行就逐字抠语法",
+        "只看返回的数字，忘了同时检查 error",
+        "把付款不足当成正常找零零元"
+      ],
+      "codeGuides": [
+        "从 main 中找到 settle(7, 10)，看这两个数字分别交给哪个参数。",
+        "沿着两个 if 看各自返回的错误，再看最后的减法。",
+        "回到 main，把找零和 error 一起读；0 本身不能说明付款成功。"
+      ],
+      "task": "先运行结账示例，分别付款 10、7、5；再补全 settle，先拒绝非法价格和不足的付款，最后计算找零。",
+      "accept": "价格 7 时，付款 10、7、5 分别返回 3 和 nil、0 和 nil、0 和 ErrInsufficientPayment；价格不大于零时返回 ErrInvalidPrice。",
+      "transitionIn": "先从一次结账开始：给出价格和付款额，看看程序如何计算找零或报告错误。",
+      "transitionOut": "接下来把多个字段放在一起，学习账单结构体与 JSON。",
+      "workshop.title": "先选步骤，再动手练习",
+      "workshop.prompt": "先回顾正文，从三组选项中选出要解决的问题、操作和检查方法。下面的代码练习会再检查一个具体函数。",
+      "workshop.fields.0.label": "先选本章要解决的问题",
+      "workshop.fields.1.label": "再选实际要做的操作",
+      "workshop.fields.2.label": "最后选检查结果的方法",
+      "workshop.codeExercise.title": "补全价格和付款检查",
+      "workshop.codeExercise.prompt": "修改 settle：先检查价格，再检查付款，只有两项都符合要求时才计算找零。",
+      "workshop.codeExercise.testIntent": "测试分别检查非法价格、付款不足、刚好付款和需要找零。",
+      "workshop.codeExercise.hints": [
+        "先处理 price <= 0，返回 ErrInvalidPrice。",
+        "再处理 paid < price，返回 ErrInsufficientPayment。",
+        "最后返回 paid - price 和 nil。"
+      ],
+      "workshop.codeExercise.failureHint": "先读第一条测试错误，核对它给出的输入和期望结果，再修改练习中的实现。",
+      "selfCheck.0.question": "程序从哪个函数开始运行？",
+      "selfCheck.0.answer": "从 main 函数开始。main 调用 settle，再把结果打印出来。",
+      "selfCheck.0.feedback": [
+        "选对了。从 main 函数开始。main 调用 settle，再把结果打印出来。",
+        "这项没有回答当前问题。应检查：从 main 函数开始。main 调用 settle，再把结果打印出来。",
+        "这项没有回答当前问题。应检查：从 main 函数开始。main 调用 settle，再把结果打印出来。"
+      ],
+      "selfCheck.1.question": "价格 7、付款 10 时，settle 返回什么？",
+      "selfCheck.1.answer": "返回找零 3 和 nil；nil 表示没有发生错误。",
+      "selfCheck.1.feedback": [
+        "这项没有回答当前问题。应检查：返回找零 3 和 nil；nil 表示没有发生错误。",
+        "这项没有回答当前问题。应检查：返回找零 3 和 nil；nil 表示没有发生错误。",
+        "选对了。返回找零 3 和 nil；nil 表示没有发生错误。"
+      ],
+      "selfCheck.2.question": "付款只有 5 时，为什么不能继续计算找零？",
+      "selfCheck.2.answer": "因为会算出负数，掩盖钱不够这个事实；应该立刻返回 ErrInsufficientPayment。",
+      "selfCheck.2.feedback": [
+        "这项没有回答当前问题。应检查：因为会算出负数，掩盖钱不够这个事实；应该立刻返回 ErrInsufficientPayment。",
+        "选对了。因为会算出负数，掩盖钱不够这个事实；应该立刻返回 ErrInsufficientPayment。",
+        "这项没有回答当前问题。应检查：因为会算出负数，掩盖钱不够这个事实；应该立刻返回 ErrInsufficientPayment。"
+      ],
+      "beginnerCode.summary": "这段程序只做一件事：收下价格和付款额，算出该找多少钱；钱不够时明确报错。先跑通，再改数字。",
+      "beginnerCode.steps.0.label": "程序从这里开始",
+      "beginnerCode.steps.0.explanation": "main 是程序入口。它把价格 7 和付款 10 交给 settle，然后打印结果。",
+      "beginnerCode.steps.1.label": "先拦住坏输入",
+      "beginnerCode.steps.1.explanation": "价格非法或付款不足时立刻返回对应错误，不继续计算找零。",
+      "beginnerCode.steps.2.label": "算出该找的钱",
+      "beginnerCode.steps.2.explanation": "付款够时，用付款额减价格。10 减 7，所以得到 3。",
+      "beginnerCode.terms.0.meaning": "程序开始运行的地方。",
+      "beginnerCode.terms.1.meaning": "把价格 7、付款 10 交给结账函数。",
+      "beginnerCode.terms.2.meaning": "把结果交回调用它的地方。",
+      "beginnerCode.terms.3.meaning": "告诉调用者事情为什么没办成。",
+      "selfCheck.0.choiceLabels": [
+        "从 main 函数开始。main 调用 settle，再把结果打印出来。",
+        "返回找零 3 和 nil；nil 表示没有发生错误。",
+        "因为会算出负数，掩盖钱不够这个事实；应该立刻返回 ErrInsufficientPayment。"
+      ],
+      "selfCheck.1.choiceLabels": [
+        "因为会算出负数，掩盖钱不够这个事实；应该立刻返回 ErrInsufficientPayment。",
+        "从 main 函数开始。main 调用 settle，再把结果打印出来。",
+        "返回找零 3 和 nil；nil 表示没有发生错误。"
+      ],
+      "selfCheck.2.choiceLabels": [
+        "返回找零 3 和 nil；nil 表示没有发生错误。",
+        "因为会算出负数，掩盖钱不够这个事实；应该立刻返回 ErrInsufficientPayment。",
+        "从 main 函数开始。main 调用 settle，再把结果打印出来。"
+      ],
+      "workshop.fields.0.optionLabels": [
+        "还没运行就逐字抠语法",
+        "只看成功的情况，不检查失败时该怎么办。",
+        "运行结账程序，再改变价格和付款额，分清正常结果与错误。"
+      ],
+      "workshop.fields.1.optionLabels": [
+        "只写实现，不运行练习要求的检查。",
+        "先运行结账示例，分别付款 10、7、5；再补全 settle，先拒绝非法价格和不足的付款，最后计算找零。",
+        "把付款不足当成正常找零零元"
+      ],
+      "workshop.fields.2.optionLabels": [
+        "价格 7 时，付款 10、7、5 分别返回 3 和 nil、0 和 nil、0 和 ErrInsufficientPayment；价格不大于零时返回 ErrInvalidPrice。",
+        "只检查成功的一次，不测试失败情况。",
+        "看见程序有输出就结束，不逐项核对要求。"
+      ]
+    },
+    "supplement-go-control-flow-declarations": {
+      "title": "把不同输入送到正确的分支",
+      "kicker": "先判断负数和零，再处理正数；增加上限时，检查分支顺序和变量范围。",
+      "analogy": "先判断负数和零，再处理正数；增加上限时，检查分支顺序和变量范围。 不合法的输入可以用 if 提前返回，让后续代码只处理正常情况。",
+      "principles": [
+        "不合法的输入可以用 if 提前返回，让后续代码只处理正常情况。",
+        "switch 不写表达式时，可以逐项判断条件；有重叠的条件要注意先后顺序。",
+        "for 可以按次数循环、按条件循环，也可以一直循环到显式退出。",
+        ":= 用于局部变量声明；跨分支使用的结果先用 var 声明，分支里用 = 更新。"
+      ],
+      "pitfalls": [],
+      "codeGuides": [
+        "先判断负数和零，再处理正数；增加上限时，检查分支顺序和变量范围。",
+        "给 classify 增加上限检查，分别输入负数、零、正常正数和超过上限的数；再故意用 := 声明一个同名局部变量，观察外层值并修正。",
+        "四类输入得到预期分类；需要在分支外使用的结果确实被更新，没有意外创建同名局部变量。"
+      ],
+      "task": "给 classify 增加上限检查，分别输入负数、零、正常正数和超过上限的数；再故意用 := 声明一个同名局部变量，观察外层值并修正。",
+      "accept": "四类输入得到预期分类；需要在分支外使用的结果确实被更新，没有意外创建同名局部变量。",
+      "selfCheck.0.question": "哪一项最完整地说明了本页需要解决的问题？",
+      "selfCheck.0.answer": "四类输入得到预期分类；需要在分支外使用的结果确实被更新，没有意外创建同名局部变量。",
+      "selfCheck.0.feedback": [
+        "这项只说了其中一步。还要检查：四类输入得到预期分类；需要在分支外使用的结果确实被更新，没有意外创建同名局部变量。",
+        "这项只说了其中一步。还要检查：四类输入得到预期分类；需要在分支外使用的结果确实被更新，没有意外创建同名局部变量。",
+        "选对了。四类输入得到预期分类；需要在分支外使用的结果确实被更新，没有意外创建同名局部变量。"
+      ],
+      "selfCheck.0.choiceLabels": [
+        "不合法的输入可以用 if 提前返回，让后续代码只处理正常情况。",
+        "switch 不写表达式时，可以逐项判断条件；有重叠的条件要注意先后顺序。",
+        "四类输入得到预期分类；需要在分支外使用的结果确实被更新，没有意外创建同名局部变量。"
+      ]
+    },
+    "supplement-go-real-test-file": {
+      "title": "写一份 Go 能自动运行的测试",
+      "kicker": "把结账的四种情况写成测试，并故意改错一次，确认测试能发现错误。",
+      "analogy": "把结账的四种情况写成测试，并故意改错一次，确认测试能发现错误。 本页把测试和实现放在同一个包，测试文件名以 _test.go 结尾。",
+      "principles": [
+        "本页把测试和实现放在同一个包，测试文件名以 _test.go 结尾。",
+        "把名称、输入和期望值排成测试数据表，可以逐行执行并方便新增场景。",
+        "用 t.Run 给每个场景命名，失败时就能找到具体输入。",
+        "既检查返回值，也检查错误类别；不要把付款不足与价格非法混为一谈。"
+      ],
+      "pitfalls": [],
+      "codeGuides": [
+        "把结账的四种情况写成测试，并故意改错一次，确认测试能发现错误。",
+        "在示例同包下新建 settle_test.go，编写 TestSettle；列出刚好付款、找零、付款不足和非法价格四种情况。先跑通过，再故意改错找零计算、确认失败，最后恢复。",
+        "go test ./... 能运行四个场景；正确实现通过，故意改错时失败；成功时核对金额，失败时区分 ErrInsufficientPayment 与 ErrInvalidPrice。"
+      ],
+      "task": "在示例同包下新建 settle_test.go，编写 TestSettle；列出刚好付款、找零、付款不足和非法价格四种情况。先跑通过，再故意改错找零计算、确认失败，最后恢复。",
+      "accept": "go test ./... 能运行四个场景；正确实现通过，故意改错时失败；成功时核对金额，失败时区分 ErrInsufficientPayment 与 ErrInvalidPrice。",
+      "selfCheck.0.question": "哪一项最完整地说明了本页需要解决的问题？",
+      "selfCheck.0.answer": "go test ./... 能运行四个场景；正确实现通过，故意改错时失败；成功时核对金额，失败时区分 ErrInsufficientPayment 与 ErrInvalidPrice。",
+      "selfCheck.0.feedback": [
+        "这项只说了其中一步。还要检查：go test ./... 能运行四个场景；正确实现通过，故意改错时失败；成功时核对金额，失败时区分 ErrInsufficientPayment 与 ErrInvalidPrice。",
+        "选对了。go test ./... 能运行四个场景；正确实现通过，故意改错时失败；成功时核对金额，失败时区分 ErrInsufficientPayment 与 ErrInvalidPrice。",
+        "这项只说了其中一步。还要检查：go test ./... 能运行四个场景；正确实现通过，故意改错时失败；成功时核对金额，失败时区分 ErrInsufficientPayment 与 ErrInvalidPrice。"
+      ],
+      "beginnerCode.summary": "这不是结账功能本身，而是给结账功能出的四道考题。程序会把四种付款情况依次交给 settle，再核对它算出的找零和错误是否正确。",
+      "beginnerCode.steps.0.label": "列出四道考题",
+      "beginnerCode.steps.0.explanation": "每道题都写清名称、价格、付款额、期望找零和期望错误。这样新增场景只需再加一行数据。",
+      "beginnerCode.steps.1.label": "逐题交给 settle",
+      "beginnerCode.steps.1.explanation": "for 会依次拿出每道题；t.Run 给它单独命名；settle 真正计算找零并返回错误。",
+      "beginnerCode.steps.2.label": "先核对错误",
+      "beginnerCode.steps.2.explanation": "该报错却没报，或报错类型不对，测试立刻失败。付款不足不能冒充价格非法。",
+      "beginnerCode.steps.3.label": "再核对找零",
+      "beginnerCode.steps.3.explanation": "错误符合预期后，再检查找零金额。实际值和期望值不同，测试会指出是哪道题错了。",
+      "beginnerCode.terms.0.meaning": "测试函数的名字；以 Test 开头，Go 才会自动运行它。",
+      "beginnerCode.terms.1.meaning": "这场测试的记录员，负责标记失败并打印原因。",
+      "beginnerCode.terms.2.meaning": "一张考题清单；每一行就是一道完整测试题。",
+      "beginnerCode.terms.3.meaning": "给每道题单独起名，失败时能直接找到具体场景。",
+      "beginnerCode.terms.4.meaning": "判断错误是否属于期望的那一类。",
+      "selfCheck.0.choiceLabels": [
+        "把名称、输入和期望值排成测试数据表，可以逐行执行并方便新增场景。",
+        "go test ./... 能运行四个场景；正确实现通过，故意改错时失败；成功时核对金额，失败时区分 ErrInsufficientPayment 与 ErrInvalidPrice。",
+        "本页把测试和实现放在同一个包，测试文件名以 _test.go 结尾。"
+      ]
+    },
+    "chapter-2": {
+      "title": "第二章  让账单字段正确出现在 JSON 中",
+      "shortTitle": "让账单字段正确出现在 JSON 中",
+      "goal": "给账单字段设置正确的导出名称和 JSON 名称，再区分数据能读入与金额合法这两件事。",
+      "mnemonic": "字段名决定能否导出，tag 指定 JSON 名称，校验决定值能否使用。",
+      "analogy": "一张账单表单可以写下金额和分类，但填进数字不代表金额合理。字段名称和填写规则要分别检查。",
+      "principles": [
+        "encoding/json 处理可导出的字段；字段名首字母要大写。JSON 中的名称由 json tag 指定。",
+        "tag 是附在字段上的说明，各个库只读取自己认识的内容；json tag 不会自动执行金额校验。",
+        "没有赋值的字段有零值，但零金额和空分类仍可能违反记账规则，需要显式检查。",
+        "接收请求的结构体只放客户端允许填写的字段。内部 ID、用户身份和审计字段由服务端决定，不直接照搬数据库整行。"
+      ],
+      "pitfalls": [
+        "金额使用 float64",
+        "把数据库模型直接暴露给客户端",
+        "以为 binding 通过就代表业务合法"
+      ],
+      "codeGuides": [
+        "先看 AmountCents 的指针：缺失与 null 都是 nil，显式零则是指向零的指针。",
+        "再读 Validate，确认金额和分类分别怎样报错。",
+        "练习里的 Bill 用于输出 JSON；查看导出字段和 tag，再核对编码后的名称及数量。"
+      ],
+      "task": "补全 Bill 的两个字段及 JSON tag，运行 encodeBill 的测试；再读正文的请求校验，分别检查缺失金额、非正金额和合法金额。",
+      "accept": "编码结果只有 id 和 amount_cents 两个字段；正文中缺失或非正金额被拒绝。能说明身份来自服务端认证，而不是请求体。",
+      "transitionIn": "已经读懂函数的输入和返回值。接下来把金额和分类放进结构体，看看它们怎样转换成 JSON。",
+      "transitionOut": "接下来保存和查询多个值，检查哪些数据会被共享修改。",
+      "workshop.title": "先选步骤，再动手练习",
+      "workshop.prompt": "先回顾正文，从三组选项中选出要解决的问题、操作和检查方法。下面的代码练习会再检查一个具体函数。",
+      "workshop.fields.0.label": "先选本章要解决的问题",
+      "workshop.fields.1.label": "再选实际要做的操作",
+      "workshop.fields.2.label": "最后选检查结果的方法",
+      "workshop.codeExercise.title": "让两个账单字段正确编码",
+      "workshop.codeExercise.prompt": "修改 Bill 的字段和 JSON tag，使编码结果只有 id 与 amount_cents。",
+      "workshop.codeExercise.testIntent": "测试把 JSON 解码，核对字段名称恰好是 id 和 amount_cents，且没有多余字段。",
+      "workshop.codeExercise.hints": [
+        "把字段改成可导出的 ID 和 AmountCents。",
+        "分别设置 json:\"id\" 和 json:\"amount_cents\"。",
+        "核对输出只含这两个字段；编码本身不执行金额校验。"
+      ],
+      "workshop.codeExercise.failureHint": "先读第一条测试错误，核对它给出的输入和期望结果，再修改练习中的实现。",
+      "selfCheck.0.question": "为什么小写字段不会出现在 JSON？",
+      "selfCheck.0.answer": "小写字段未导出，encoding/json 在包外看不见它。",
+      "selfCheck.0.feedback": [
+        "选对了。小写字段未导出，encoding/json 在包外看不见它。",
+        "这项没有回答当前问题。应检查：小写字段未导出，encoding/json 在包外看不见它。",
+        "这项没有回答当前问题。应检查：小写字段未导出，encoding/json 在包外看不见它。"
+      ],
+      "selfCheck.1.question": "零值有什么好处和风险？",
+      "selfCheck.1.answer": "零值便于直接创建对象，但 0 金额等零值可能不满足业务规则。",
+      "selfCheck.1.feedback": [
+        "这项没有回答当前问题。应检查：零值便于直接创建对象，但 0 金额等零值可能不满足业务规则。",
+        "这项没有回答当前问题。应检查：零值便于直接创建对象，但 0 金额等零值可能不满足业务规则。",
+        "选对了。零值便于直接创建对象，但 0 金额等零值可能不满足业务规则。"
+      ],
+      "selfCheck.2.question": "为什么 user_id 不信任请求体？",
+      "selfCheck.2.answer": "user_id 必须来自服务端认证结果，不能信任请求体自报。",
+      "selfCheck.2.feedback": [
+        "这项没有回答当前问题。应检查：user_id 必须来自服务端认证结果，不能信任请求体自报。",
+        "选对了。user_id 必须来自服务端认证结果，不能信任请求体自报。",
+        "这项没有回答当前问题。应检查：user_id 必须来自服务端认证结果，不能信任请求体自报。"
+      ],
+      "selfCheck.0.choiceLabels": [
+        "小写字段未导出，encoding/json 在包外看不见它。",
+        "零值便于直接创建对象，但 0 金额等零值可能不满足业务规则。",
+        "user_id 必须来自服务端认证结果，不能信任请求体自报。"
+      ],
+      "selfCheck.1.choiceLabels": [
+        "user_id 必须来自服务端认证结果，不能信任请求体自报。",
+        "小写字段未导出，encoding/json 在包外看不见它。",
+        "零值便于直接创建对象，但 0 金额等零值可能不满足业务规则。"
+      ],
+      "selfCheck.2.choiceLabels": [
+        "零值便于直接创建对象，但 0 金额等零值可能不满足业务规则。",
+        "user_id 必须来自服务端认证结果，不能信任请求体自报。",
+        "小写字段未导出，encoding/json 在包外看不见它。"
+      ],
+      "workshop.fields.0.optionLabels": [
+        "只看成功的情况，不检查失败时该怎么办。",
+        "给账单字段设置正确的导出名称和 JSON 名称，再区分数据能读入与金额合法这两件事。",
+        "金额使用 float64"
+      ],
+      "workshop.fields.1.optionLabels": [
+        "补全 Bill 的两个字段及 JSON tag，运行 encodeBill 的测试；再读正文的请求校验，分别检查缺失金额、非正金额和合法金额。",
+        "以为 输入格式检查通过就代表业务合法",
+        "只写实现，不运行练习要求的检查。"
+      ],
+      "workshop.fields.2.optionLabels": [
+        "只检查成功的一次，不测试失败情况。",
+        "看见程序有输出就结束，不逐项核对要求。",
+        "编码结果只有 id 和 amount_cents 两个字段；正文中缺失或非正金额被拒绝。能说明身份来自服务端认证，而不是请求体。"
+      ]
+    },
+    "supplement-go-utf8-string-byte-rune": {
+      "title": "数中文长度时，先说清数什么",
+      "kicker": "对同一个字符串分别数字节、数 rune，并检查它是否为合法 UTF-8。",
+      "analogy": "对同一个字符串分别数字节、数 rune，并检查它是否为合法 UTF-8。 string 是不可修改的字节序列，其中可以包含非法 UTF-8。",
+      "principles": [
+        "string 是不可修改的字节序列，其中可以包含非法 UTF-8。",
+        "len 数的是字节；utf8.RuneCountInString 数的是 rune，也就是 Unicode 码点。",
+        "range 遇到非法 UTF-8 会给出 RuneError，并按解码规则继续前进。",
+        "人眼看到的一个字符可能由多个码点组成。需要按可见字符截取时，还要处理字素簇。"
+      ],
+      "pitfalls": [],
+      "codeGuides": [
+        "对同一个字符串分别数字节、数 rune，并检查它是否为合法 UTF-8。",
+        "把 Go、中国和含非法 UTF-8 字节的字符串依次传给 inspect，记录字节数、rune 数和合法性；再比较按字节切片与按 rune 切片。",
+        "能解释三个返回值；截取前检查位置，避免切断 UTF-8 编码。转成 []rune 可以按码点切分，但不能保证不拆开组合字符。"
+      ],
+      "task": "把 Go、中国和含非法 UTF-8 字节的字符串依次传给 inspect，记录字节数、rune 数和合法性；再比较按字节切片与按 rune 切片。",
+      "accept": "能解释三个返回值；截取前检查位置，避免切断 UTF-8 编码。转成 []rune 可以按码点切分，但不能保证不拆开组合字符。",
+      "selfCheck.0.question": "哪一项最完整地说明了本页需要解决的问题？",
+      "selfCheck.0.answer": "能解释三个返回值；截取前检查位置，避免切断 UTF-8 编码。转成 []rune 可以按码点切分，但不能保证不拆开组合字符。",
+      "selfCheck.0.feedback": [
+        "选对了。能解释三个返回值；截取前检查位置，避免切断 UTF-8 编码。转成 []rune 可以按码点切分，但不能保证不拆开组合字符。",
+        "这项只说了其中一步。还要检查：能解释三个返回值；截取前检查位置，避免切断 UTF-8 编码。转成 []rune 可以按码点切分，但不能保证不拆开组合字符。",
+        "这项只说了其中一步。还要检查：能解释三个返回值；截取前检查位置，避免切断 UTF-8 编码。转成 []rune 可以按码点切分，但不能保证不拆开组合字符。"
+      ],
+      "selfCheck.0.choiceLabels": [
+        "能解释三个返回值；截取前检查位置，避免切断 UTF-8 编码。转成 []rune 可以按码点切分，但不能保证不拆开组合字符。",
+        "string 是不可修改的字节序列，其中可以包含非法 UTF-8。",
+        "len 数的是字节；utf8.RuneCountInString 数的是 rune，也就是 Unicode 码点。"
+      ]
+    },
+    "supplement-go-strict-json-contract": {
+      "title": "拒绝含糊或多余的 JSON 输入",
+      "kicker": "逐项检查金额、未知字段、重复字段和尾部数据，只接受符合本页规则的请求。",
+      "analogy": "一张账单把金额写了两遍，一次 15、一次 150：某处可能取前一个，另一处可能取后一个，同一份请求就算出了不同的账。因此读到重复字段就拒绝，连只差大小写和嵌套对象中的重复也检查。还要分别拒绝不允许的多余字段、正文后又接上的第二段 JSON，以及超过读取大小上限的请求；这些检查不能互相代替。",
+      "principles": [
+        "先限制请求大小，再逐个读取 JSON token，检查每层对象是否重复使用字段名，大小写变体也拒绝。",
+        "*int64 会把缺失与 null 都读成 nil。本页把这两种情况和非正数一起拒绝。",
+        "如果业务要分别识别缺失、null 和有效值，就用带 Present/Null 标记的自定义类型实现 UnmarshalJSON。",
+        "网关、服务和签名前的数据整理必须使用一致的重复字段规则，不能依赖后一个值覆盖前一个值。"
+      ],
+      "pitfalls": [],
+      "codeGuides": [
+        "逐项检查金额、未知字段、重复字段和尾部数据，只接受符合本页规则的请求。",
+        "为 decodeBill 列测试：金额缺失、null、零、负数、正数，再加未知字段、第二段 JSON、重复金额字段、大小写变体和嵌套重复字段。",
+        "合法正金额通过；缺失、null、非正金额都失败。未知字段、尾部数据、任意层重复或仅大小写不同的字段名也失败，超过读取上限的请求被拒绝。"
+      ],
+      "task": "为 decodeBill 列测试：金额缺失、null、零、负数、正数，再加未知字段、第二段 JSON、重复金额字段、大小写变体和嵌套重复字段。",
+      "accept": "合法正金额通过；缺失、null、非正金额都失败。未知字段、尾部数据、任意层重复或仅大小写不同的字段名也失败，超过读取上限的请求被拒绝。",
+      "selfCheck.0.question": "哪一项最完整地说明了本页需要解决的问题？",
+      "selfCheck.0.answer": "合法正金额通过；缺失、null、非正金额都失败。未知字段、尾部数据、任意层重复或仅大小写不同的字段名也失败，超过读取上限的请求被拒绝。",
+      "selfCheck.0.feedback": [
+        "这项只说了其中一步。还要检查：合法正金额通过；缺失、null、非正金额都失败。未知字段、尾部数据、任意层重复或仅大小写不同的字段名也失败，超过读取上限的请求被拒绝。",
+        "这项只说了其中一步。还要检查：合法正金额通过；缺失、null、非正金额都失败。未知字段、尾部数据、任意层重复或仅大小写不同的字段名也失败，超过读取上限的请求被拒绝。",
+        "选对了。合法正金额通过；缺失、null、非正金额都失败。未知字段、尾部数据、任意层重复或仅大小写不同的字段名也失败，超过读取上限的请求被拒绝。"
+      ],
+      "selfCheck.0.choiceLabels": [
+        "先限制请求大小，再逐个读取 JSON token，检查每层对象是否重复使用字段名，大小写变体也拒绝。",
+        "*int64 会把缺失与 null 都读成 nil。本页把这两种情况和非正数一起拒绝。",
+        "合法正金额通过；缺失、null、非正金额都失败。未知字段、尾部数据、任意层重复或仅大小写不同的字段名也失败，超过读取上限的请求被拒绝。"
+      ]
+    },
+    "chapter-3": {
+      "title": "第三章  添加列表元素，按名字查分数",
+      "shortTitle": "添加列表元素，按名字查分数",
+      "goal": "给切片添加姓名，用 map 查询分数，再复制一份可以独立修改的姓名列表。",
+      "mnemonic": "append 要接返回值，查 map 要看是否存在，独立修改要复制元素。",
+      "analogy": "把同一份名单交给两个人修改，双方可能看见彼此的更改。要各改各的，就真正复印一份名单。",
+      "principles": [
+        "数组长度固定。切片记录底层数组的位置、长度和容量；切片赋值只复制这些信息，仍可能共用元素。",
+        "append 可能沿用原数组，也可能换成更大的数组。把返回值赋回变量，才能取得更新后的长度和位置。",
+        "nil map 可以读取，写入前要用 make 或字面量初始化。读取时同时接收第二个值，判断键是否存在。",
+        "本章先检查单线程下的数据变化。多个 goroutine 同时读写的问题留到第 7 章。"
+      ],
+      "pitfalls": [
+        "调用 append 后忘了接住返回的新 slice",
+        "向 nil map 写值导致 panic",
+        "读取 map 时只看零值，不检查键是否真的存在"
+      ],
+      "codeGuides": [
+        "找到 append，确认返回的切片赋回 names。",
+        "查看 scores 如何初始化，再分别查询已有姓名和不存在的姓名。",
+        "练习不能直接返回 src；建立新切片并复制字符串元素，再修改副本作比较。"
+      ],
+      "task": "运行示例并添加姓名和分数，查询一个不存在的名字；补全 clone，再修改副本验证原列表不变。",
+      "accept": "新增姓名出现在结果中；map 中有键时返回 true、没有键时返回 false；修改 clone 返回的字符串切片不会改变原切片。",
+      "transitionIn": "一笔账单的字段已经清楚了。现在用列表保存多个值，再按名字查找数据。",
+      "transitionOut": "接下来用接口声明读取能力，让调用方可以使用不同的存储实现。",
+      "workshop.title": "先选步骤，再动手练习",
+      "workshop.prompt": "先回顾正文，从三组选项中选出要解决的问题、操作和检查方法。下面的代码练习会再检查一个具体函数。",
+      "workshop.fields.0.label": "先选本章要解决的问题",
+      "workshop.fields.1.label": "再选实际要做的操作",
+      "workshop.fields.2.label": "最后选检查结果的方法",
+      "workshop.codeExercise.title": "复制一份能独立修改的列表",
+      "workshop.codeExercise.prompt": "实现 clone，把字符串元素复制到新的存储中；修改副本不能影响 src。",
+      "workshop.codeExercise.testIntent": "测试修改返回的副本，再确认原切片的元素没有改变。",
+      "workshop.codeExercise.hints": [
+        "直接 return src 会共享元素。",
+        "用 make 创建新切片，再用 copy 复制；也可以向新切片 append 原元素。",
+        "修改副本后重新检查原切片。"
+      ],
+      "workshop.codeExercise.failureHint": "先读第一条测试错误，核对它给出的输入和期望结果，再修改练习中的实现。",
+      "selfCheck.0.question": "为什么 append 的结果要重新赋给 names？",
+      "selfCheck.0.answer": "因为 append 可能换一块新的底层数组，返回的 slice 才指向正确结果。",
+      "selfCheck.0.feedback": [
+        "选对了。因为 append 可能换一块新的底层数组，返回的 slice 才指向正确结果。",
+        "这项没有回答当前问题。应检查：因为 append 可能换一块新的底层数组，返回的 slice 才指向正确结果。",
+        "这项没有回答当前问题。应检查：因为 append 可能换一块新的底层数组，返回的 slice 才指向正确结果。"
+      ],
+      "selfCheck.1.question": "map 为什么要先 make 再写？",
+      "selfCheck.1.answer": "nil map 可以读但不能写；make 会创建可写的 map。",
+      "selfCheck.1.feedback": [
+        "这项没有回答当前问题。应检查：nil map 可以读但不能写；make 会创建可写的 map。",
+        "这项没有回答当前问题。应检查：nil map 可以读但不能写；make 会创建可写的 map。",
+        "选对了。nil map 可以读但不能写；make 会创建可写的 map。"
+      ],
+      "selfCheck.2.question": "读取不存在的键时，怎样区分它和真的存了一个零值？",
+      "selfCheck.2.answer": "接住第二个返回值 ok；ok 为 false 表示键不存在。",
+      "selfCheck.2.feedback": [
+        "这项没有回答当前问题。应检查：接住第二个返回值 ok；ok 为 false 表示键不存在。",
+        "选对了。接住第二个返回值 ok；ok 为 false 表示键不存在。",
+        "这项没有回答当前问题。应检查：接住第二个返回值 ok；ok 为 false 表示键不存在。"
+      ],
+      "selfCheck.0.choiceLabels": [
+        "因为 append 可能换一块新的底层数组，返回的 slice 才指向正确结果。",
+        "nil map 可以读但不能写；make 会创建可写的 map。",
+        "接住第二个返回值 ok；ok 为 false 表示键不存在。"
+      ],
+      "selfCheck.1.choiceLabels": [
+        "接住第二个返回值 ok；ok 为 false 表示键不存在。",
+        "因为 append 可能换一块新的底层数组，返回的 slice 才指向正确结果。",
+        "nil map 可以读但不能写；make 会创建可写的 map。"
+      ],
+      "selfCheck.2.choiceLabels": [
+        "nil map 可以读但不能写；make 会创建可写的 map。",
+        "接住第二个返回值 ok；ok 为 false 表示键不存在。",
+        "因为 append 可能换一块新的底层数组，返回的 slice 才指向正确结果。"
+      ],
+      "workshop.fields.0.optionLabels": [
+        "给切片添加姓名，用 map 查询分数，再复制一份可以独立修改的姓名列表。",
+        "调用 append 后忘了接住返回的新 slice",
+        "只看成功的情况，不检查失败时该怎么办。"
+      ],
+      "workshop.fields.1.optionLabels": [
+        "读取 map 时只看零值，不检查键是否真的存在",
+        "只写实现，不运行练习要求的检查。",
+        "运行示例并添加姓名和分数，查询一个不存在的名字；补全 clone，再修改副本验证原列表不变。"
+      ],
+      "workshop.fields.2.optionLabels": [
+        "看见程序有输出就结束，不逐项核对要求。",
+        "新增姓名出现在结果中；map 中有键时返回 true、没有键时返回 false；修改 clone 返回的字符串切片不会改变原切片。",
+        "只检查成功的一次，不测试失败情况。"
+      ]
+    },
+    "supplement-go-container-contracts": {
+      "title": "返回列表时，说明能不能修改",
+      "kicker": "检查列表是否共享元素，明确空结果的表示方式，并让输出顺序可重复。",
+      "analogy": "检查列表是否共享元素，明确空结果的表示方式，并让输出顺序可重复。 nil 切片可以读取和 append；nil map 可以读取，但不能写入。",
+      "principles": [
+        "nil 切片可以读取和 append；nil map 可以读取，但不能写入。",
+        "map 的遍历顺序没有保证；需要稳定输出时取出键并排序。",
+        "切片赋值只复制位置、长度和容量，底层元素可能仍共享。",
+        "返回集合时说明空结果是 nil 还是空集合，以及调用方能否独立修改它。"
+      ],
+      "pitfalls": [],
+      "codeGuides": [
+        "检查列表是否共享元素，明确空结果的表示方式，并让输出顺序可重复。",
+        "写一个返回独立副本的 Names 方法，修改返回值并检查原数据；比较 nil 与空切片的 JSON；运行 sortedKeys，核对排序后的输出。",
+        "修改返回值不影响内部数据；键按固定顺序输出；测试说明 nil 和空切片各自如何编码。"
+      ],
+      "task": "写一个返回独立副本的 Names 方法，修改返回值并检查原数据；比较 nil 与空切片的 JSON；运行 sortedKeys，核对排序后的输出。",
+      "accept": "修改返回值不影响内部数据；键按固定顺序输出；测试说明 nil 和空切片各自如何编码。",
+      "selfCheck.0.question": "哪一项最完整地说明了本页需要解决的问题？",
+      "selfCheck.0.answer": "修改返回值不影响内部数据；键按固定顺序输出；测试说明 nil 和空切片各自如何编码。",
+      "selfCheck.0.feedback": [
+        "这项只说了其中一步。还要检查：修改返回值不影响内部数据；键按固定顺序输出；测试说明 nil 和空切片各自如何编码。",
+        "选对了。修改返回值不影响内部数据；键按固定顺序输出；测试说明 nil 和空切片各自如何编码。",
+        "这项只说了其中一步。还要检查：修改返回值不影响内部数据；键按固定顺序输出；测试说明 nil 和空切片各自如何编码。"
+      ],
+      "selfCheck.0.choiceLabels": [
+        "map 的遍历顺序没有保证；需要稳定输出时取出键并排序。",
+        "修改返回值不影响内部数据；键按固定顺序输出；测试说明 nil 和空切片各自如何编码。",
+        "nil 切片可以读取和 append；nil map 可以读取，但不能写入。"
+      ]
+    },
+    "chapter-4": {
+      "title": "第四章  让函数接受不同的存储实现",
+      "shortTitle": "让函数接受不同的存储实现",
+      "goal": "定义只要求 Get 方法的 Reader 接口，让同一个函数调用不同的存储实现。",
+      "mnemonic": "调用方需要哪些方法，接口就写哪些方法。",
+      "analogy": "查询姓名的函数只需要一个会按编号查找的对象。数据来自数据库还是内存，不影响它怎样调用 Get。",
+      "principles": [
+        "接口放在使用它的一方，先列出真正需要的方法。类型的方法符合要求，就能作为该接口使用，无需 implements 声明。",
+        "值接收者的方法可以通过 T 或 *T 使用；指针接收者的方法只属于 *T 的方法集。",
+        "嵌入其他类型可以复用并提升方法，但不会把两种类型变成继承关系。",
+        "多个类型确实使用同一套容器操作或算法时再考虑泛型，不用类型参数掩盖不同业务规则。"
+      ],
+      "pitfalls": [
+        "接口列出实现方的所有方法，迫使调用方依赖用不到的功能",
+        "不看是否需要修改数据，所有结构体方法都用指针接收者",
+        "为了一处重复就引入泛型"
+      ],
+      "codeGuides": [
+        "先看调用方用了哪些方法，再读接口声明。",
+        "核对 Get 的参数和两个返回值是否完全匹配。",
+        "沿着 return 查看结果与错误，确认存储失败没有被改成成功。"
+      ],
+      "task": "补全 Reader 接口，让 readName 可以接收测试提供的 fakeReader；再观察示例中存储错误如何返回给调用方。",
+      "accept": "Reader 只要求 Get(string) (string, error)；fakeReader 能传入 readName，读取结果和错误都能原样返回。",
+      "transitionIn": "知道怎样存放一组数据后，再看调用方如何使用不同的数据来源。",
+      "transitionOut": "接下来把实现分到不同包，再由 main 创建并连接它们。",
+      "workshop.title": "先选步骤，再动手练习",
+      "workshop.prompt": "先回顾正文，从三组选项中选出要解决的问题、操作和检查方法。下面的代码练习会再检查一个具体函数。",
+      "workshop.fields.0.label": "先选本章要解决的问题",
+      "workshop.fields.1.label": "再选实际要做的操作",
+      "workshop.fields.2.label": "最后选检查结果的方法",
+      "workshop.codeExercise.title": "声明读取函数需要的方法",
+      "workshop.codeExercise.prompt": "定义 Reader 接口，只要求 Get(string) (string, error)，让 readName 能接收测试中的实现。",
+      "workshop.codeExercise.testIntent": "测试将 fakeReader 传给 readName，检查读取结果与错误。",
+      "workshop.codeExercise.hints": [
+        "先看 readName 只调用了 Get。",
+        "接口方法的参数与返回值必须匹配实现。",
+        "写出 type Reader interface { Get(string) (string, error) }。"
+      ],
+      "workshop.codeExercise.failureHint": "先读第一条测试错误，核对它给出的输入和期望结果，再修改练习中的实现。",
+      "selfCheck.0.question": "接口应该由谁定义？",
+      "selfCheck.0.answer": "接口通常由使用方按所需的最小能力定义。",
+      "selfCheck.0.feedback": [
+        "选对了。接口通常由使用方按所需的最小能力定义。",
+        "这项没有回答当前问题。应检查：接口通常由使用方按所需的最小能力定义。",
+        "这项没有回答当前问题。应检查：接口通常由使用方按所需的最小能力定义。"
+      ],
+      "selfCheck.1.question": "值接收者和指针接收者的方法，分别能用于哪些类型？",
+      "selfCheck.1.answer": "值接收者的方法属于 T 和 *T 的方法集；指针接收者的方法只属于 *T 的方法集。",
+      "selfCheck.1.feedback": [
+        "这项没有回答当前问题。应检查：值接收者的方法属于 T 和 *T 的方法集；指针接收者的方法只属于 *T 的方法集。",
+        "这项没有回答当前问题。应检查：值接收者的方法属于 T 和 *T 的方法集；指针接收者的方法只属于 *T 的方法集。",
+        "选对了。值接收者的方法属于 T 和 *T 的方法集；指针接收者的方法只属于 *T 的方法集。"
+      ],
+      "selfCheck.2.question": "组合为何不等于继承？",
+      "selfCheck.2.answer": "组合复用行为，但不自动建立 is-a 继承关系。",
+      "selfCheck.2.feedback": [
+        "这项没有回答当前问题。应检查：组合复用行为，但不自动建立 is-a 继承关系。",
+        "选对了。组合复用行为，但不自动建立 is-a 继承关系。",
+        "这项没有回答当前问题。应检查：组合复用行为，但不自动建立 is-a 继承关系。"
+      ],
+      "selfCheck.0.choiceLabels": [
+        "接口通常由使用方按所需的最小能力定义。",
+        "值接收者的方法属于 T 和 *T 的方法集；指针接收者的方法只属于 *T 的方法集。",
+        "组合复用行为，但不自动建立 is-a 继承关系。"
+      ],
+      "selfCheck.1.choiceLabels": [
+        "组合复用行为，但不自动建立 is-a 继承关系。",
+        "接口通常由使用方按所需的最小能力定义。",
+        "值接收者的方法属于 T 和 *T 的方法集；指针接收者的方法只属于 *T 的方法集。"
+      ],
+      "selfCheck.2.choiceLabels": [
+        "值接收者的方法属于 T 和 *T 的方法集；指针接收者的方法只属于 *T 的方法集。",
+        "组合复用行为，但不自动建立 is-a 继承关系。",
+        "接口通常由使用方按所需的最小能力定义。"
+      ],
+      "workshop.fields.0.optionLabels": [
+        "接口列出实现方的所有方法，迫使调用方依赖用不到的功能",
+        "只看成功的情况，不检查失败时该怎么办。",
+        "定义只要求 Get 方法的 Reader 接口，让同一个函数调用不同的存储实现。"
+      ],
+      "workshop.fields.1.optionLabels": [
+        "只写实现，不运行练习要求的检查。",
+        "补全 Reader 接口，让 readName 可以接收测试提供的 fakeReader；再观察示例中存储错误如何返回给调用方。",
+        "为了一处重复就引入泛型"
+      ],
+      "workshop.fields.2.optionLabels": [
+        "Reader 只要求 Get(string) (string, error)；fakeReader 能传入 readName，读取结果和错误都能原样返回。",
+        "只检查成功的一次，不测试失败情况。",
+        "看见程序有输出就结束，不逐项核对要求。"
+      ]
+    },
+    "supplement-go-interface-typed-nil": {
+      "title": "为什么指针为空，error 却不为空",
+      "kicker": "观察接口保存的类型和值，避免把空指针当成成功返回。",
+      "analogy": "观察接口保存的类型和值，避免把空指针当成成功返回。 接口同时保存具体类型和具体值。装入有类型的空指针后，类型仍然存在，接口就不等于 nil。",
+      "principles": [
+        "接口同时保存具体类型和具体值。装入有类型的空指针后，类型仍然存在，接口就不等于 nil。",
+        "函数返回 error 时，成功分支直接 return nil，不返回一个具体类型的空指针。",
+        "不能确定类型时，用 v, ok := x.(T) 并检查 ok，避免断言失败导致 panic。",
+        "已知只有几种类型时可用 type switch；要支持以后新增实现，优先调用接口方法。"
+      ],
+      "pitfalls": [],
+      "codeGuides": [
+        "观察接口保存的类型和值，避免把空指针当成成功返回。",
+        "先把 validate 的成功分支改成直接返回 p，测试 err 是否为 nil；再恢复显式 return nil，比较两次结果。",
+        "成功时 error 接口本身为 nil；不确定具体类型时，用带 ok 的类型断言并处理失败。"
+      ],
+      "task": "先把 validate 的成功分支改成直接返回 p，测试 err 是否为 nil；再恢复显式 return nil，比较两次结果。",
+      "accept": "成功时 error 接口本身为 nil；不确定具体类型时，用带 ok 的类型断言并处理失败。",
+      "selfCheck.0.question": "哪一项最完整地说明了本页需要解决的问题？",
+      "selfCheck.0.answer": "成功时 error 接口本身为 nil；不确定具体类型时，用带 ok 的类型断言并处理失败。",
+      "selfCheck.0.feedback": [
+        "选对了。成功时 error 接口本身为 nil；不确定具体类型时，用带 ok 的类型断言并处理失败。",
+        "这项只说了其中一步。还要检查：成功时 error 接口本身为 nil；不确定具体类型时，用带 ok 的类型断言并处理失败。",
+        "这项只说了其中一步。还要检查：成功时 error 接口本身为 nil；不确定具体类型时，用带 ok 的类型断言并处理失败。"
+      ],
+      "selfCheck.0.choiceLabels": [
+        "成功时 error 接口本身为 nil；不确定具体类型时，用带 ok 的类型断言并处理失败。",
+        "接口同时保存具体类型和具体值。装入有类型的空指针后，类型仍然存在，接口就不等于 nil。",
+        "函数返回 error 时，成功分支直接 return nil，不返回一个具体类型的空指针。"
+      ]
+    },
+    "supplement-go-generics-when-useful": {
+      "title": "重复的是同一套算法时，再用泛型",
+      "kicker": "用不同键和值类型的 map 调用 keys，判断是否真能共用同一套操作。",
+      "analogy": "用不同键和值类型的 map 调用 keys，判断是否真能共用同一套操作。 容器或集合转换确实对多种类型执行同一算法时，可以考虑泛型。",
+      "principles": [
+        "容器或集合转换确实对多种类型执行同一算法时，可以考虑泛型。",
+        "类型约束只写算法需要的能力；map 键需要 comparable，不能随意增加限制。",
+        "业务规则不同就分别写清函数或接口，不为了看起来统一而加类型参数。",
+        "如果调用处变得更难理解，保留少量重复可能更合适。"
+      ],
+      "pitfalls": [],
+      "codeGuides": [
+        "用不同键和值类型的 map 调用 keys，判断是否真能共用同一套操作。",
+        "用两种类型的 map 调用 keys；再找两段重复代码，逐步比较操作和业务规则，说明哪些部分适合共用。",
+        "能指出类型参数具体减少了哪段重复；键只要求 comparable，值不增加无用限制；不依赖返回键的顺序。"
+      ],
+      "task": "用两种类型的 map 调用 keys；再找两段重复代码，逐步比较操作和业务规则，说明哪些部分适合共用。",
+      "accept": "能指出类型参数具体减少了哪段重复；键只要求 comparable，值不增加无用限制；不依赖返回键的顺序。",
+      "selfCheck.0.question": "哪一项最完整地说明了本页需要解决的问题？",
+      "selfCheck.0.answer": "能指出类型参数具体减少了哪段重复；键只要求 comparable，值不增加无用限制；不依赖返回键的顺序。",
+      "selfCheck.0.feedback": [
+        "这项只说了其中一步。还要检查：能指出类型参数具体减少了哪段重复；键只要求 comparable，值不增加无用限制；不依赖返回键的顺序。",
+        "这项只说了其中一步。还要检查：能指出类型参数具体减少了哪段重复；键只要求 comparable，值不增加无用限制；不依赖返回键的顺序。",
+        "选对了。能指出类型参数具体减少了哪段重复；键只要求 comparable，值不增加无用限制；不依赖返回键的顺序。"
+      ],
+      "selfCheck.0.choiceLabels": [
+        "容器或集合转换确实对多种类型执行同一算法时，可以考虑泛型。",
+        "类型约束只写算法需要的能力；map 键需要 comparable，不能随意增加限制。",
+        "能指出类型参数具体减少了哪段重复；键只要求 comparable，值不增加无用限制；不依赖返回键的顺序。"
+      ]
+    },
+    "chapter-5": {
+      "title": "第五章  把代码分包，再从 main 启动服务",
+      "shortTitle": "把代码分包，再从 main 启动服务",
+      "goal": "辨认 go.mod、包和 internal 目录各管什么，再按依赖方向连接服务。",
+      "mnemonic": "go.mod 管模块依赖，包组织代码，main 选择并连接实现。",
+      "analogy": "项目可以分成启动、业务和存储几部分。启动代码把其他部分接起来，业务代码不应反过来依赖启动入口。",
+      "principles": [
+        "go.mod 记录模块路径和依赖。import 可以导入本模块、标准库，也可以导入已解析到的外部模块。",
+        "包把一组代码组织在一起。internal 的导入限制看目录位置，不是简单看它是否属于同一模块。",
+        "只有 internal 上一级目录树中的代码可以导入其中的包。main 负责选择实现、传入依赖并启动服务。"
+      ],
+      "pitfalls": [
+        "把 go.mod 误解成只准导入本模块",
+        "忽略 internal 的父目录树限制",
+        "业务层反向依赖 Gin 或 SQL 行"
+      ],
+      "codeGuides": [
+        "先读 go.mod，找到模块路径，再对照目录和 import。",
+        "查看 main 如何创建存储、业务服务和请求处理器。",
+        "canImport 练习只判断题目给定的分层方向；它不能代替 Go 对真实目录的检查。"
+      ],
+      "task": "补全 canImport，拒绝 internal 导入 cmd，允许题目规定的其他方向；再按正文建目录，检查 internal 的可见范围，并运行 go test ./...。",
+      "accept": "canImport 的方向判断通过测试；能分别解释项目分层规则与 Go 的 internal 父目录树限制。允许的导入成功，范围外导入被 Go 拒绝。",
+      "transitionIn": "读取函数已经能接受不同实现。现在把启动、业务和存储代码分开放，并把它们连接起来。",
+      "transitionOut": "接下来沿着一次读取失败，查看错误如何返回到请求处理器。",
+      "workshop.title": "先选步骤，再动手练习",
+      "workshop.prompt": "先回顾正文，从三组选项中选出要解决的问题、操作和检查方法。下面的代码练习会再检查一个具体函数。",
+      "workshop.fields.0.label": "先选本章要解决的问题",
+      "workshop.fields.1.label": "再选实际要做的操作",
+      "workshop.fields.2.label": "最后选检查结果的方法",
+      "workshop.codeExercise.title": "检查题目规定的包依赖方向",
+      "workshop.codeExercise.prompt": "实现 canImport：拒绝 internal 指向 cmd，允许 cmd 指向 internal 及同层依赖。这是本题的分层规则，不是完整的 Go 导入检查器。",
+      "workshop.codeExercise.testIntent": "测试检查 cmd、internal 和同层之间的题定依赖方向。",
+      "workshop.codeExercise.hints": [
+        "用 strings.HasPrefix 检查 from 和 to 的目录前缀。",
+        "当 from 属于 internal 且 to 属于 cmd 时返回 false。",
+        "其他题目允许的方向返回 true，再运行测试核对。"
+      ],
+      "workshop.codeExercise.failureHint": "先读第一条测试错误，核对它给出的输入和期望结果，再修改练习中的实现。",
+      "selfCheck.0.question": "module 与 package 的边界有何不同？",
+      "selfCheck.0.answer": "module 定义版本、主模块路径与依赖图；package 定义编译和封装；internal 另受父目录树限制。",
+      "selfCheck.0.feedback": [
+        "选对了。module 定义版本、主模块路径与依赖图；package 定义编译和封装；internal 另受父目录树限制。",
+        "这项没有回答当前问题。应检查：module 定义版本、主模块路径与依赖图；package 定义编译和封装；internal 另受父目录树限制。",
+        "这项没有回答当前问题。应检查：module 定义版本、主模块路径与依赖图；package 定义编译和封装；internal 另受父目录树限制。"
+      ],
+      "selfCheck.1.question": "业务为什么不应依赖 Gin？",
+      "selfCheck.1.answer": "业务层不依赖 Gin，才能独立测试并替换传输协议。",
+      "selfCheck.1.feedback": [
+        "这项没有回答当前问题。应检查：业务层不依赖 Gin，才能独立测试并替换传输协议。",
+        "这项没有回答当前问题。应检查：业务层不依赖 Gin，才能独立测试并替换传输协议。",
+        "选对了。业务层不依赖 Gin，才能独立测试并替换传输协议。"
+      ],
+      "selfCheck.2.question": "为什么说 main 是把各部分组装起来的入口？",
+      "selfCheck.2.answer": "main 先准备数据库连接，创建读写账单的对象并交给记账服务，再把记账服务交给请求处理器，最后启动 HTTP 服务。把这些部分连接起来的地方，就叫组装入口（composition root）。",
+      "selfCheck.2.feedback": [
+        "这项没有回答当前问题。应检查：main 先准备数据库连接，创建读写账单的对象并交给记账服务，再把记账服务交给请求处理器，最后启动 HTTP 服务。把这些部分连接起来的地方，就叫组装入口（composition root）。",
+        "选对了。main 先准备数据库连接，创建读写账单的对象并交给记账服务，再把记账服务交给请求处理器，最后启动 HTTP 服务。把这些部分连接起来的地方，就叫组装入口（composition root）。",
+        "这项没有回答当前问题。应检查：main 先准备数据库连接，创建读写账单的对象并交给记账服务，再把记账服务交给请求处理器，最后启动 HTTP 服务。把这些部分连接起来的地方，就叫组装入口（composition root）。"
+      ],
+      "selfCheck.0.choiceLabels": [
+        "module 定义版本、主模块路径与依赖图；package 定义编译和封装；internal 另受父目录树限制。",
+        "业务层不依赖 Gin，才能独立测试并替换传输协议。",
+        "main 先准备数据库连接，创建读写账单的对象并交给记账服务，再把记账服务交给请求处理器，最后启动 HTTP 服务。把这些部分连接起来的地方，就叫组装入口（composition root）。"
+      ],
+      "selfCheck.1.choiceLabels": [
+        "main 先准备数据库连接，创建读写账单的对象并交给记账服务，再把记账服务交给请求处理器，最后启动 HTTP 服务。把这些部分连接起来的地方，就叫组装入口（composition root）。",
+        "module 定义版本、主模块路径与依赖图；package 定义编译和封装；internal 另受父目录树限制。",
+        "业务层不依赖 Gin，才能独立测试并替换传输协议。"
+      ],
+      "selfCheck.2.choiceLabels": [
+        "业务层不依赖 Gin，才能独立测试并替换传输协议。",
+        "main 先准备数据库连接，创建读写账单的对象并交给记账服务，再把记账服务交给请求处理器，最后启动 HTTP 服务。把这些部分连接起来的地方，就叫组装入口（composition root）。",
+        "module 定义版本、主模块路径与依赖图；package 定义编译和封装；internal 另受父目录树限制。"
+      ],
+      "workshop.fields.0.optionLabels": [
+        "只看成功的情况，不检查失败时该怎么办。",
+        "辨认 go.mod、包和 internal 目录各管什么，再按依赖方向连接服务。",
+        "把 go.mod 误解成只准导入本模块"
+      ],
+      "workshop.fields.1.optionLabels": [
+        "补全 canImport，拒绝 internal 导入 cmd，允许题目规定的其他方向；再按正文建目录，检查 internal 的可见范围，并运行 go test ./...。",
+        "业务层反向依赖 Gin 或 SQL 行",
+        "只写实现，不运行练习要求的检查。"
+      ],
+      "workshop.fields.2.optionLabels": [
+        "只检查成功的一次，不测试失败情况。",
+        "看见程序有输出就结束，不逐项核对要求。",
+        "canImport 的方向判断通过测试；能分别解释项目分层规则与 Go 的 internal 父目录树限制。允许的导入成功，范围外导入被 Go 拒绝。"
+      ]
+    },
+    "supplement-go-module-diagnostics": {
+      "title": "查清一个依赖为什么会被引入",
+      "kicker": "沿着导入关系找到依赖来源，再判断整理依赖产生的变化。",
+      "analogy": "沿着导入关系找到依赖来源，再判断整理依赖产生的变化。 go.mod 记录模块路径、Go 版本及直接或间接依赖。",
+      "principles": [
+        "go.mod 记录模块路径、Go 版本及直接或间接依赖。",
+        "go mod tidy 会考虑相关包和测试，也会考虑不同系统、架构及构建标签；执行后要检查差异。",
+        "go mod why -m 解释依赖为何存在；go mod graph 展示模块之间的依赖关系。",
+        "go mod verify 检查缓存内容是否与 go.sum 一致，不是漏洞扫描。"
+      ],
+      "pitfalls": [],
+      "codeGuides": [],
+      "task": "选择一个间接依赖，用 go mod why -m 查看引入路径，再用 go mod graph 查看模块关系；运行 tidy 后逐项核对 go.mod 和 go.sum 的变化。",
+      "accept": "能解释该依赖由谁引入、当前使用什么版本、为何还需要它；整理后只有预期文件变化。",
+      "selfCheck.0.question": "哪一项最完整地说明了本页需要解决的问题？",
+      "selfCheck.0.answer": "能解释该依赖由谁引入、当前使用什么版本、为何还需要它；整理后只有预期文件变化。",
+      "selfCheck.0.feedback": [
+        "这项只说了其中一步。还要检查：能解释该依赖由谁引入、当前使用什么版本、为何还需要它；整理后只有预期文件变化。",
+        "选对了。能解释该依赖由谁引入、当前使用什么版本、为何还需要它；整理后只有预期文件变化。",
+        "这项只说了其中一步。还要检查：能解释该依赖由谁引入、当前使用什么版本、为何还需要它；整理后只有预期文件变化。"
+      ],
+      "selfCheck.0.choiceLabels": [
+        "go mod tidy 会考虑相关包和测试，也会考虑不同系统、架构及构建标签；执行后要检查差异。",
+        "能解释该依赖由谁引入、当前使用什么版本、为何还需要它；整理后只有预期文件变化。",
+        "go.mod 记录模块路径、Go 版本及直接或间接依赖。"
+      ]
+    },
+    "supplement-go-workspace-boundaries": {
+      "title": "离开本地工作区，模块还能运行吗",
+      "kicker": "用工作区联合开发两个模块，再关闭工作区，分别检查它们的依赖。",
+      "analogy": "用工作区联合开发两个模块，再关闭工作区，分别检查它们的依赖。 go work use 把多个本地模块放进工作区，方便一起修改，不会替它们填写发布依赖。",
+      "principles": [
+        "go work use 把多个本地模块放进工作区，方便一起修改，不会替它们填写发布依赖。",
+        "先用 go env GOWORK 查看当前是否正在使用某个工作区。",
+        "在每个模块中用 GOWORK=off go test ./...，检查脱离工作区后是否仍能使用。",
+        "仅供本地调试的 replace 不应误入准备发布的 go.mod。"
+      ],
+      "pitfalls": [],
+      "codeGuides": [],
+      "task": "建立包含两个模块的临时 go.work，完成联合测试；随后进入各模块目录，用 GOWORK=off go test ./... 分别测试。",
+      "accept": "两个模块能一起开发，也能在关闭工作区后各自解析依赖并通过测试；准备发布的 go.mod 不含意外的本地替换。",
+      "selfCheck.0.question": "哪一项最完整地说明了本页需要解决的问题？",
+      "selfCheck.0.answer": "两个模块能一起开发，也能在关闭工作区后各自解析依赖并通过测试；准备发布的 go.mod 不含意外的本地替换。",
+      "selfCheck.0.feedback": [
+        "选对了。两个模块能一起开发，也能在关闭工作区后各自解析依赖并通过测试；准备发布的 go.mod 不含意外的本地替换。",
+        "这项只说了其中一步。还要检查：两个模块能一起开发，也能在关闭工作区后各自解析依赖并通过测试；准备发布的 go.mod 不含意外的本地替换。",
+        "这项只说了其中一步。还要检查：两个模块能一起开发，也能在关闭工作区后各自解析依赖并通过测试；准备发布的 go.mod 不含意外的本地替换。"
+      ],
+      "selfCheck.0.choiceLabels": [
+        "两个模块能一起开发，也能在关闭工作区后各自解析依赖并通过测试；准备发布的 go.mod 不含意外的本地替换。",
+        "go work use 把多个本地模块放进工作区，方便一起修改，不会替它们填写发布依赖。",
+        "先用 go env GOWORK 查看当前是否正在使用某个工作区。"
+      ]
+    },
+    "chapter-6": {
+      "title": "第六章  补充错误信息，同时保留原来的原因",
+      "shortTitle": "补充错误信息，同时保留原来的原因",
+      "goal": "给读取失败加上账单编号，让调用方仍能判断是不是没有找到。",
+      "mnemonic": "错误文字解释发生了什么，错误链保留程序需要判断的原因。",
+      "analogy": "查询失败时补一句“正在读取哪笔账单”，有助于排查；原来的“找不到”原因也要保留，调用方才能决定怎样回应。",
+      "principles": [
+        "用 %w 给错误增加操作说明并保留原错误。判断类别用 errors.Is，需要提取自定义错误字段时用 errors.As，不比较错误文字。",
+        "客户端取消、服务自身超时、上游超时发生在不同位置，不能一律返回 500 或 504。",
+        "连接已断就停止写响应，日志记为 cancelled；把取消传下去，让下游任务检查信号并退出。",
+        "用一组测试列清对外错误码和状态码。内部原因只写入受控日志与调用追踪，不直接发给客户端。"
+      ],
+      "pitfalls": [
+        "比较 `err.Error()`",
+        "既记录错误又层层重复记录",
+        "把 panic 当普通错误处理"
+      ],
+      "codeGuides": [
+        "练习先看 ErrNotFound，再看 loadBill 怎样把编号和原错误放进返回值。",
+        "正文用 errors.Is 分类，继续追到各类 HTTP 状态和错误码。",
+        "遇到取消分支，检查是否停止写响应，并把停止信号传给下游。"
+      ],
+      "task": "修改 loadBill，用 %w 保留 ErrNotFound 并写明 id；再读 mapError 的测试，分别检查找不到、取消、两类超时和未知错误。",
+      "accept": "loadBill 的错误文字含账单编号，errors.Is 能识别 ErrNotFound；正文里包装后的 ErrMissing 对应 404/bill_not_found，取消、超时及未知错误分别按约定处理。",
+      "transitionIn": "服务各部分连接起来后，读取失败会逐层返回。接下来保留原始原因，并决定如何回应客户端。",
+      "transitionOut": "接下来让多个 goroutine 一起工作，检查共享数据是否安全。",
+      "workshop.title": "先选步骤，再动手练习",
+      "workshop.prompt": "先回顾正文，从三组选项中选出要解决的问题、操作和检查方法。下面的代码练习会再检查一个具体函数。",
+      "workshop.fields.0.label": "先选本章要解决的问题",
+      "workshop.fields.1.label": "再选实际要做的操作",
+      "workshop.fields.2.label": "最后选检查结果的方法",
+      "workshop.codeExercise.title": "补充账单编号，保留找不到的错误",
+      "workshop.codeExercise.prompt": "修改 loadBill，把 id 写进错误说明，并用 %w 保留 ErrNotFound。",
+      "workshop.codeExercise.testIntent": "测试检查错误中含账单编号，并用 errors.Is 确认识别出 ErrNotFound。",
+      "workshop.codeExercise.hints": [
+        "错误文字应说明正在读取哪一笔账单。",
+        "fmt.Errorf 中为原错误保留一个 %w。",
+        "把 ErrNotFound 作为对应参数；测试用 errors.Is 检查。"
+      ],
+      "workshop.codeExercise.failureHint": "先读第一条测试错误，核对它给出的输入和期望结果，再修改练习中的实现。",
+      "selfCheck.0.question": "为什么不用 err.Error() 比较？",
+      "selfCheck.0.answer": "错误文本会变化；分类应使用 errors.Is 或 errors.As。",
+      "selfCheck.0.feedback": [
+        "选对了。错误文本会变化；分类应使用 errors.Is 或 errors.As。",
+        "这项没有回答当前问题。应检查：错误文本会变化；分类应使用 errors.Is 或 errors.As。",
+        "这项没有回答当前问题。应检查：错误文本会变化；分类应使用 errors.Is 或 errors.As。"
+      ],
+      "selfCheck.1.question": "panic 适合普通业务错误吗？",
+      "selfCheck.1.answer": "普通业务失败应返回 error，panic 留给当前调用无法继续的异常状态。",
+      "selfCheck.1.feedback": [
+        "这项没有回答当前问题。应检查：普通业务失败应返回 error，panic 留给当前调用无法继续的异常状态。",
+        "这项没有回答当前问题。应检查：普通业务失败应返回 error，panic 留给当前调用无法继续的异常状态。",
+        "选对了。普通业务失败应返回 error，panic 留给当前调用无法继续的异常状态。"
+      ],
+      "selfCheck.2.question": "为什么不能把内部错误详情直接放进 500 响应？",
+      "selfCheck.2.answer": "内部错误原因可能包含 SQL 语句、服务器文件路径或用户数据，直接返回会泄露信息。因此 500 响应只提供约定的错误码，详细原因留在受控日志和调用追踪中。",
+      "selfCheck.2.feedback": [
+        "这项没有回答当前问题。应检查：内部错误原因可能包含 SQL 语句、服务器文件路径或用户数据，直接返回会泄露信息。因此 500 响应只提供约定的错误码，详细原因留在受控日志和调用追踪中。",
+        "选对了。内部错误原因可能包含 SQL 语句、服务器文件路径或用户数据，直接返回会泄露信息。因此 500 响应只提供约定的错误码，详细原因留在受控日志和调用追踪中。",
+        "这项没有回答当前问题。应检查：内部错误原因可能包含 SQL 语句、服务器文件路径或用户数据，直接返回会泄露信息。因此 500 响应只提供约定的错误码，详细原因留在受控日志和调用追踪中。"
+      ],
+      "selfCheck.0.choiceLabels": [
+        "错误文本会变化；分类应使用 errors.Is 或 errors.As。",
+        "普通业务失败应返回 error，panic 留给当前调用无法继续的异常状态。",
+        "内部错误原因可能包含 SQL 语句、服务器文件路径或用户数据，直接返回会泄露信息。因此 500 响应只提供约定的错误码，详细原因留在受控日志和调用追踪中。"
+      ],
+      "selfCheck.1.choiceLabels": [
+        "内部错误原因可能包含 SQL 语句、服务器文件路径或用户数据，直接返回会泄露信息。因此 500 响应只提供约定的错误码，详细原因留在受控日志和调用追踪中。",
+        "错误文本会变化；分类应使用 errors.Is 或 errors.As。",
+        "普通业务失败应返回 error，panic 留给当前调用无法继续的异常状态。"
+      ],
+      "selfCheck.2.choiceLabels": [
+        "普通业务失败应返回 error，panic 留给当前调用无法继续的异常状态。",
+        "内部错误原因可能包含 SQL 语句、服务器文件路径或用户数据，直接返回会泄露信息。因此 500 响应只提供约定的错误码，详细原因留在受控日志和调用追踪中。",
+        "错误文本会变化；分类应使用 errors.Is 或 errors.As。"
+      ],
+      "workshop.fields.0.optionLabels": [
+        "给读取失败加上账单编号，让调用方仍能判断是不是没有找到。",
+        "比较 `err.Error()`",
+        "只看成功的情况，不检查失败时该怎么办。"
+      ],
+      "workshop.fields.1.optionLabels": [
+        "把 普通失败也交给 panic 处理",
+        "只写实现，不运行练习要求的检查。",
+        "修改 loadBill，用 %w 保留 ErrNotFound 并写明 id；再读 mapError 的测试，分别检查找不到、取消、两类超时和未知错误。"
+      ],
+      "workshop.fields.2.optionLabels": [
+        "看见程序有输出就结束，不逐项核对要求。",
+        "loadBill 的错误文字含账单编号，errors.Is 能识别 ErrNotFound；正文里包装后的 ErrMissing 对应 404/bill_not_found，取消、超时及未知错误分别按约定处理。",
+        "只检查成功的一次，不测试失败情况。"
+      ]
+    },
+    "supplement-go-error-chain": {
+      "title": "错误说明变了，仍能认出原始原因",
+      "kicker": "在 load 中补充操作和编号，让调用方不读错误文字也能识别 ErrMissing。",
+      "analogy": "在 load 中补充操作和编号，让调用方不读错误文字也能识别 ErrMissing。 fmt.Errorf 的 %w 保留原错误，同时允许你补充正在做什么。",
+      "principles": [
+        "fmt.Errorf 的 %w 保留原错误，同时允许你补充正在做什么。",
+        "固定错误类别可以用预先定义的错误值和 errors.Is 判断；需要额外字段时再定义错误类型。",
+        "errors.As 可以沿错误链寻找指定类型，不必知道包了多少层。",
+        "只在能够增加有用信息的位置处理错误，避免每层重复记录同一件事。"
+      ],
+      "pitfalls": [],
+      "codeGuides": [
+        "在 load 中补充操作和编号，让调用方不读错误文字也能识别 ErrMissing。",
+        "给 load 返回的错误加上操作和 id，用 %w 保留原错误；再改变外层文字，用 errors.Is 检查 ErrMissing 是否仍能识别。",
+        "错误文字含操作信息；改变文字后仍能识别原错误，不需要拆分或比较字符串。"
+      ],
+      "task": "给 load 返回的错误加上操作和 id，用 %w 保留原错误；再改变外层文字，用 errors.Is 检查 ErrMissing 是否仍能识别。",
+      "accept": "错误文字含操作信息；改变文字后仍能识别原错误，不需要拆分或比较字符串。",
+      "selfCheck.0.question": "哪一项最完整地说明了本页需要解决的问题？",
+      "selfCheck.0.answer": "错误文字含操作信息；改变文字后仍能识别原错误，不需要拆分或比较字符串。",
+      "selfCheck.0.feedback": [
+        "这项只说了其中一步。还要检查：错误文字含操作信息；改变文字后仍能识别原错误，不需要拆分或比较字符串。",
+        "这项只说了其中一步。还要检查：错误文字含操作信息；改变文字后仍能识别原错误，不需要拆分或比较字符串。",
+        "选对了。错误文字含操作信息；改变文字后仍能识别原错误，不需要拆分或比较字符串。"
+      ],
+      "selfCheck.0.choiceLabels": [
+        "fmt.Errorf 的 %w 保留原错误，同时允许你补充正在做什么。",
+        "固定错误类别可以用预先定义的错误值和 errors.Is 判断；需要额外字段时再定义错误类型。",
+        "错误文字含操作信息；改变文字后仍能识别原错误，不需要拆分或比较字符串。"
+      ]
+    },
+    "supplement-go-defer-panic-recover": {
+      "title": "普通失败返回 error，异常中断再 recover",
+      "kicker": "观察正常返回、业务错误和 panic 三条路径，检查返回结果及资源清理。",
+      "analogy": "观察正常返回、业务错误和 panic 三条路径，检查返回结果及资源清理。 defer 在函数退出前执行，后登记的先执行，适合获取资源后立即登记清理。",
+      "principles": [
+        "defer 在函数退出前执行，后登记的先执行，适合获取资源后立即登记清理。",
+        "defer 的参数在登记时计算；如果闭包随后读取变量，要考虑它期间是否改变。",
+        "读写失败、输入不合法等可预期情况返回 error，不用 panic 代替。",
+        "只有能决定如何处理异常的位置才 recover；记录内部堆栈、返回约定的错误，并完成资源清理。"
+      ],
+      "pitfalls": [],
+      "codeGuides": [
+        "观察正常返回、业务错误和 panic 三条路径，检查返回结果及资源清理。",
+        "让 next 分别正常返回、返回业务错误和触发 panic；在相关资源旁登记 defer 清理，核对三次返回结果及清理记录。",
+        "业务错误原样返回；panic 在 boundary 中记录堆栈并转为 ErrInternal；堆栈不发给客户端，已登记的清理仍执行。"
+      ],
+      "task": "让 next 分别正常返回、返回业务错误和触发 panic；在相关资源旁登记 defer 清理，核对三次返回结果及清理记录。",
+      "accept": "业务错误原样返回；panic 在 boundary 中记录堆栈并转为 ErrInternal；堆栈不发给客户端，已登记的清理仍执行。",
+      "selfCheck.0.question": "哪一项最完整地说明了本页需要解决的问题？",
+      "selfCheck.0.answer": "业务错误原样返回；panic 在 boundary 中记录堆栈并转为 ErrInternal；堆栈不发给客户端，已登记的清理仍执行。",
+      "selfCheck.0.feedback": [
+        "这项只说了其中一步。还要检查：业务错误原样返回；panic 在 boundary 中记录堆栈并转为 ErrInternal；堆栈不发给客户端，已登记的清理仍执行。",
+        "选对了。业务错误原样返回；panic 在 boundary 中记录堆栈并转为 ErrInternal；堆栈不发给客户端，已登记的清理仍执行。",
+        "这项只说了其中一步。还要检查：业务错误原样返回；panic 在 boundary 中记录堆栈并转为 ErrInternal；堆栈不发给客户端，已登记的清理仍执行。"
+      ],
+      "selfCheck.0.choiceLabels": [
+        "defer 的参数在登记时计算；如果闭包随后读取变量，要考虑它期间是否改变。",
+        "业务错误原样返回；panic 在 boundary 中记录堆栈并转为 ErrInternal；堆栈不发给客户端，已登记的清理仍执行。",
+        "defer 在函数退出前执行，后登记的先执行，适合获取资源后立即登记清理。"
+      ]
+    },
+    "supplement-go-testing-fuzz-cleanup": {
+      "title": "让测试生成更多输入来找错",
+      "kicker": "先列出已知例子，再用模糊测试检查编解码后必须还原输入这条规则。",
+      "analogy": "先列出已知例子，再用模糊测试检查编解码后必须还原输入这条规则。 辅助检查函数使用 t.Helper，让报错指向调用位置；资源清理由 t.Cleanup 登记。",
+      "principles": [
+        "辅助检查函数使用 t.Helper，让报错指向调用位置；资源清理由 t.Cleanup 登记。",
+        "子测试按场景命名；只有不共享可变状态时才考虑 t.Parallel。",
+        "f.Add 提供有代表性的初始输入，Fuzz 检查所有生成输入都应满足的规则。",
+        "保存使测试失败的输入，修复后继续用它检查同一问题是否再次出现。"
+      ],
+      "pitfalls": [],
+      "codeGuides": [
+        "先列出已知例子，再用模糊测试检查编解码后必须还原输入这条规则。",
+        "给 FuzzRoundTrip 加入空串和中文种子；对每个生成的字符串，要求编解码不报错且结果与输入相等，并为临时资源登记清理。",
+        "普通测试可重复运行；任何错误或结果不等都使测试失败，不靠吞掉 panic 通过；临时资源由 Cleanup 回收，发现的失败输入保留用于复测。"
+      ],
+      "task": "给 FuzzRoundTrip 加入空串和中文种子；对每个生成的字符串，要求编解码不报错且结果与输入相等，并为临时资源登记清理。",
+      "accept": "普通测试可重复运行；任何错误或结果不等都使测试失败，不靠吞掉 panic 通过；临时资源由 Cleanup 回收，发现的失败输入保留用于复测。",
+      "selfCheck.0.question": "哪一项最完整地说明了本页需要解决的问题？",
+      "selfCheck.0.answer": "普通测试可重复运行；任何错误或结果不等都使测试失败，不靠吞掉 panic 通过；临时资源由 Cleanup 回收，发现的失败输入保留用于复测。",
+      "selfCheck.0.feedback": [
+        "选对了。普通测试可重复运行；任何错误或结果不等都使测试失败，不靠吞掉 panic 通过；临时资源由 Cleanup 回收，发现的失败输入保留用于复测。",
+        "这项只说了其中一步。还要检查：普通测试可重复运行；任何错误或结果不等都使测试失败，不靠吞掉 panic 通过；临时资源由 Cleanup 回收，发现的失败输入保留用于复测。",
+        "这项只说了其中一步。还要检查：普通测试可重复运行；任何错误或结果不等都使测试失败，不靠吞掉 panic 通过；临时资源由 Cleanup 回收，发现的失败输入保留用于复测。"
+      ],
+      "selfCheck.0.choiceLabels": [
+        "普通测试可重复运行；任何错误或结果不等都使测试失败，不靠吞掉 panic 通过；临时资源由 Cleanup 回收，发现的失败输入保留用于复测。",
+        "辅助检查函数使用 t.Helper，让报错指向调用位置；资源清理由 t.Cleanup 登记。",
+        "子测试按场景命名；只有不共享可变状态时才考虑 t.Parallel。"
+      ]
+    },
+    "chapter-7": {
+      "title": "第七章  让并发计数得到正确结果",
+      "shortTitle": "让并发计数得到正确结果",
+      "goal": "让多个 goroutine 安全地更新同一个计数器，并等待它们全部结束。",
+      "mnemonic": "等待完成靠 WaitGroup，共享写入靠同步。",
+      "analogy": "两个人同时读出旧总数，再各加一写回，可能丢掉一次增加。更新时加锁，才能让每次读、加、写完整执行。",
+      "principles": [
+        "goroutine 是 Go 中并发运行的任务。运行时用 G、M、P 调度它们；GOMAXPROCS 控制 P 的数量，P 不对应某一颗固定的物理核心。",
+        "WaitGroup 负责等待任务结束，不保护共享数据。多个任务修改同一个变量时，要用锁等同步方法。channel 也不会自动保护它以外的变量。",
+        "select 从就绪分支中选择，不保证业务公平或每个分支都不会长期等候。循环里加 default 可能导致不停空转。"
+      ],
+      "pitfalls": [
+        "启动 goroutine 后，不再确认它是否结束",
+        "接收方没有确认发送结束，就擅自关闭 channel",
+        "靠 Sleep 猜测其他任务已经完成"
+      ],
+      "codeGuides": [
+        "找到启动 goroutine 前的 Add 和任务结束时的 Done。",
+        "把 total++ 看作读值、加一、写回三步，检查三步是否由同一把锁保护。",
+        "最后看 Wait，确认返回总数前所有任务已经结束。"
+      ],
+      "task": "修好 count 中的共享计数：用同一把锁保护 total++，保留 WaitGroup 的等待，然后运行包含 -race 的测试。",
+      "accept": "启动 1000 个 goroutine 后返回 1000；所有任务完成后才返回，本次 -race 检查没有报告数据竞争。检查通过不代表未执行的并发路径也一定正确。",
+      "transitionIn": "错误处理清楚后，再让多个任务同时工作。先看它们为什么会把同一个总数算错。",
+      "transitionOut": "接下来让发送任务响应取消，避免接收方离开后仍然等待。",
+      "workshop.title": "先选步骤，再动手练习",
+      "workshop.prompt": "先回顾正文，从三组选项中选出要解决的问题、操作和检查方法。下面的代码练习会再检查一个具体函数。",
+      "workshop.fields.0.label": "先选本章要解决的问题",
+      "workshop.fields.1.label": "再选实际要做的操作",
+      "workshop.fields.2.label": "最后选检查结果的方法",
+      "workshop.codeExercise.title": "修复多个任务一起计数时丢数",
+      "workshop.codeExercise.prompt": "修改 count，用同一把锁保护 total++，并等所有 goroutine 结束后返回总数。",
+      "workshop.codeExercise.testIntent": "测试反复启动 1000 个 goroutine，核对总数，并用 -race 检查共享写入。",
+      "workshop.codeExercise.hints": [
+        "保留 WaitGroup 的 Add、Done 和 Wait，它们负责等待完成。",
+        "在循环外声明一个 sync.Mutex，让所有任务共用。",
+        "每次 total++ 前 Lock，更新后 Unlock，再用 -race 检查。"
+      ],
+      "workshop.codeExercise.failureHint": "先读第一条测试错误，核对它给出的输入和期望结果，再修改练习中的实现。",
+      "selfCheck.0.question": "调度器里的 P 对应一颗固定的物理 CPU 核吗？",
+      "selfCheck.0.answer": "P 是调度资源，不等同于某一颗物理 CPU 核。",
+      "selfCheck.0.feedback": [
+        "选对了。P 是调度资源，不等同于某一颗物理 CPU 核。",
+        "这项没有回答当前问题。应检查：P 是调度资源，不等同于某一颗物理 CPU 核。",
+        "这项没有回答当前问题。应检查：P 是调度资源，不等同于某一颗物理 CPU 核。"
+      ],
+      "selfCheck.1.question": "用了 channel，其他共享变量还可能发生数据竞争吗？",
+      "selfCheck.1.answer": "会；channel 不会自动保护它之外的共享变量。",
+      "selfCheck.1.feedback": [
+        "这项没有回答当前问题。应检查：会；channel 不会自动保护它之外的共享变量。",
+        "这项没有回答当前问题。应检查：会；channel 不会自动保护它之外的共享变量。",
+        "选对了。会；channel 不会自动保护它之外的共享变量。"
+      ],
+      "selfCheck.2.question": "一次 -race 检查通过，能保证所有并发情况都正确吗？",
+      "selfCheck.2.answer": "不能；race detector 只检查本次执行实际覆盖到的并发路径。",
+      "selfCheck.2.feedback": [
+        "这项没有回答当前问题。应检查：不能；race detector 只检查本次执行实际覆盖到的并发路径。",
+        "选对了。不能；race detector 只检查本次执行实际覆盖到的并发路径。",
+        "这项没有回答当前问题。应检查：不能；race detector 只检查本次执行实际覆盖到的并发路径。"
+      ],
+      "selfCheck.0.choiceLabels": [
+        "P 是调度资源，不等同于某一颗物理 CPU 核。",
+        "会；channel 不会自动保护它之外的共享变量。",
+        "不能；race detector 只检查本次执行实际覆盖到的并发路径。"
+      ],
+      "selfCheck.1.choiceLabels": [
+        "不能；race detector 只检查本次执行实际覆盖到的并发路径。",
+        "P 是调度资源，不等同于某一颗物理 CPU 核。",
+        "会；channel 不会自动保护它之外的共享变量。"
+      ],
+      "selfCheck.2.choiceLabels": [
+        "会；channel 不会自动保护它之外的共享变量。",
+        "不能；race detector 只检查本次执行实际覆盖到的并发路径。",
+        "P 是调度资源，不等同于某一颗物理 CPU 核。"
+      ],
+      "workshop.fields.0.optionLabels": [
+        "启动 goroutine 后就不再等它结束",
+        "只看成功的情况，不检查失败时该怎么办。",
+        "让多个 goroutine 安全地更新同一个计数器，并等待它们全部结束。"
+      ],
+      "workshop.fields.1.optionLabels": [
+        "只写实现，不运行练习要求的检查。",
+        "修好 count 中的共享计数：用同一把锁保护 total++，保留 WaitGroup 的等待，然后运行包含 -race 的测试。",
+        "用 Sleep 猜测其他任务已经完成"
+      ],
+      "workshop.fields.2.optionLabels": [
+        "启动 1000 个 goroutine 后返回 1000；所有任务完成后才返回，本次 -race 检查没有报告数据竞争。检查通过不代表未执行的并发路径也一定正确。",
+        "只检查成功的一次，不测试失败情况。",
+        "看见程序有输出就结束，不逐项核对要求。"
+      ]
+    },
+    "supplement-go-memory-model-race": {
+      "title": "用明确通知代替等待一会儿",
+      "kicker": "让读写双方通过 channel 建立先后关系，不靠延时猜测数据是否准备好。",
+      "analogy": "让读写双方通过 channel 建立先后关系，不靠延时猜测数据是否准备好。 多个 goroutine 访问同一内存位置，其中至少一个写入，又没有合适同步，就会发生数据竞争。",
+      "principles": [
+        "多个 goroutine 访问同一内存位置，其中至少一个写入，又没有合适同步，就会发生数据竞争。",
+        "启动 goroutine、通道收发、锁和原子操作可以按各自规则建立同步关系。",
+        "睡一会儿、观察日志顺序或在本机跑对多次，都不能替代同步。",
+        "-race 只检查本次实际运行的路径，所以还要设计覆盖真实并发场景的测试。"
+      ],
+      "pitfalls": [],
+      "codeGuides": [
+        "让读写双方通过 channel 建立先后关系，不靠延时猜测数据是否准备好。",
+        "把轮询共享 bool 的写法改成 channel 通知，参考 publish 发送数据；运行普通测试，再运行 go test -race ./...。",
+        "能指出发送与接收在哪里确定先后关系；本次 race 检查无报告；代码不依赖 sleep 或碰巧的调度顺序。"
+      ],
+      "task": "把轮询共享 bool 的写法改成 channel 通知，参考 publish 发送数据；运行普通测试，再运行 go test -race ./...。",
+      "accept": "能指出发送与接收在哪里确定先后关系；本次 race 检查无报告；代码不依赖 sleep 或碰巧的调度顺序。",
+      "selfCheck.0.question": "哪一项最完整地说明了本页需要解决的问题？",
+      "selfCheck.0.answer": "能指出发送与接收在哪里确定先后关系；本次 race 检查无报告；代码不依赖 sleep 或碰巧的调度顺序。",
+      "selfCheck.0.feedback": [
+        "这项只说了其中一步。还要检查：能指出发送与接收在哪里确定先后关系；本次 race 检查无报告；代码不依赖 sleep 或碰巧的调度顺序。",
+        "这项只说了其中一步。还要检查：能指出发送与接收在哪里确定先后关系；本次 race 检查无报告；代码不依赖 sleep 或碰巧的调度顺序。",
+        "选对了。能指出发送与接收在哪里确定先后关系；本次 race 检查无报告；代码不依赖 sleep 或碰巧的调度顺序。"
+      ],
+      "selfCheck.0.choiceLabels": [
+        "多个 goroutine 访问同一内存位置，其中至少一个写入，又没有合适同步，就会发生数据竞争。",
+        "启动 goroutine、通道收发、锁和原子操作可以按各自规则建立同步关系。",
+        "能指出发送与接收在哪里确定先后关系；本次 race 检查无报告；代码不依赖 sleep 或碰巧的调度顺序。"
+      ]
+    },
+    "supplement-go-sync-tool-choice": {
+      "title": "先看共享数据，再选锁或其他工具",
+      "kicker": "分别说明计数器与配置缓存怎样被访问，再选择能够保证正确结果的同步方法。",
+      "analogy": "分别说明计数器与配置缓存怎样被访问，再选择能够保证正确结果的同步方法。 一组字段必须同时满足某条规则时，用同一把 Mutex 保护相关读写，并说明加锁范围。",
+      "principles": [
+        "一组字段必须同时满足某条规则时，用同一把 Mutex 保护相关读写，并说明加锁范围。",
+        "读操作多不代表 RWMutex 一定快；存在竞争且基准测试显示收益时再采用。",
+        "Once 适合只做一次的初始化；atomic 适合简单、独立的状态，不自动保证多个字段共同正确。",
+        "已经使用的锁不能复制；含锁的结构体通常通过指针传递。"
+      ],
+      "pitfalls": [],
+      "codeGuides": [
+        "分别说明计数器与配置缓存怎样被访问，再选择能够保证正确结果的同步方法。",
+        "为计数器选择保护方法，再读 ConfigCache.Get，说明为什么配置只加载一次；为两者补并发测试并运行 -race。",
+        "每个共享值由谁读写都能说清；需要一起更新的字段不会被分开修改，配置按约定只初始化一次，本次 race 检查通过。"
+      ],
+      "task": "为计数器选择保护方法，再读 ConfigCache.Get，说明为什么配置只加载一次；为两者补并发测试并运行 -race。",
+      "accept": "每个共享值由谁读写都能说清；需要一起更新的字段不会被分开修改，配置按约定只初始化一次，本次 race 检查通过。",
+      "selfCheck.0.question": "哪一项最完整地说明了本页需要解决的问题？",
+      "selfCheck.0.answer": "每个共享值由谁读写都能说清；需要一起更新的字段不会被分开修改，配置按约定只初始化一次，本次 race 检查通过。",
+      "selfCheck.0.feedback": [
+        "这项只说了其中一步。还要检查：每个共享值由谁读写都能说清；需要一起更新的字段不会被分开修改，配置按约定只初始化一次，本次 race 检查通过。",
+        "选对了。每个共享值由谁读写都能说清；需要一起更新的字段不会被分开修改，配置按约定只初始化一次，本次 race 检查通过。",
+        "这项只说了其中一步。还要检查：每个共享值由谁读写都能说清；需要一起更新的字段不会被分开修改，配置按约定只初始化一次，本次 race 检查通过。"
+      ],
+      "selfCheck.0.choiceLabels": [
+        "读操作多不代表 RWMutex 一定快；存在竞争且基准测试显示收益时再采用。",
+        "每个共享值由谁读写都能说清；需要一起更新的字段不会被分开修改，配置按约定只初始化一次，本次 race 检查通过。",
+        "一组字段必须同时满足某条规则时，用同一把 Mutex 保护相关读写，并说明加锁范围。"
+      ]
+    },
+    "chapter-8": {
+      "title": "第八章  没人接收时，也能停止发送",
+      "shortTitle": "没人接收时，也能停止发送",
+      "goal": "让发送数据的 goroutine 响应取消，并在退出时关闭输出通道。",
+      "mnemonic": "发送时等取消，退出时关通道，调用方再确认已经结束。",
+      "analogy": "接收方不再需要数据时，发送方不能一直等下去。双方约定一个取消通知，发送方收到后停止，并关闭输出。",
+      "principles": [
+        "只有能确认不会再有人发送的一方才能关闭 channel；通常由唯一发送方或协调者关闭。接收方可以用 range 读到关闭为止。",
+        "select 在多个分支同时就绪时伪随机选择，不保证各项业务获得相同机会。",
+        "context 只通知取消。它不能强制终止 goroutine、解开互斥锁，也不能保证数据库驱动立即停止；相关代码必须主动响应。",
+        "启动每个 goroutine 时，说明它等什么、从哪里接收取消、把错误交给谁，以及调用方怎样确认它已经退出。"
+      ],
+      "pitfalls": [
+        "把 context 放进 struct 长期保存",
+        "把业务参数塞进 context",
+        "忽略 ctx.Err"
+      ],
+      "codeGuides": [
+        "先找 out 和发送 goroutine，确认只有发送任务执行 close。",
+        "检查每一次可能阻塞的发送，都有 ctx.Done() 分支可以退出。",
+        "看正常发送完和提前取消两条路径是否都会执行关闭，再用测试等待结束。"
+      ],
+      "task": "补全 stream：每次发送都用 select 同时等待接收方和 ctx.Done()；发送任务退出时关闭 out，再测试接收方提前停止。",
+      "accept": "正常输入能发送完并关闭输出；提前取消后输出在测试期限内关闭，发送任务退出；-race 和泄漏检查通过。",
+      "transitionIn": "计数已经能安全更新。接下来处理另一种问题：接收方先退出了，发送方怎样停止等待。",
+      "transitionOut": "Go 卷到这里已经串起函数、数据、接口、包、错误和并发。下一章把这些代码用到 HTTP 请求处理中。",
+      "workshop.title": "先选步骤，再动手练习",
+      "workshop.prompt": "先回顾正文，从三组选项中选出要解决的问题、操作和检查方法。下面的代码练习会再检查一个具体函数。",
+      "workshop.fields.0.label": "先选本章要解决的问题",
+      "workshop.fields.1.label": "再选实际要做的操作",
+      "workshop.fields.2.label": "最后选检查结果的方法",
+      "workshop.codeExercise.title": "让等待发送的任务响应取消",
+      "workshop.codeExercise.prompt": "补全 stream：发送数据时同时等待取消信号；发送 goroutine 结束时关闭 out。",
+      "workshop.codeExercise.testIntent": "测试提前取消发送，检查输出通道是否在期限内关闭。",
+      "workshop.codeExercise.hints": [
+        "在发送 goroutine 内 defer close(out)，保证退出时关闭。",
+        "不要只写 out <- value，否则无人接收时会一直等。",
+        "用 select 等待 out <- value 或 ctx.Done()；取消时 return。"
+      ],
+      "workshop.codeExercise.failureHint": "先读第一条测试错误，核对它给出的输入和期望结果，再修改练习中的实现。",
+      "selfCheck.0.question": "谁应该关闭 channel？",
+      "selfCheck.0.answer": "能保证不再发送的唯一发送方或协调者负责关闭 channel。",
+      "selfCheck.0.feedback": [
+        "选对了。能保证不再发送的唯一发送方或协调者负责关闭 channel。",
+        "这项没有回答当前问题。应检查：能保证不再发送的唯一发送方或协调者负责关闭 channel。",
+        "这项没有回答当前问题。应检查：能保证不再发送的唯一发送方或协调者负责关闭 channel。"
+      ],
+      "selfCheck.1.question": "select 是否保证绝对公平？",
+      "selfCheck.1.answer": "不保证；多个 case 同时就绪时伪随机选择，不是业务公平策略。",
+      "selfCheck.1.feedback": [
+        "这项没有回答当前问题。应检查：不保证；多个 case 同时就绪时伪随机选择，不是业务公平策略。",
+        "这项没有回答当前问题。应检查：不保证；多个 case 同时就绪时伪随机选择，不是业务公平策略。",
+        "选对了。不保证；多个 case 同时就绪时伪随机选择，不是业务公平策略。"
+      ],
+      "selfCheck.2.question": "context 能强杀 goroutine 吗？",
+      "selfCheck.2.answer": "不能；context 只广播取消意图，goroutine 必须主动监听并返回。",
+      "selfCheck.2.feedback": [
+        "这项没有回答当前问题。应检查：不能；context 只广播取消意图，goroutine 必须主动监听并返回。",
+        "选对了。不能；context 只广播取消意图，goroutine 必须主动监听并返回。",
+        "这项没有回答当前问题。应检查：不能；context 只广播取消意图，goroutine 必须主动监听并返回。"
+      ],
+      "selfCheck.0.choiceLabels": [
+        "能保证不再发送的唯一发送方或协调者负责关闭 channel。",
+        "不保证；多个 case 同时就绪时伪随机选择，不是业务公平策略。",
+        "不能；context 只广播取消意图，goroutine 必须主动监听并返回。"
+      ],
+      "selfCheck.1.choiceLabels": [
+        "不能；context 只广播取消意图，goroutine 必须主动监听并返回。",
+        "能保证不再发送的唯一发送方或协调者负责关闭 channel。",
+        "不保证；多个 case 同时就绪时伪随机选择，不是业务公平策略。"
+      ],
+      "selfCheck.2.choiceLabels": [
+        "不保证；多个 case 同时就绪时伪随机选择，不是业务公平策略。",
+        "不能；context 只广播取消意图，goroutine 必须主动监听并返回。",
+        "能保证不再发送的唯一发送方或协调者负责关闭 channel。"
+      ],
+      "workshop.fields.0.optionLabels": [
+        "只看成功的情况，不检查失败时该怎么办。",
+        "让发送数据的 goroutine 响应取消，并在退出时关闭输出通道。",
+        "把 context 放进 struct 长期保存"
+      ],
+      "workshop.fields.1.optionLabels": [
+        "补全 stream：每次发送都用 select 同时等待接收方和 ctx.Done()；发送任务退出时关闭 out，再测试接收方提前停止。",
+        "忽略 ctx.Err",
+        "只写实现，不运行练习要求的检查。"
+      ],
+      "workshop.fields.2.optionLabels": [
+        "只检查成功的一次，不测试失败情况。",
+        "看见程序有输出就结束，不逐项核对要求。",
+        "正常输入能发送完并关闭输出；提前取消后输出在测试期限内关闭，发送任务退出；-race 和泄漏检查通过。"
+      ]
+    },
+    "supplement-go-goroutine-lifecycle": {
+      "title": "发出取消后，还要等任务退出",
+      "kicker": "让消费者提前停止，检查生产者是否响应取消并关闭输出。",
+      "analogy": "让消费者提前停止，检查生产者是否响应取消并关闭输出。 context 沿函数调用传递，不长期存到结构体中；下游主动检查取消信号。",
+      "principles": [
+        "context 沿函数调用传递，不长期存到结构体中；下游主动检查取消信号。",
+        "由能确认不再发送的一方关闭通道，不能仅凭“谁创建了通道”决定；接收方不要擅自关闭。",
+        "正常完成、取消和出错都要有明确退出方式。",
+        "用 WaitGroup、errgroup 或本例的关闭通知等待任务结束，不能只等进程退出替它回收。"
+      ],
+      "pitfalls": [],
+      "codeGuides": [
+        "让消费者提前停止，检查生产者是否响应取消并关闭输出。",
+        "消费者读取三个值后调用 cancel；等待生产者的输出关闭，并用带超时的测试确认发送任务已经结束。",
+        "取消后任务在期限内退出；输出只关闭一次，没有一直阻塞的发送，也没有不停空转的循环。"
+      ],
+      "task": "消费者读取三个值后调用 cancel；等待生产者的输出关闭，并用带超时的测试确认发送任务已经结束。",
+      "accept": "取消后任务在期限内退出；输出只关闭一次，没有一直阻塞的发送，也没有不停空转的循环。",
+      "selfCheck.0.question": "哪一项最完整地说明了本页需要解决的问题？",
+      "selfCheck.0.answer": "取消后任务在期限内退出；输出只关闭一次，没有一直阻塞的发送，也没有不停空转的循环。",
+      "selfCheck.0.feedback": [
+        "选对了。取消后任务在期限内退出；输出只关闭一次，没有一直阻塞的发送，也没有不停空转的循环。",
+        "这项只说了其中一步。还要检查：取消后任务在期限内退出；输出只关闭一次，没有一直阻塞的发送，也没有不停空转的循环。",
+        "这项只说了其中一步。还要检查：取消后任务在期限内退出；输出只关闭一次，没有一直阻塞的发送，也没有不停空转的循环。"
+      ],
+      "selfCheck.0.choiceLabels": [
+        "取消后任务在期限内退出；输出只关闭一次，没有一直阻塞的发送，也没有不停空转的循环。",
+        "context 沿函数调用传递，不长期存到结构体中；下游主动检查取消信号。",
+        "由能确认不再发送的一方关闭通道，不能仅凭“谁创建了通道”决定；接收方不要擅自关闭。"
+      ]
+    }
+  },
+  "briefs": {
+    "1": {
+      "task": "运行结账程序，再改变价格和付款额，分清正常结果与错误。",
+      "why": "只看一个数字分不清付款成功还是失败。先把输入、结果和错误一起读清楚，后面的函数才不会用错。",
+      "mechanism": "main 是程序入口。它调用 settle，把价格和付款额传进去，再打印两个返回值。 参数写在函数名后的括号里，返回值类型写在参数括号后；本例返回找零和 error。",
+      "check": "价格 7 时，付款 10、7、5 分别返回 3 和 nil、0 和 nil、0 和 ErrInsufficientPayment；价格不大于零时返回 ErrInvalidPrice。"
+    },
+    "2": {
+      "task": "给账单字段设置正确的导出名称和 JSON 名称，再区分数据能读入与金额合法这两件事。",
+      "why": "程序中的字段名和 JSON 名称可能不同。能成功编码或解码，也不代表金额和用户身份可信。",
+      "mechanism": "encoding/json 处理可导出的字段；字段名首字母要大写。JSON 中的名称由 json tag 指定。 tag 是附在字段上的说明，各个库只读取自己认识的内容；json tag 不会自动执行金额校验。",
+      "check": "编码结果只有 id 和 amount_cents 两个字段；正文中缺失或非正金额被拒绝。能说明身份来自服务端认证，而不是请求体。"
+    },
+    "3": {
+      "task": "给切片添加姓名，用 map 查询分数，再复制一份可以独立修改的姓名列表。",
+      "why": "列表赋值后可能仍共享数据，map 的零值也不能说明键存在。先检查这些细节，才能避免无意修改和错误查询。",
+      "mechanism": "数组长度固定。切片记录底层数组的位置、长度和容量；切片赋值只复制这些信息，仍可能共用元素。 append 可能沿用原数组，也可能换成更大的数组。把返回值赋回变量，才能取得更新后的长度和位置。",
+      "check": "新增姓名出现在结果中；map 中有键时返回 true、没有键时返回 false；修改 clone 返回的字符串切片不会改变原切片。"
+    },
+    "4": {
+      "task": "定义只要求 Get 方法的 Reader 接口，让同一个函数调用不同的存储实现。",
+      "why": "读取函数不需要知道数据到底来自数据库还是内存。只声明用得上的方法，就能替换实现并独立测试。",
+      "mechanism": "接口放在使用它的一方，先列出真正需要的方法。类型的方法符合要求，就能作为该接口使用，无需 implements 声明。 值接收者的方法可以通过 T 或 *T 使用；指针接收者的方法只属于 *T 的方法集。",
+      "check": "Reader 只要求 Get(string) (string, error)；fakeReader 能传入 readName，读取结果和错误都能原样返回。"
+    },
+    "5": {
+      "task": "辨认 go.mod、包和 internal 目录各管什么，再按依赖方向连接服务。",
+      "why": "代码分到不同目录后，仍要知道谁可以导入谁、由谁创建实例。这样才能把各部分连接成可运行的服务。",
+      "mechanism": "go.mod 记录模块路径和依赖。import 可以导入本模块、标准库，也可以导入已解析到的外部模块。 包把一组代码组织在一起。internal 的导入限制看目录位置，不是简单看它是否属于同一模块。",
+      "check": "canImport 的方向判断通过测试；能分别解释项目分层规则与 Go 的 internal 父目录树限制。允许的导入成功，范围外导入被 Go 拒绝。"
+    },
+    "6": {
+      "task": "给读取失败加上账单编号，让调用方仍能判断是不是没有找到。",
+      "why": "外层需要知道发生了什么，程序也需要识别原始原因。只拼文字会让找不到、取消和超时难以区分。",
+      "mechanism": "用 %w 给错误增加操作说明并保留原错误。判断类别用 errors.Is，需要提取自定义错误字段时用 errors.As，不比较错误文字。 客户端取消、服务自身超时、上游超时发生在不同位置，不能一律返回 500 或 504。",
+      "check": "loadBill 的错误文字含账单编号，errors.Is 能识别 ErrNotFound；正文里包装后的 ErrMissing 对应 404/bill_not_found，取消、超时及未知错误分别按约定处理。"
+    },
+    "7": {
+      "task": "让多个 goroutine 安全地更新同一个计数器，并等待它们全部结束。",
+      "why": "多个任务同时加一，不一定得到正确总数。等待任务结束和保护共享变量，是两件不同的事。",
+      "mechanism": "goroutine 是 Go 中并发运行的任务。运行时用 G、M、P 调度它们；GOMAXPROCS 控制 P 的数量，P 不对应某一颗固定的物理核心。 WaitGroup 负责等待任务结束，不保护共享数据。多个任务修改同一个变量时，要用锁等同步方法。channel 也不会自动保护它以外的变量。",
+      "check": "启动 1000 个 goroutine 后返回 1000；所有任务完成后才返回，本次 -race 检查没有报告数据竞争。检查通过不代表未执行的并发路径也一定正确。"
+    },
+    "8": {
+      "task": "让发送数据的 goroutine 响应取消，并在退出时关闭输出通道。",
+      "why": "接收方提前离开后，发送可能一直阻塞。取消必须被发送任务主动检查，调用方还要确认它真的退出。",
+      "mechanism": "只有能确认不会再有人发送的一方才能关闭 channel；通常由唯一发送方或协调者关闭。接收方可以用 range 读到关闭为止。 select 在多个分支同时就绪时伪随机选择，不保证各项业务获得相同机会。",
+      "check": "正常输入能发送完并关闭输出；提前取消后输出在测试期限内关闭，发送任务退出；-race 和泄漏检查通过。"
+    }
+  }
+}

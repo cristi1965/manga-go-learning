@@ -485,7 +485,7 @@
         ]
       ],
       "principles": [
-        "认证中间件生成 typed Principal；Handler 显式把 TenantID/UserID 传给 Service 做授权。",
+        "认证中间件生成 typed Principal；Handler 显式把 TenantID/SubjectID 传给 Service 做授权。SubjectID 是认证系统里的用户主体标识，示例代码统一使用它。",
         "请求 body 有大小上限，JSON 拒绝未知字段；解码后显式执行字段校验，再进入领域校验。",
         "context 传递 deadline、取消和 trace，不隐藏必须参与授权与落库的业务身份。",
         "稳定错误 code 属于 HTTP 契约，内部 cause 不对客户端泄露。"

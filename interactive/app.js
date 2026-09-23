@@ -1,8 +1,16 @@
+import { enhanceTerms } from './term-help.js';
+import { mountCodeEditor } from './vendor/editor.js';
+import { mountStarter } from './starter.js';
+import { lessonBriefs } from './lesson-briefs.js';
+import { courseDiagrams } from './diagram-definitions.js';
+import { renderMermaid } from './vendor/diagram-renderer.js';
+const staticHosted = location.hostname.endsWith('github.io') || new URLSearchParams(location.search).get('static') === '1';
 const state = {
   data: null,
   units: [],
   currentIndex: 0,
   stage: 'understand',
+  readSupplements: new Set(JSON.parse(localStorage.getItem('manga-go-read-supplements') || '[]')),
   completed: new Set(JSON.parse(localStorage.getItem('jianjian-completed') || '[]')),
   wrong: JSON.parse(localStorage.getItem('jianjian-wrong') || '[]'),
   answered: new Set(JSON.parse(localStorage.getItem('jianjian-answered') || '[]')),
@@ -24,6 +32,43 @@ function flattenUnits(data) {
   return units;
 }
 
+function isReadingSupplement(unit) {
+  return unit && unit.kind !== 'chapter' && !unit.projectLab;
+}
+
+function parentChapter(unit) {
+  return state.data.chapters.find((chapter) => chapter.supplements.some((item) => item.id === unit.id));
+}
+
+function learningRoute() {
+  return [...state.data.chapters.filter((chapter) => chapter.number <= 16),
+    ...state.units.filter((unit) => unit.projectLab),
+    ...state.data.chapters.filter((chapter) => chapter.number > 16)];
+}
+
+function adjacentUnit(direction) {
+  const unit = state.units[state.currentIndex];
+  if (isReadingSupplement(unit)) return parentChapter(unit);
+  const route = learningRoute();
+  const index = route.findIndex((item) => item.id === unit.id);
+  return route[index + direction];
+}
+
+function renderCompletionControls() {
+  const unit = state.units[state.currentIndex];
+  const reading = isReadingSupplement(unit);
+  const done = reading ? state.readSupplements.has(unit.id) : state.completed.has(unit.id);
+  $('#completeButton').innerHTML = reading
+    ? (done ? '已阅读（点击取消） <span>✓</span>' : '标记已阅读 <span>✓</span>')
+    : (done ? '本节已完成 <span>✓</span>' : '标记本节完成 <span>✓</span>');
+  $('#continueUnitButton').classList.toggle('hidden', !done || !adjacentUnit(1));
+  $('#continueUnitButton').textContent = reading ? '返回所属章 →' : unit.projectLab ? '下个项目里程碑 →' : '下一章 →';
+  $('#prevButton').disabled = !adjacentUnit(-1);
+  $('#nextButton').disabled = !adjacentUnit(1);
+  $('#prevButton').textContent = reading ? '返回所属章' : unit.projectLab ? '上个里程碑' : '上一章';
+  $('#nextButton').textContent = reading ? '返回所属章' : unit.projectLab ? '下个里程碑' : '下一章';
+}
+
 function avatar(data, speaker) {
   const path = data.avatars[speaker];
   return path ? `<img class="avatar" src="${encodeURI(path)}" alt="${esc(speaker)}头像">` : `<span class="avatar" aria-hidden="true"></span>`;
@@ -36,6 +81,10 @@ function dialogueHtml(data, lines) {
   }).join('')}</div>`;
 }
 
+function comicOpeningHtml(data, lines, scene) {
+  return `<div class="comic-heading"><div><span>开场漫画</span><h2>${richText(scene || '先看一个具体场景')}</h2></div><small>两格看懂这节课</small></div><div class="comic-grid">${lines.map(({speaker, text}, index) => `<figure class="comic-panel comic-panel-${index + 1}" data-speaker="${esc(speaker)}"><div class="comic-character">${avatar(data, speaker)}<b>${esc(speaker)}</b></div><blockquote>${richText(text)}</blockquote><figcaption>${String(index + 1).padStart(2, '0')}</figcaption></figure>`).join('')}</div>`;
+}
+
 function renderNav() {
   const nav = $('#chapterNav');
   let html = '';
@@ -44,11 +93,16 @@ function renderNav() {
     if (chapter.number === 1 || state.data.chapters[chapter.number - 2]?.volume.title !== chapter.volume.title) {
       html += `<div class="volume-label">${esc(chapter.volume.title)}</div>`;
     }
-    html += `<button class="nav-item ${current ? 'active' : ''}" data-unit="${chapter.id}"><span class="nav-num">${String(chapter.number).padStart(2, '0')}</span><span>${esc(chapter.shortTitle)}</span>${state.completed.has(chapter.id) ? '<span aria-label="已完成">·</span>' : ''}</button>`;
-    if (current || chapter.supplements.some((item) => state.units[state.currentIndex]?.id === item.id)) chapter.supplements.forEach((supplement) => {
+    html += `<button class="nav-item ${current ? 'active' : ''}" aria-current="${current ? 'page' : 'false'}" data-unit="${chapter.id}"><span class="nav-num">${String(chapter.number).padStart(2, '0')}</span><span>${esc(chapter.shortTitle)}</span>${state.completed.has(chapter.id) ? '<span aria-label="已完成">·</span>' : ''}</button>`;
+    if (current || chapter.supplements.some((item) => !item.projectLab && state.units[state.currentIndex]?.id === item.id)) chapter.supplements.filter((item) => !item.projectLab).forEach((supplement) => {
       const subCurrent = state.units[state.currentIndex]?.id === supplement.id;
-      html += `<button class="nav-item sub ${subCurrent ? 'active' : ''}" data-unit="${supplement.id}"><span class="nav-num">↳</span><span>${esc(supplement.title)}</span>${state.completed.has(supplement.id) ? '<span>·</span>' : ''}</button>`;
+      html += `<button class="nav-item sub ${subCurrent ? 'active' : ''}" aria-current="${subCurrent ? 'page' : 'false'}" data-unit="${supplement.id}"><span class="nav-num">↳</span><span>${esc(supplement.title)}</span>${state.readSupplements.has(supplement.id) ? '<span aria-label="已阅读">·</span>' : ''}</button>`;
     });
+  });
+  html += '<div class="volume-label">AI 项目 · 8 个里程碑</div>';
+  state.units.filter((unit) => unit.projectLab).forEach((unit, index) => {
+    const current = state.units[state.currentIndex]?.id === unit.id;
+    html += `<button class="nav-item ${current ? 'active' : ''}" aria-current="${current ? 'page' : 'false'}" data-unit="${unit.id}"><span class="nav-num">P${index + 1}</span><span>${esc(unit.title)}</span>${state.completed.has(unit.id) ? '<span aria-label="已完成">·</span>' : ''}</button>`;
   });
   nav.innerHTML = html;
   nav.querySelectorAll('[data-unit]').forEach((button) => button.addEventListener('click', () => { openUnit(button.dataset.unit); closeSidebar(); }));
@@ -87,13 +141,11 @@ function progress() {
   // Today's recommendation
   const todayElem = $('#todayRecommend');
   if (todayElem && state.data) {
-    const nextChapter = state.data.chapters.find((ch) => !state.completed.has(ch.id));
-    const nextProject = state.units.find((u) => u.projectLab && !state.completed.has(u.id));
-    if (!nextChapter && !nextProject) {
+    const target = learningRoute().find((unit) => !state.completed.has(unit.id));
+    if (!target) {
       todayElem.innerHTML = '<span class="today-rec-done">🎉 全链路通关！</span>';
     } else {
-      const target = nextChapter || nextProject;
-      const label = nextChapter ? `第 ${nextChapter.number} 章 · ${esc(nextChapter.shortTitle)}` : `里程碑 · ${esc(nextProject.title)}`;
+      const label = target.kind === 'chapter' ? `第 ${target.number} 章 · ${esc(target.shortTitle)}` : `里程碑 · ${esc(target.title)}`;
       todayElem.innerHTML = `<span class="today-rec-label">今日建议：</span><button class="today-rec-link" data-today-unit="${target.id}">${label} →</button>`;
       todayElem.querySelector('[data-today-unit]')?.addEventListener('click', () => openUnit(target.id));
     }
@@ -101,6 +153,7 @@ function progress() {
 }
 
 function saveState() {
+  localStorage.setItem('manga-go-read-supplements', JSON.stringify([...state.readSupplements]));
   localStorage.setItem('jianjian-completed', JSON.stringify([...state.completed]));
   localStorage.setItem('jianjian-wrong', JSON.stringify(state.wrong));
   localStorage.setItem('jianjian-answered', JSON.stringify([...state.answered]));
@@ -116,28 +169,34 @@ function saveState() {
 }
 
 function renderIncident(unit) {
-  $('#incidentCard').innerHTML = `<div class="card-kicker">闯祸现场 · 先看发生了什么</div>${(unit.opening || [unit.goal || unit.kicker]).map((paragraph) => `<p>${richText(paragraph)}</p>`).join('')}`;
+  const brief = lessonBriefs[unit.id];
+  $('#incidentCard').innerHTML = brief
+    ? `<div class="card-kicker">这节解决一个问题</div><h2>${richText(brief.task)}</h2><p>${richText(brief.why)}</p><div class="lesson-mechanism"><b>先把机制讲清楚</b><p>${richText(brief.mechanism)}</p></div><details class="lesson-recall"><summary>学完后，用自己的话回答</summary><p>${richText(brief.check)}</p></details>`
+    : `<div class="card-kicker">本节任务</div><h2>${richText(unit.projectExercise?.title || unit.title)}</h2><p>${richText(unit.task || unit.goal || unit.kicker)}</p><div class="lesson-mechanism"><b>完成后应看到</b><p>${richText(unit.accept)}</p></div>`;
 }
 
 function renderChat(unit) {
   const dialogue = unit.dialogue || [];
-  $('#chatCard').innerHTML = `<h2 class="sr-only">本章内容</h2><div class="chat-title"><h3>人物对话</h3><span>${dialogue.length} 句</span></div>${dialogueHtml(state.data, dialogue)}<div class="chat-close"><b>这一幕的结论</b><span>${richText(unit.closing || unit.accept)}</span></div>`;
+  const opening = dialogue.slice(0, 2);
+  const rest = dialogue.slice(2);
+  $('#comicOpening').innerHTML = comicOpeningHtml(state.data, opening, unit.opening?.[0]);
+  $('#chatCard').innerHTML = `<h2 class="sr-only">继续问答</h2><div class="chat-title"><h3>继续问答</h3><span>${rest.length} 句</span></div>${dialogueHtml(state.data, rest)}<div class="chat-close"><b>回顾一下</b><span>${richText(unit.closing || unit.accept)}</span></div>`;
 }
 
 function renderMemory(unit) {
   $('#memoryCard').innerHTML = `<h3>小白先懂</h3><p class="memory-quote">“${richText(unit.mnemonic || unit.kicker)}”</p><p class="memory-analogy">${richText(unit.analogy || unit.goal)}</p>`;
   const glossary = unit.glossary?.length ? unit.glossary : [{term: '本节先不加黑话', meaning: '沿着事故和代码往下走。'}];
-  $('#glossaryCard').innerHTML = `<h3>黑话翻译</h3><ul class="glossary-list">${glossary.map(({term, meaning}) => `<li><b>${esc(term)}</b><span>${richText(meaning)}</span></li>`).join('')}</ul>`;
+  $('#glossaryCard').innerHTML = `<h3>术语速查</h3><p class="term-note">带虚线的术语可悬停看中文，点击查看详细说明。</p><ul class="glossary-list">${glossary.map(({term, meaning}) => `<li><b>${esc(term)}</b><span>${richText(meaning)}</span></li>`).join('')}</ul>`;
 }
 
 function renderFlow(unit) {
   const nodes = [
-    ['事故', unit.opening?.[0] || unit.goal || unit.kicker],
-    ['关键边界', unit.principles[0] || unit.kicker],
-    ['代码动作', unit.code ? '看输入、状态与出口' : '看状态、证据与验收'],
-    ['验收', unit.accept],
+    ['发生了什么', unit.opening?.[0] || unit.goal || unit.kicker],
+    ['哪条规则最重要', unit.principles[0] || unit.kicker],
+    ['代码怎么做', unit.codeGuides?.[0] || (unit.code ? '先找输入、条件判断和返回结果' : '先记状态，再保存可查的结果')],
+    ['怎么确认做对', unit.accept],
   ];
-  $('#flowCard').innerHTML = `<div class="section-heading"><h3>点击路线图，看这一节怎么收住</h3><small>本节路线</small></div><div class="flow-map">${nodes.map(([title, detail], index) => `<button class="flow-node ${index === 0 ? 'active' : ''}" data-flow="${index}"><b>${esc(title)}</b><span>${esc(detail).slice(0, 32)}${detail.length > 32 ? '…' : ''}</span></button>${index < nodes.length - 1 ? '<span class="flow-arrow" aria-hidden="true">→</span>' : ''}`).join('')}</div><div class="flow-detail" id="flowDetail">${esc(nodes[0][1])}</div>`;
+  $('#flowCard').innerHTML = `<div class="section-heading"><h3>本章细节路线</h3><small>点击节点看解释</small></div><div class="flow-map">${nodes.map(([title, detail], index) => `<button class="flow-node ${index === 0 ? 'active' : ''}" data-flow="${index}"><b>${esc(title)}</b><span>${esc(detail).slice(0, 32)}${detail.length > 32 ? '…' : ''}</span></button>${index < nodes.length - 1 ? '<span class="flow-arrow" aria-hidden="true">→</span>' : ''}`).join('')}</div><div class="flow-detail" id="flowDetail">${esc(nodes[0][1])}</div>`;
   $('#flowCard').querySelectorAll('[data-flow]').forEach((item, index) => item.setAttribute('aria-pressed', String(index === 0)));
   const detail = $('#flowDetail');
   $('#flowCard').querySelectorAll('[data-flow]').forEach((button) => button.addEventListener('click', () => {
@@ -148,14 +207,89 @@ function renderFlow(unit) {
   }));
 }
 
-function highlightGo(line) {
-  let result = esc(line);
-  result = result.replace(/(\/\/.*)$/g, '<span class="comment">$1</span>');
-  result = result.replace(/(&quot;.*?&quot;|`.*?`)/g, '<span class="str">$1</span>');
-  result = result.replace(/\b(package|import|func|return|if|else|for|range|switch|case|type|struct|interface|var|const|go|select|defer)\b/g, '<span class="kw">$1</span>');
-  result = result.replace(/\b(string|int|int64|uint64|float64|bool|error|Context|Time)\b/g, '<span class="type">$1</span>');
-  return result;
+function renderOverviewDiagram(unit) {
+  const number = unit.number || unit.chapter || 1;
+  const volume = number <= 8 ? 'go' : number <= 16 ? 'backend' : 'ai';
+  const diagram = courseDiagrams[volume];
+  $('#overviewDiagram').innerHTML = `<div class="diagram-heading"><div><span>全局图</span><h2>${diagram.title}</h2><p>${diagram.caption}</p></div><small>当前在第 ${number} 章</small></div><div class="mermaid-host" role="img" aria-label="${diagram.title}"><span>正在绘制图示…</span></div>`;
+  $('#overviewDiagram').classList.remove('hidden');
+  renderMermaid($('#overviewDiagram .mermaid-host'), diagram.source).catch(() => {
+    $('#overviewDiagram .mermaid-host').innerHTML = '<p class="diagram-error">图示暂时无法显示，请刷新页面。</p>';
+  });
 }
+
+function highlightLine(line, kind = 'go') {
+  if (!line) return '';
+  if (kind === 'json') {
+    const jsonRegex = /("(?:\\.|[^"\\])*"(?=\s*:))|("(?:\\.|[^"\\])*")|(\b(?:true|false|null)\b)|(\b-?\d+(?:\.\d+)?(?:e[+-]?\d+)?\b)/g;
+    let last = 0, out = '', m;
+    while ((m = jsonRegex.exec(line)) !== null) {
+      if (m.index > last) out += esc(line.slice(last, m.index));
+      const [, key, str, bool, num] = m;
+      if (key) out += `<span class="type">${esc(key)}</span>`;
+      else if (str) out += `<span class="str">${esc(str)}</span>`;
+      else if (bool) out += `<span class="const">${esc(bool)}</span>`;
+      else if (num) out += `<span class="num">${esc(num)}</span>`;
+      last = jsonRegex.lastIndex;
+    }
+    if (last < line.length) out += esc(line.slice(last));
+    return out;
+  }
+  if (kind === 'dockerfile') {
+    const dfRegex = /(#[^\n]*)|(\b(?:FROM|RUN|CMD|LABEL|EXPOSE|ENV|ADD|COPY|ENTRYPOINT|VOLUME|USER|WORKDIR|ARG)\b)|("(?:\\.|[^"\\])*")/gi;
+    let last = 0, out = '', m;
+    while ((m = dfRegex.exec(line)) !== null) {
+      if (m.index > last) out += esc(line.slice(last, m.index));
+      const [, cmt, kw, str] = m;
+      if (cmt) out += `<span class="comment">${esc(cmt)}</span>`;
+      else if (kw) out += `<span class="kw">${esc(kw)}</span>`;
+      else if (str) out += `<span class="str">${esc(str)}</span>`;
+      last = dfRegex.lastIndex;
+    }
+    if (last < line.length) out += esc(line.slice(last));
+    return out;
+  }
+  // Default: Go
+  const goRegex = /(\/\/[^\n]*)|("(?:\\.|[^"\\])*"|`[^`]*`)|(\b[a-z_][a-z0-9_]*(?=\.[A-Z]))|(\b(?:package|import|func|return|if|else|for|range|switch|case|default|type|struct|interface|var|const|go|select|defer|map|chan|continue|break|goto|fallthrough)\b)|(\b(?:string|int|int8|int16|int32|int64|uint|uint8|uint16|uint32|uint64|uintptr|float32|float64|complex64|complex128|bool|byte|rune|error|any|Context|Time|Duration|Reader|Writer|Header|Request|Response|Handler|WaitGroup|Mutex|RWMutex)\b)|(\b(?:true|false|nil|iota)\b)|(\b\d+(?:\.\d+)?(?:e[+-]?\d+)?\b|0x[0-9a-fA-F]+\b)|(\b[A-Za-z_]\w*(?=\s*\())|(:=|\+\+|--|<=|>=|==|!=|&&|\|\||<-)/g;
+  let last = 0, out = '', m;
+  while ((m = goRegex.exec(line)) !== null) {
+    if (m.index > last) out += esc(line.slice(last, m.index));
+    const [, cmt, str, pkg, kw, type, constant, num, fn, op] = m;
+    if (cmt) out += `<span class="comment">${esc(cmt)}</span>`;
+    else if (str) out += `<span class="str">${esc(str)}</span>`;
+    else if (pkg) out += `<span class="pkg">${esc(pkg)}</span>`;
+    else if (kw) out += `<span class="kw">${esc(kw)}</span>`;
+    else if (type) out += `<span class="type">${esc(type)}</span>`;
+    else if (constant) out += `<span class="const">${esc(constant)}</span>`;
+    else if (num) out += `<span class="num">${esc(num)}</span>`;
+    else if (fn) out += `<span class="fn">${esc(fn)}</span>`;
+    else if (op) out += `<span class="op">${esc(op)}</span>`;
+    last = goRegex.lastIndex;
+  }
+  if (last < line.length) out += esc(line.slice(last));
+  return out;
+}
+
+function highlightGo(line) {
+  return highlightLine(line, 'go');
+}
+
+function gutterLinesHtml(code) {
+  const lineCount = (code || '').split('\n').length;
+  let html = '';
+  for (let i = 1; i <= lineCount; i++) {
+    html += `<span class="gutter-num" data-code-line="${i}">${String(i).padStart(2, '0')}</span>`;
+  }
+  return html;
+}
+
+function editorBackdropHtml(code, kind = 'go') {
+  return (code || '').split('\n').map((line, index) =>
+    `<span class="code-line" data-code-line="${index + 1}">${highlightLine(line, kind) || ' '}</span>`
+  ).join('');
+}
+
+function bindEditorSync(editor) { mountCodeEditor(editor); }
 
 function codeLessonFor(unit) {
   if (unit.beginnerCode) return unit.beginnerCode;
@@ -172,8 +306,8 @@ function codeLessonFor(unit) {
   };
   return {
     summary: subject
-      ? `${subject} 是这段代码的主角。先别逐字翻译，只追三件事：它收到什么，在哪里拦下坏情况，最后交回什么。`
-      : `这段代码只为本节的目标服务：${unit.kicker || unit.mnemonic || unit.goal || '把输入变成可以验收的结果'}。先看数据从哪里来、到哪里去。`,
+      ? `从 ${subject} 开始读：先看传进来的数据，再看条件判断，最后看返回的结果。下面按这个顺序解释。`
+      : '先看这段代码接收什么数据，再看它怎样处理，最后看它返回什么。下面分步解释。',
     steps: guides.map((guide, index) => ({
       label: labelFor(guide, index),
       explanation: guide,
@@ -183,8 +317,8 @@ function codeLessonFor(unit) {
   };
 }
 
-function codeLinesHtml(code) {
-  return code.split('\n').map((line, index) => `<span class="code-line" data-code-line="${index + 1}"><span class="line-number">${String(index + 1).padStart(2, '0')}</span>${highlightGo(line)}</span>`).join('');
+function codeLinesHtml(code, kind = 'go') {
+  return (code || '').split('\n').map((line, index) => `<span class="code-line" data-code-line="${index + 1}"><span class="line-number">${String(index + 1).padStart(2, '0')}</span>${highlightLine(line, kind)}</span>`).join('');
 }
 
 function codeLessonHtml(unit) {
@@ -195,13 +329,11 @@ function codeLessonHtml(unit) {
   const stepButtons = steps.length ? `<div class="code-steps" aria-label="代码阅读步骤">${steps.map((step, index) => `<button class="code-step ${index === 0 ? 'active' : ''}" data-code-step="${index}" aria-pressed="${index === 0}"><span>${index + 1}</span>${esc(step.label)}</button>`).join('')}</div><div class="step-explanation" aria-live="polite">${esc(steps[0].explanation)}</div>` : '';
   const labels = {go: 'Go 核心代码', json: 'JSON 契约', dockerfile: 'Dockerfile', tree: '目录结构', concept: '概念页'};
   const runnable = Boolean(unit.runnable && unit.verified);
-  const codeLabel = runnable ? `运行已验证 · ${labels[unit.codeKind] || '可运行示例'}` : `${unit.syntaxVerified ? '语法已校验 · ' : ''}${labels[unit.codeKind] || '核心代码片段'}`;
+  const codeLabel = runnable ? `运行已验证 · ${labels[unit.codeKind] || '可运行示例'}` : `${unit.syntaxVerified ? '语法已校验 · ' : ''}${labels[unit.codeKind] || '代码片段'}`;
   const codeHint = runnable ? `${unit.verificationCommand} 已通过` : (unit.codeKind === 'go' ? '省略 package、import 与上一章已有类型' : '这是配置或结构示例，不按 Go 编译');
   const runButton = runnable ? `<button class="run-code" data-run-unit="${esc(unit.id)}">编译运行</button>` : '';
-  const codeView = runnable
-    ? `<textarea class="code-editor" aria-label="Go 代码编辑器" spellcheck="false" wrap="off">${esc(unit.code)}</textarea>`
-    : `<pre class="code-block">${codeLinesHtml(unit.code)}</pre>`;
-  return `<div class="code-teacher" data-code-lesson><p class="code-first-label">先讲人话</p><h3>${esc(lesson.summary)}</h3>${cases}${stepButtons}${terms}</div><details class="full-code"><summary><span>${codeLabel}</span><small>${codeHint}</small></summary><div class="code-shell"><div class="code-toolbar"><span>${runnable ? '可修改代码；刷新页面恢复原稿' : '当前步骤会在代码中标亮'}</span><div class="code-actions">${runButton}<button class="copy-code">复制代码</button></div></div><div class="code-wrap">${codeView}</div><div class="run-result hidden" aria-live="polite"><div><b>运行结果</b><span></span></div><pre></pre></div></div></details>`;
+  const codeView = `<pre class="code-block">${codeLinesHtml(unit.code, unit.codeKind || 'go')}</pre>`;
+  return `<div class="code-teacher" data-code-lesson><p class="code-first-label">这段代码做什么</p><h3>${esc(lesson.summary)}</h3>${cases}${stepButtons}${terms}</div><details class="full-code"><summary><span>${codeLabel}</span><small>${codeHint}</small></summary><div class="code-shell"><div class="code-toolbar"><span>${runnable ? '完整示例；修改代码请进入独立练习' : '当前步骤会在代码中标亮'}</span><div class="code-actions">${runButton}<button class="copy-code">复制代码</button></div></div><div class="code-wrap">${codeView}</div><div class="run-result hidden" aria-live="polite"><div><b>运行结果</b><span></span></div><pre></pre></div></div></details>`;
 }
 
 async function runCode(button, container, unitID) {
@@ -261,9 +393,11 @@ function bindCodeLesson(container, unit) {
     if (details) details.open = true;
     runCode(button, container, button.dataset.runUnit);
   }));
+  const editor = container.querySelector('.code-editor');
+  if (editor) bindEditorSync(editor, unit.codeKind || 'go');
   container.querySelector('[data-code-step]')?.click();
   const initialDetails = container.querySelector('.full-code');
-  if (initialDetails) initialDetails.open = false;
+  if (initialDetails) initialDetails.open = true;
 }
 
 function renderCode(unit) {
@@ -278,7 +412,7 @@ function renderCode(unit) {
 function renderTechnical(unit) {
   const principles = unit.principles || [];
   const pitfalls = unit.pitfalls || [];
-  $('#technicalCard').innerHTML = `<div class="section-heading"><h3>技术真相</h3><small>这里不卖萌，只守边界</small></div><ul class="bullet-list">${principles.map((item) => `<li>${richText(item)}</li>`).join('')}</ul><details><summary>最容易怎么翻车</summary>${pitfalls.length ? `<ul class="bullet-list">${pitfalls.map((item) => `<li>${richText(item)}</li>`).join('')}</ul>` : '<p class="muted">本补页不另起炉灶，先把上一个边界钉牢。</p>'}</details>`;
+  $('#technicalCard').innerHTML = `<div class="section-heading"><h3>要理解的规则</h3><small>结合下一步示例逐条确认</small></div><ul class="bullet-list">${principles.map((item) => `<li>${richText(item)}</li>`).join('')}</ul><details><summary>常见错误</summary>${pitfalls.length ? `<ul class="bullet-list">${pitfalls.map((item) => `<li>${richText(item)}</li>`).join('')}</ul>` : '<p class="muted">本补页不另起炉灶，先把上一个边界钉牢。</p>'}</details>`;
 }
 
 function quizHtml(unit) {
@@ -287,7 +421,7 @@ function quizHtml(unit) {
     const response = state.responses[key];
     const hasResponse = Number.isInteger(response);
     const correct = hasResponse && response === quiz.correctIndex;
-    const choices = quiz.choices.map((choice, choiceIndex) => `<label><input type="radio" name="${esc(key)}" value="${choiceIndex}" ${response === choiceIndex ? 'checked' : ''}><span>${richText(choice)}</span></label>`).join('');
+    const choices = quiz.choices.map((choice, choiceIndex) => `<label><input type="radio" name="${esc(key)}" value="${choiceIndex}" ${response === choiceIndex ? 'checked' : ''}><span>${richText(quiz.choiceLabels?.[choiceIndex] || choice)}</span></label>`).join('');
     const reason = quiz.feedback?.[response] || '';
     const feedback = hasResponse ? `<b>${correct ? '答对了' : '还差一步'}</b>${!correct && reason ? `<p>${richText(reason)}</p>` : ''}<p>${richText(quiz.answer)}</p>` : '';
     return `<fieldset class="quiz-item ${state.wrong.includes(key) ? 'review' : ''} ${hasResponse ? 'open' : ''}" data-quiz="${index}" data-key="${key}" tabindex="-1"><legend class="quiz-question">${index + 1}. ${richText(quiz.question)}</legend><div class="quiz-choices">${choices}</div><button class="answer-button" data-submit-answer>${hasResponse ? '重新提交' : '提交答案'}</button><div class="answer" aria-live="polite">${feedback}</div></fieldset>`;
@@ -315,7 +449,7 @@ function bindQuiz(container, unit) {
     const reason = quiz.feedback?.[Number(selected.value)] || '';
     item.querySelector('.answer').innerHTML = `<b>${correct ? '答对了' : '还差一步'}</b>${!correct && reason ? `<p>${richText(reason)}</p>` : ''}<p>${richText(quiz.answer)}</p>`;
     saveState(); renderNav();
-    showToast(correct ? '答对了，已记入掌握证据' : '已加入复习，看看解析再试一次');
+    showToast(correct ? '答对了，结果已保存' : '已加入复习，看看解析再试一次');
   }));
 }
 
@@ -323,18 +457,16 @@ function renderExercise(unit) {
   const saved = state.practices[unit.id];
   const exercise = unit.projectExercise || unit.workshop?.codeExercise;
   const resultId = `run-result-${unit.id}`;
-  const hintHtml = exercise?.hints?.length ? `<details class="exercise-hints"><summary>卡住了？按顺序看提示</summary><ol>${exercise.hints.map((hint) => `<li>${richText(hint)}</li>`).join('')}</ol></details>` : '';
-  const codeExercise = exercise ? `<div class="code-exercise" data-code-exercise><div><h3>${esc(exercise.title)}</h3><p>${richText(exercise.prompt)}</p><p class="test-intent"><b>固定测试会检查什么：</b>${richText(exercise.testIntent || '')}</p></div><textarea class="code-editor" aria-label="${esc(exercise.title)}代码编辑器" aria-describedby="${resultId}" spellcheck="false" wrap="off">${esc(saved?.code || exercise.code)}</textarea>${hintHtml}<div class="code-actions"><button class="run-code" data-run-exercise>运行固定测试</button><button class="text-button" data-reset-exercise>恢复初始代码</button></div><div id="${resultId}" class="run-result ${saved?.codeOk ? 'success' : 'hidden'}" aria-live="polite" tabindex="-1"><div><b>测试结果</b><span>${saved?.codeOk ? esc(saved.codeDigest) : ''}</span></div><p class="failure-guide"></p><pre>${saved?.codeOk ? 'PASS（已保存本次代码的验收摘要）' : ''}</pre></div></div>` : '';
-  const resumePitch = `【核心项目架构：高可用 Go 智能体微服务与 Wails 桌面端系统 (Ledger Agent × TradingAgents)】
-· 基于 Go 1.24+ 纯标准库结合 Wails v2 框架，构建跨平台轻量级 AI 金融交易桌面系统，单二进制嵌入前端资源，内存占用相比传统 Electron 降低 80%。
-· 打造 Go 原生与多智能体（TradingAgents）异构联动架构：Go 作为核心调度层与风控网关，提供 CAS 租约 Fencing、租户级并发隔离与过载背压。
-· 建立生产级 LLM 契约边界：严格 JSON 反序列化未知字段防御（DisallowUnknownFields+EOF）、Fail Closed 安全熔断及沙箱只读/写动作审批。
-· 跨网络与进程端到端交付：通过 Wails IPC 双向绑定与 SSE 毫秒级流式推演，集成包含正常、并发争抢、幂等重试、超时故障注入的自动化测试套件。`;
-  const capstone = unit.workshop?.capstone ? `<section class="capstone-brief"><p class="code-first-label">企业级作品集交付 (Capstone Portfolio)</p><h3>${esc(unit.workshop.capstone.title)}</h3><p class="capstone-desc">${richText(unit.workshop.capstone.brief)}</p><div class="capstone-actions"><a href="${esc(unit.workshop.capstone.downloadUrl || 'downloads/ledger-agent-starter.zip')}" download class="capstone-download-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>下载完整工程 Starter (${esc(unit.workshop.capstone.downloadName || 'ledger-agent-starter.zip')})</a><span class="capstone-tag">Go 1.24+ · 纯标准库 · 独立微服务</span></div><div class="capstone-arch"><h4>系统架构与全链路装配</h4><ul>${(unit.workshop.capstone.architecture || []).map((item) => `<li>${richText(item)}</li>`).join('')}</ul></div><div class="capstone-checklist"><h4>交付与验收清单</h4><ol>${unit.workshop.capstone.deliverables.map((item) => `<li>${richText(item)}</li>`).join('')}</ol></div><details class="capstone-resume-box"><summary class="capstone-resume-toggle">🛠️ 项目技术架构亮点与核心设计（点击展开，可直接复制）</summary><div class="capstone-resume-body"><pre class="capstone-resume-text">${esc(resumePitch)}</pre><button class="copy-resume-btn" type="button">复制技术架构亮点</button></div></details></section>` : '';
-  const projectLab = unit.projectLab ? `<div class="project-lab" data-project-lab><div><p class="code-first-label">同一个项目，继续往前</p><h3>${esc(unit.projectLab.title)}</h3><p>把当前提交编译进 Ledger Agent，再运行本节具名测试，确认这条生产边界成立。通过结果会成为本节完成条件。</p></div><div class="project-lab-actions"><button class="run-code" data-run-project="${esc(unit.projectLab.id)}">运行企业实验</button><a href="${esc(unit.projectLab.path)}" target="_blank">查看项目源码</a></div><div class="run-result ${saved?.labOk ? 'success' : 'hidden'}" aria-live="polite" tabindex="-1"><div><b>项目测试</b><span>${saved?.labOk ? esc(saved.labDigest) : ''}</span></div><pre>${saved?.labOk ? 'PASS（已保存本版本的项目验收）' : ''}</pre></div></div>` : '';
-  const workshop = unit.workshop ? `<div class="workshop" data-workshop><div><h3>${esc(unit.workshop.title)}</h3><p>${richText(unit.workshop.prompt)}</p></div>${capstone}${codeExercise}<div class="workshop-fields">${unit.workshop.fields.map((field, index) => `<label><b>${index + 1}. ${esc(field.label)}</b>${field.kind === 'text' ? `<textarea data-workshop-field="${index}" rows="3" placeholder="${esc(field.placeholder)}">${esc(saved?.answers?.[index] || '')}</textarea>` : `<select data-workshop-field="${index}"><option value="">请选择</option>${field.options.map((option) => `<option value="${esc(option)}" ${saved?.answers?.[index] === option ? 'selected' : ''}>${esc(option)}</option>`).join('')}</select>`}</label>`).join('')}</div><button class="answer-button" data-submit-workshop>提交工程演练</button><div class="workshop-result ${saved?.workshopOk ? 'success' : ''}" aria-live="polite">${saved?.workshopOk ? `<b>已通过</b><span>${esc(saved.workshopDigest)}</span>` : ''}</div></div>` : '';
+  const hintHtml = exercise?.hints?.length ? `<div class="exercise-hints"><p>卡住时只展开一条，回到代码再试。</p>${exercise.hints.map((hint, i) => `<details><summary>提示 ${i + 1}</summary><p>${richText(hint)}</p></details>`).join('')}</div>` : '';
+  const codeExercise = exercise ? `<div class="code-exercise" data-code-exercise><div><h3>${esc(exercise.title)}</h3><p>${richText(exercise.prompt)}</p><p class="test-intent"><b>固定测试会检查什么：</b>${richText(exercise.testIntent || '')}</p></div><textarea class="code-editor" aria-label="${esc(exercise.title)}代码编辑器" aria-describedby="${resultId}" spellcheck="false" wrap="off">${esc(saved?.code || exercise.code)}</textarea>${hintHtml}<div class="code-actions"><button class="run-code" data-run-exercise>运行固定测试</button><button class="text-button" data-reset-exercise>恢复初始代码</button></div><div id="${resultId}" class="run-result ${saved?.codeOk ? 'success' : 'hidden'}" aria-live="polite" tabindex="-1"><div><b>测试结果</b><span>${saved?.codeOk ? esc(saved.codeDigest) : ''}</span></div><p class="failure-guide"></p><pre>${saved?.codeOk ? '这份代码已通过测试；修改后需要重新运行。' : ''}</pre></div></div>` : '';
+  const resumePitch = `这个示例项目用 Go 接收请求、调用模型、检查模型返回的数据，再决定是否执行工具。
+练习包括：拒绝不合法的输入、处理重复请求、限制同时运行的任务，以及保留能用于排查问题的记录。
+介绍自己的实现时，应写清实际完成了哪些功能、运行了哪些测试。没有测过的性能或可靠性不要当成结果。`;
+  const capstone = unit.workshop?.capstone ? `<section class="capstone-brief"><p class="code-first-label">完整项目练习</p><h3>${esc(unit.workshop.capstone.title)}</h3><p class="capstone-desc">${richText(unit.workshop.capstone.brief)}</p><div class="capstone-actions"><a href="${esc(unit.workshop.capstone.downloadUrl || 'downloads/ledger-agent-starter.zip')}" download class="capstone-download-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>下载完整工程 Starter (${esc(unit.workshop.capstone.downloadName || 'ledger-agent-starter.zip')})</a><span class="capstone-tag">Go 1.24+ · 纯标准库 · 独立微服务</span></div><div class="capstone-arch"><h4>系统架构与全链路装配</h4><ul>${(unit.workshop.capstone.architecture || []).map((item) => `<li>${richText(item)}</li>`).join('')}</ul></div><div class="capstone-checklist"><h4>交付与验收清单</h4><ol>${unit.workshop.capstone.deliverables.map((item) => `<li>${richText(item)}</li>`).join('')}</ol></div><details class="capstone-resume-box"><summary class="capstone-resume-toggle">🛠️ 项目技术架构亮点与核心设计（点击展开，可直接复制）</summary><div class="capstone-resume-body"><pre class="capstone-resume-text">${esc(resumePitch)}</pre><button class="copy-resume-btn" type="button">复制技术架构亮点</button></div></details></section>` : '';
+  const projectLab = unit.projectLab ? `<div class="project-lab" data-project-lab><div><p class="code-first-label">在完整项目中试一试</p><h3>${esc(unit.projectLab.title)}</h3><p>把你写的函数放进示例项目，再运行本节对应的测试。这样可以检查它与项目其他部分是否配合正常。</p></div><div class="project-lab-actions"><button class="run-code" data-run-project="${esc(unit.projectLab.id)}">运行项目测试</button><a href="${esc(unit.projectLab.path)}" target="_blank">查看项目源码</a></div><div class="run-result ${saved?.labOk ? 'success' : 'hidden'}" aria-live="polite" tabindex="-1"><div><b>项目测试</b><span>${saved?.labOk ? esc(saved.labDigest) : ''}</span></div><pre>${saved?.labOk ? '测试通过，结果已保存。' : ''}</pre></div></div>` : '';
+  const workshop = unit.workshop ? `<div class="workshop" data-workshop><div><h3>${esc(unit.workshop.title)}</h3><p>${richText(unit.workshop.prompt)}</p></div>${capstone}${codeExercise}<div class="workshop-fields">${unit.workshop.fields.map((field, index) => `<label><b>${index + 1}. ${esc(field.label)}</b>${field.kind === 'text' ? `<textarea data-workshop-field="${index}" rows="3" placeholder="${esc(field.placeholder)}">${esc(saved?.answers?.[index] || '')}</textarea>` : `<select data-workshop-field="${index}"><option value="">请选择</option>${field.options.map((option, optionIndex) => `<option value="${esc(option)}" ${saved?.answers?.[index] === option ? 'selected' : ''}>${esc(field.optionLabels?.[optionIndex] || option)}</option>`).join('')}</select>`}</label>`).join('')}</div><button class="answer-button" data-submit-workshop>检查我的选择</button><div class="workshop-result ${saved?.workshopOk ? 'success' : ''}" aria-live="polite">${saved?.workshopOk ? `<b>已通过</b><span>${esc(saved.workshopDigest)}</span>` : ''}</div></div>` : '';
   const projectExercise = unit.projectExercise ? codeExercise : '';
-  $('#exerciseCard').innerHTML = `<div class="section-heading"><h2>动手与验收</h2><small>答题和工程演练都通过，才算完成</small></div><div class="pitfall-grid"><div class="pitfall-panel"><h3>跟着做</h3><p>${richText(unit.task)}</p></div><div class="task-panel"><h3>做到什么算过关</h3><p>${richText(unit.accept)}</p></div></div>${projectExercise}${projectLab}${workshop}<div class="quiz-list">${quizHtml(unit)}</div>`;
+  $('#exerciseCard').innerHTML = `<div class="section-heading"><h2>${isReadingSupplement(unit) ? '阅读回顾' : '自己试一试'}</h2><small>${isReadingSupplement(unit) ? '回顾不计入工程掌握进度' : '运行结果与答题记录分别保存'}</small></div><div class="pitfall-grid"><div class="pitfall-panel"><h3>跟着做</h3><p>${richText(lessonBriefs[unit.id]?.task || unit.task)}</p></div><div class="task-panel"><h3>怎样检查自己做对了</h3><p>${richText(unit.accept)}</p></div></div>${projectExercise}${projectLab}${workshop}<div class="quiz-list">${quizHtml(unit)}</div>`;
   bindQuiz($('#exerciseCard'), unit);
   $('#exerciseCard').querySelector('.copy-resume-btn')?.addEventListener('click', async () => {
     try {
@@ -377,6 +509,7 @@ function renderExercise(unit) {
   });
   const codeRoot = $('#exerciseCard').querySelector('[data-code-exercise]');
   const editor = codeRoot?.querySelector('.code-editor');
+  if (editor) bindEditorSync(editor, 'go');
   editor?.addEventListener('input', () => {
     state.practices[unit.id] = {...state.practices[unit.id], code: editor.value, codeOk: false, codeDigest: '', runProof: '', completionDigest: ''};
     state.completed.delete(unit.id);
@@ -424,7 +557,7 @@ function renderExercise(unit) {
       saveState(); renderNav(); result.focus();
     } catch (_error) {
       result.classList.add('failure'); result.querySelector('pre').textContent = '实验服务不可用，请从项目根目录运行 run-preview.sh。';
-    } finally { button.disabled = false; button.textContent = '运行企业实验'; }
+    } finally { button.disabled = false; button.textContent = '运行项目测试'; }
   });
 }
 
@@ -439,6 +572,7 @@ async function revalidateCompletedEvidence() {
     const unit = state.units.find((item) => item.id === id);
     const proof = state.practices[id];
     if (!unit) { state.completed.delete(id); continue; }
+    if (isReadingSupplement(unit)) { state.readSupplements.add(id); state.completed.delete(id); continue; }
     const quizKeys = (unit.selfCheck || []).map((quiz, index) => ({key: `${id}:${index}`, quiz}));
     const quizAnswers = quizKeys.map(({key}) => state.responses[key]);
     const quizzesValid = quizKeys.length > 0 && quizKeys.every(({quiz}, index) => quizAnswers[index] === quiz.correctIndex);
@@ -494,17 +628,13 @@ function supplementHtml(supplement) {
   const chat = dialogueHtml(state.data, supplement.dialogue);
   const glossary = supplement.glossary.length ? `<ul class="glossary-list">${supplement.glossary.slice(0, 5).map(({term, meaning}) => `<li><b>${esc(term)}</b><span>${richText(meaning)}</span></li>`).join('')}</ul>` : '<p class="muted">这一节先不加新词，重点看它如何收住上一处事故。</p>';
   const code = supplement.code ? `<section class="code-card supplement-code">${codeLessonHtml(supplement)}</section>` : '';
-  return `<details class="supplement-card" id="${esc(supplement.id)}"><summary>选修补页 · ${esc(supplement.title)} <span>＋</span></summary><div class="supplement-inner"><div class="incident-card"><div class="card-kicker">${richText(supplement.kicker)}</div>${supplement.opening.map((p) => `<p>${richText(p)}</p>`).join('')}</div><div class="chat-card">${chat}<div class="chat-close"><b>这一幕的结论</b><span>${richText(supplement.closing)}</span></div></div><div class="memory-card"><h3>像什么</h3><p class="memory-analogy">${richText(supplement.analogy)}</p></div><div class="glossary-card"><h3>黑话翻译</h3>${glossary}</div>${code}<div class="pitfall-grid"><div class="pitfall-panel"><h3>动手</h3><p>${richText(supplement.task)}</p></div><div class="task-panel"><h3>过关</h3><p>${richText(supplement.accept)}</p></div></div><div class="quiz-list supplement-quiz">${quizHtml(supplement)}</div></div></details>`;
+  return `<details class="supplement-card" id="${esc(supplement.id)}"><summary>选修补页 · ${esc(supplement.title)} <span>＋</span></summary><div class="supplement-inner"><div class="incident-card"><div class="card-kicker">${richText(supplement.kicker)}</div>${supplement.opening.map((p) => `<p>${richText(p)}</p>`).join('')}</div><div class="chat-card">${chat}<div class="chat-close"><b>回顾一下</b><span>${richText(supplement.closing)}</span></div></div><div class="memory-card"><h3>像什么</h3><p class="memory-analogy">${richText(supplement.analogy)}</p></div><div class="glossary-card"><h3>黑话翻译</h3>${glossary}</div>${code}<div class="pitfall-grid"><div class="pitfall-panel"><h3>动手</h3><p>${richText(supplement.task)}</p></div><div class="task-panel"><h3>过关</h3><p>${richText(supplement.accept)}</p></div></div><div class="quiz-list supplement-quiz">${quizHtml(supplement)}</div></div></details>`;
 }
 
 function renderSupplements(unit) {
-  if (unit.kind !== 'chapter' || !unit.supplements.length) { $('#supplementList').innerHTML = ''; return; }
-  $('#supplementList').innerHTML = `<h3>本章补页 · 继续把边界钉牢</h3>${unit.supplements.map(supplementHtml).join('')}`;
-  unit.supplements.forEach((supplement) => {
-    const container = document.getElementById(supplement.id);
-    if (container && supplement.code) bindCodeLesson(container, supplement);
-    if (container) bindQuiz(container, supplement);
-  });
+  const supplements = unit.kind === 'chapter' ? unit.supplements.filter((item) => !item.projectLab) : [];
+  $('#supplementList').innerHTML = supplements.length ? `<h3>按需查阅 · 本章补页</h3><p>补页不影响主线进度，阅读后可以返回本章。</p>${supplements.map((item) => `<button class="nav-item" data-supplement="${esc(item.id)}">${esc(item.title)}${state.readSupplements.has(item.id) ? ' · 已阅读' : ''} →</button>`).join('')}` : '';
+  $('#supplementList').querySelectorAll('[data-supplement]').forEach((button) => button.addEventListener('click', () => openUnit(button.dataset.supplement)));
 }
 
 function openUnit(id, stage = 'understand') {
@@ -515,18 +645,22 @@ function openUnit(id, stage = 'understand') {
   $('#welcome').classList.add('hidden');
   $('#unitView').classList.remove('hidden');
   $('#unitVolume').textContent = unit.volume?.title || 'Go 后端与 Harness AI';
-  $('#unitTitle').textContent = unit.kind === 'chapter' ? unit.shortTitle : `补页 · ${unit.title}`;
+  $('#unitTitle').textContent = unit.kind === 'chapter' ? unit.shortTitle : `${unit.projectLab ? '项目里程碑' : '参考补页'} · ${unit.title}`;
   $('#unitGoal').innerHTML = unit.kind === 'chapter' ? `<b>目标：</b>${richText(unit.goal)}` : richText(unit.kicker);
   const learning = unit.learning || {level: 3, label: '进阶', required: unit.kind === 'chapter', estimatedMinutes: 20, prerequisite: ''};
   const timeLabel = learning.readingMinutes ? `阅读 ${learning.readingMinutes} 分钟 · 动手 ${learning.practiceMinutes} 分钟` : `约 ${learning.estimatedMinutes} 分钟`;
-  $('#unitMeta').innerHTML = `<span>难度 ${'●'.repeat(learning.level)}${'○'.repeat(5 - learning.level)} · ${esc(learning.label)}</span><span>${learning.required ? '主线' : '选修'} · ${timeLabel}</span><span>${esc(learning.prerequisite)}</span>`;
-  $('#transitionIn').innerHTML = unit.transitionIn ? `<span class="transition-tag">承前</span><span>${richText(unit.transitionIn)}</span>` : '';
-  $('#transitionOut').innerHTML = (unit.transitionOut || unit.nextHook) ? `<span class="transition-tag">启后</span><span>${richText(unit.transitionOut || unit.nextHook)}</span>` : '';
-  renderIncident(unit); renderChat(unit); renderMemory(unit); renderFlow(unit); renderTechnical(unit); renderCode(unit); renderExercise(unit); renderSupplements(unit); renderNav();
+  $('#unitMeta').innerHTML = `<span>难度 ${'●'.repeat(learning.level)}${'○'.repeat(5 - learning.level)} · ${esc(learning.label)}</span><span>${unit.projectLab ? 'AI 项目' : learning.required ? '主线' : '选修参考'} · ${timeLabel}</span><span>${esc(learning.prerequisite)}</span>`;
+  $('#transitionIn').innerHTML = unit.transitionIn ? `<span class="transition-tag">这次遇到的问题</span><span>${richText(unit.transitionIn)}</span>` : '';
+  const parent = isReadingSupplement(unit) ? parentChapter(unit) : null;
+  if (parent) {
+    $('#transitionIn').innerHTML = `<button class="nav-item" data-return-chapter="${parent.id}">← 返回第 ${parent.number} 章 · ${esc(parent.shortTitle)}</button>`;
+    $('#transitionIn [data-return-chapter]').addEventListener('click', () => openUnit(parent.id));
+  }
+  $('#transitionOut').innerHTML = (unit.transitionOut || unit.nextHook) ? `<span class="transition-tag">接下来</span><span>${richText(unit.transitionOut || unit.nextHook)}</span>` : '';
+  renderIncident(unit); renderChat(unit); renderOverviewDiagram(unit); renderMemory(unit); renderFlow(unit); renderTechnical(unit); renderCode(unit); renderExercise(unit); renderSupplements(unit); renderNav();
+  enhanceTerms(document.getElementById('unitView'), unit);
   setStage(stage, false);
-  $('#completeButton').innerHTML = state.completed.has(unit.id) ? '本节已完成 <span>✓</span>' : '标记本节完成 <span>✓</span>';
-  $('#continueUnitButton').classList.toggle('hidden', !state.completed.has(unit.id) || index === state.units.length - 1);
-  $('#prevButton').disabled = index === 0; $('#nextButton').disabled = index === state.units.length - 1;
+  renderCompletionControls();
   localStorage.setItem('manga-go-last-unit', unit.id);
   localStorage.setItem('manga-go-last-stage', stage);
   history.replaceState(null, '', `#${unit.id}`);
@@ -542,7 +676,7 @@ function setStage(stage, moveFocus = true) {
   const index = ['understand', 'read', 'practice'].indexOf(stage);
   $('#stageButton').classList.toggle('hidden', index === 2);
   $('#completeButton').classList.toggle('hidden', index !== 2);
-  if (index < 2) $('#stageButton').innerHTML = `下一步：${index === 0 ? '会读' : '会做'} <span>→</span>`;
+  if (index < 2) $('#stageButton').innerHTML = `下一步：${index === 0 ? '看懂示例' : '独立练习'} <span>→</span>`;
   localStorage.setItem('manga-go-last-stage', stage);
   if (moveFocus) {
     const target = $(`.stage-${stage}:not(.hidden)`);
@@ -567,26 +701,27 @@ function toggleSidebar() { const sidebar = $('.sidebar'); const open = sidebar.c
 
 function showToast(message) { const toast = $('#toast'); toast.textContent = message; toast.classList.add('show'); window.clearTimeout(showToast.timer); showToast.timer = window.setTimeout(() => toast.classList.remove('show'), 1800); }
 
-function openSearch() { $('#dialogTitle').textContent = '搜索教材'; $('#searchInput').hidden = false; $('#searchDialog').showModal(); $('#searchInput').focus(); }
+function openSearch() { $('#dialogTitle').textContent = '搜索课程'; $('#searchLine').hidden = false; $('#searchInput').value = ''; renderSearch(''); $('#searchDialog').showModal(); $('#searchInput').focus(); }
 
 function openReview() {
   const reviewKeys = [...new Set([...state.reviewHistory, ...state.wrong])];
   $('#dialogTitle').textContent = `复习记录 ${reviewKeys.length} 项`;
-  $('#searchDialog').showModal();
   $('#searchInput').value = '';
-  $('#searchInput').hidden = true;
+  $('#searchLine').hidden = true;
   const items = reviewKeys.map((key) => {
     if (key.endsWith(':lab')) {
       const id = key.slice(0, -4); const unit = state.units.find((candidate) => candidate.id === id);
-      return unit ? `<button class="search-result" data-unit="${id}" data-review-key="${esc(key)}"><b>${esc(unit.title)}</b><span>企业实验曾失败，需要重新运行并解释失败边界</span></button>` : '';
+      return unit ? `<button class="search-result" data-unit="${id}" data-review-key="${esc(key)}"><b>${esc(unit.title)}</b><span>上次项目测试没有通过。打开后查看报错，再修改代码重试。</span></button>` : '';
     }
     const [id, rawIndex] = key.split(':');
     const unit = state.units.find((candidate) => candidate.id === id);
     const quiz = unit?.selfCheck?.[Number(rawIndex)];
     return unit && quiz ? `<button class="search-result" data-unit="${id}" data-review-key="${esc(key)}"><b>${esc(unit.shortTitle || unit.title)}</b><span>${state.wrong.includes(key) ? '待纠正 · ' : '已纠正 · '}${esc(quiz.question)}</span></button>` : '';
   }).join('');
-  $('#searchResults').innerHTML = items || '<p class="muted">暂时没有待复习题。答题时点“还不会”，它会出现在这里。</p>';
+  $('#searchResults').innerHTML = items || '<p class="muted">还没有需要复习的题。答错的题和没通过的项目测试会记录在这里，方便你回来重做。</p>';
   $('#searchResults').querySelectorAll('[data-unit]').forEach((button) => button.addEventListener('click', () => { const key = button.dataset.reviewKey; $('#searchDialog').close(); openUnit(button.dataset.unit, 'practice'); requestAnimationFrame(() => { const target = key.endsWith(':lab') ? document.querySelector('[data-project-lab]') : document.querySelector(`[data-key="${CSS.escape(key)}"]`); if (target) { target.tabIndex = -1; target.scrollIntoView({block: 'center'}); target.focus(); } }); }));
+  $('#searchDialog').showModal();
+  $('#dialogTitle').focus({preventScroll: true});
 }
 
 function renderSearch(query) {
@@ -597,14 +732,26 @@ function renderSearch(query) {
     const haystack = JSON.stringify(unit).toLowerCase();
     if (haystack.includes(value)) results.push(unit);
   });
-  $('#searchResults').innerHTML = results.length ? results.slice(0, 14).map((unit) => `<button class="search-result" data-unit="${unit.id}"><b>${esc(unit.kind === 'chapter' ? `第 ${unit.number} 章 · ${unit.shortTitle}` : `补页 · ${unit.title}`)}</b><span>${esc(unit.goal || unit.kicker || unit.analogy)}</span></button>`).join('') : '<p class="muted">暂时没有找到，换个词试试。</p>';
+  $('#searchResults').innerHTML = results.length ? results.slice(0, 14).map((unit) => `<button class="search-result" data-unit="${unit.id}"><b>${esc(unit.kind === 'chapter' ? `第 ${unit.number} 章 · ${unit.shortTitle}` : `${unit.projectLab ? '项目里程碑' : '参考补页'} · ${unit.title}`)}</b><span>${esc(unit.goal || unit.kicker || unit.analogy)}</span></button>`).join('') : '<p class="muted">暂时没有找到，换个词试试。</p>';
   $('#searchResults').querySelectorAll('[data-unit]').forEach((button) => button.addEventListener('click', () => { $('#searchDialog').close(); openUnit(button.dataset.unit); }));
 }
 
 async function boot() {
+  if (staticHosted) {
+    document.body.classList.add('static-hosted');
+    $('#hostingNotice').hidden = false;
+    document.addEventListener('click', (event) => {
+      const control = event.target.closest('.run-code,[data-submit-workshop],[data-run-exercise],[data-run-project]');
+      if (!control) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      showToast('在线版不执行服务器代码；请在本地完整版运行测试');
+    }, true);
+  }
   const response = await fetch('data/book.json?v=18.7.0', {cache: 'no-store'});
   state.data = await response.json();
   state.units = flattenUnits(state.data);
+  mountStarter(document.getElementById('starterMount'));
   discardStaleEvidence();
   const revalidation = revalidateCompletedEvidence();
   $('#statChapters').textContent = state.data.chapters.length;
@@ -614,33 +761,40 @@ async function boot() {
   $('#startButton').addEventListener('click', () => openUnit(state.units[0].id));
   document.querySelectorAll('[data-start-chapter]').forEach((button) => button.addEventListener('click', () => openUnit(`chapter-${button.dataset.startChapter}`)));
   document.querySelectorAll('[data-start-unit]').forEach((button) => button.addEventListener('click', () => openUnit(button.dataset.startUnit)));
-  $('#continueButton').addEventListener('click', () => openUnit(localStorage.getItem('manga-go-last-unit') || state.data.chapters.find((unit) => !state.completed.has(unit.id))?.id || state.data.chapters[0].id, localStorage.getItem('manga-go-last-stage') || 'understand'));
-  $('#prevButton').addEventListener('click', () => openUnit(state.units[state.currentIndex - 1]?.id));
-  $('#nextButton').addEventListener('click', () => openUnit(state.units[state.currentIndex + 1]?.id));
+  $('#continueButton').addEventListener('click', () => openUnit(localStorage.getItem('manga-go-last-unit') || learningRoute().find((unit) => !state.completed.has(unit.id))?.id || state.data.chapters[0].id, localStorage.getItem('manga-go-last-stage') || 'understand'));
+  $('#prevButton').addEventListener('click', () => openUnit(adjacentUnit(-1)?.id));
+  $('#nextButton').addEventListener('click', () => openUnit(adjacentUnit(1)?.id));
   document.querySelectorAll('button[data-stage]').forEach((button) => button.addEventListener('click', () => setStage(button.dataset.stage)));
   $('#stageButton').addEventListener('click', () => setStage(state.stage === 'understand' ? 'read' : 'practice'));
   $('#completeButton').addEventListener('click', async () => {
     const unit = state.units[state.currentIndex];
+    if (isReadingSupplement(unit)) {
+      if (state.readSupplements.has(unit.id)) state.readSupplements.delete(unit.id);
+      else state.readSupplements.add(unit.id);
+      saveState(); renderNav(); renderCompletionControls();
+      showToast(state.readSupplements.has(unit.id) ? '已记录为读过；练习进度单独保存' : '已取消阅读记录');
+      return;
+    }
     if (state.completed.has(unit.id)) { state.completed.delete(unit.id); saveState(); renderNav(); $('#completeButton').innerHTML = '标记本节完成 <span>✓</span>'; $('#continueUnitButton').classList.add('hidden'); showToast('已取消完成标记'); return; }
     const keys = (unit.selfCheck || []).map((_, index) => `${unit.id}:${index}`);
     const pending = keys.filter((key) => !state.answered.has(key) || state.wrong.includes(key));
-    if (pending.length) { showToast(`还有 ${pending.length} 道题需要确认掌握`); return; }
+    if (pending.length) { showToast(`还有 ${pending.length} 道题需要答对`); return; }
     if (unit.kind !== 'chapter') {
       if (unit.projectExercise && !state.practices[unit.id]?.codeOk) { showToast('先完成里程碑代码并通过固定测试'); return; }
-      if (unit.projectLab && !state.practices[unit.id]?.labOk) { showToast('先运行并通过企业实验'); return; }
+      if (unit.projectLab && !state.practices[unit.id]?.labOk) { showToast('先运行项目测试，全部通过后再完成本节'); return; }
       const practice = state.practices[unit.id];
       try {
         const response = await fetch('/api/check', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({unitId:unit.id,quizAnswers:keys.map((key)=>state.responses[key]),codeDigest:practice.labDigest,runProof:practice.labRunProof,challengeDigest:practice.codeDigest,challengeRunProof:practice.runProof})});
         const proof = await response.json();
         if (!proof.ok || !proof.completionDigest) throw new Error('completion rejected');
         state.practices[unit.id] = {...practice, completionDigest:proof.completionDigest};
-        state.completed.add(unit.id); saveState(); renderNav(); $('#completeButton').innerHTML = '本节已完成 <span>✓</span>'; $('#continueUnitButton').classList.remove('hidden'); showToast('项目里程碑已完成');
-      } catch (_error) { showToast('企业实验凭证无效，请重新运行'); }
+        state.completed.add(unit.id); saveState(); renderNav(); renderCompletionControls(); showToast('项目里程碑已完成');
+      } catch (_error) { showToast('之前的测试结果已失效，请重新运行项目测试'); }
       return;
     }
     const practice = state.practices[unit.id];
-    if (unit.kind === 'chapter' && !practice?.workshopOk) { showToast('先通过三步工程演练'); return; }
-    if (unit.workshop?.codeExercise && !practice?.codeOk) { showToast('先让固定 Go 测试通过'); return; }
+    if (unit.kind === 'chapter' && !practice?.workshopOk) { showToast('先完成下面三项练习'); return; }
+    if (unit.workshop?.codeExercise && !practice?.codeOk) { showToast('先修改代码，让测试通过'); return; }
     const quizAnswers = keys.map((key) => state.responses[key]);
     try {
       const response = await fetch('/api/check', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({unitId:unit.id,answers:practice.answers,quizAnswers,codeDigest:practice.codeDigest || '',runProof:practice.runProof || ''})});
@@ -648,14 +802,14 @@ async function boot() {
       if (!proof.ok || !proof.completionDigest) throw new Error('completion rejected');
       state.practices[unit.id] = {...practice, completionDigest: proof.completionDigest};
       state.completed.add(unit.id); saveState(); renderNav();
-      $('#completeButton').innerHTML = '本节已完成 <span>✓</span>'; $('#continueUnitButton').classList.remove('hidden'); showToast('已生成完整掌握凭证');
-    } catch (_error) { showToast('完整凭证生成失败，请确认运行服务已启动'); }
+      renderCompletionControls(); showToast('本节练习已通过，进度已保存');
+    } catch (_error) { showToast('没能保存完成记录，请检查本地服务后重试'); }
   });
   $('#backToTop').addEventListener('click', () => window.scrollTo({top: 0, behavior: 'smooth'}));
-  $('#continueUnitButton').addEventListener('click', () => openUnit(state.units[state.currentIndex + 1]?.id));
+  $('#continueUnitButton').addEventListener('click', () => openUnit(adjacentUnit(1)?.id));
   $('#searchToggle').addEventListener('click', openSearch); $('#searchInput').addEventListener('input', (event) => renderSearch(event.target.value));
   $('#progressButton').addEventListener('click', openReview);
-  $('#themeToggle').addEventListener('click', () => { document.body.classList.toggle('dark'); localStorage.setItem('jianjian-theme', document.body.classList.contains('dark') ? 'dark' : 'light'); });
+  $('#themeToggle').addEventListener('click', () => { document.body.classList.toggle('dark'); localStorage.setItem('jianjian-theme', document.body.classList.contains('dark') ? 'dark' : 'light'); if (!$('#unitView').classList.contains('hidden')) renderOverviewDiagram(state.units[state.currentIndex]); });
   if (localStorage.getItem('jianjian-theme') === 'dark') document.body.classList.add('dark');
   $('#compactToggle').addEventListener('click', () => { document.body.classList.toggle('compact'); showToast(document.body.classList.contains('compact') ? '专注模式已开启 · Alt+C 切换' : '已退出专注模式'); });
   $('#sidebarCollapse').addEventListener('click', () => $('.sidebar').classList.toggle('collapsed'));
@@ -720,10 +874,12 @@ async function boot() {
           el.value = el.value.slice(0, lineStart) + el.value.slice(lineStart + toRemove);
           el.selectionStart = Math.max(lineStart, start - toRemove);
           el.selectionEnd = Math.max(lineStart, end - toRemove);
+          el.dispatchEvent(new Event('input', {bubbles: true}));
         }
       } else {
         el.value = el.value.slice(0, start) + '\t' + el.value.slice(end);
         el.selectionStart = el.selectionEnd = start + 1;
+        el.dispatchEvent(new Event('input', {bubbles: true}));
       }
       return;
     }
@@ -740,8 +896,7 @@ async function boot() {
     saveState(); renderNav();
     const current = state.units[state.currentIndex];
     if (current) {
-      $('#completeButton').innerHTML = state.completed.has(current.id) ? '本节已完成 <span>✓</span>' : '标记本节完成 <span>✓</span>';
-      $('#continueUnitButton').classList.toggle('hidden', !state.completed.has(current.id) || state.currentIndex === state.units.length - 1);
+      renderCompletionControls();
     }
   });
 }

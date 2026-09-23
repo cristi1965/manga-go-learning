@@ -1,0 +1,35 @@
+{
+  "time": "2026-09-23T04:32:43.519Z",
+  "hashes": {
+    "interactive/app.js": "0cdd5dfae3d9a1ccfdf00ee1ce02c3deb21be9735408234b3cea33e0d2210c03",
+    "interactive/styles.css": "6a9601cfafb46612d0b37d90d207a8032fd6c11b0546a0c714f939070e8d81da",
+    "interactive/index.html": "63c13622d2490f23008b766a4d30cb9c3bf70ffb674d790acd588c5b6cf00551",
+    "interactive/lesson-briefs.js": "64486cfed2f8972df9ad6a5a1638e7ffaf7f692b864f0e65ee6994b5a2a74fdd",
+    "interactive/starter.js": "0ee4d6b296539fbc126cd5ece9e5142ca5483746d872e0b62279f59b11ee55bd"
+  },
+  "checks": [
+    {
+      "width": 1440,
+      "starterRun": "100\n",
+      "draft": true,
+      "route": true,
+      "optionalStory": true,
+      "focus": true,
+      "readingRecord": true,
+      "editor": true,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "starterRun": "100\n",
+      "draft": true,
+      "route": true,
+      "optionalStory": true,
+      "focus": true,
+      "readingRecord": true,
+      "editor": true,
+      "overflow": false
+    }
+  ],
+  "errors": []
+}

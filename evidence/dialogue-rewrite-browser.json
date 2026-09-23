@@ -1,0 +1,800 @@
+{
+  "hashes": {
+    "interactive/data/book.json": "a904765ba462b9144c1bfd9f9bd02458645afbb937a1992332ecdebb93c54e44",
+    "interactive/app.js": "0cdd5dfae3d9a1ccfdf00ee1ce02c3deb21be9735408234b3cea33e0d2210c03",
+    "interactive/styles.css": "6a9601cfafb46612d0b37d90d207a8032fd6c11b0546a0c714f939070e8d81da"
+  },
+  "results": [
+    {
+      "id": "chapter-1",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-control-flow-declarations",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-real-test-file",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-2",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-utf8-string-byte-rune",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-strict-json-contract",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-3",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-container-contracts",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-4",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-interface-typed-nil",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-generics-when-useful",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-5",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-module-diagnostics",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-workspace-boundaries",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-6",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-error-chain",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-defer-panic-recover",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-testing-fuzz-cleanup",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-7",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-memory-model-race",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-sync-tool-choice",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-8",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-goroutine-lifecycle",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-9",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-io-boundaries",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-http-client-server",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-httptest-contract",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-09-authn-oidc",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-09-object-authz",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-09-http-boundary",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-10",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-10-tenant-defense",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-11",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-11-transaction-helper",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-11-isolation-locks",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-11-connection-pool",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-11-outbox-inbox",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-12",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-13",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-13-worker-pool",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-13-resilience",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-14",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-14-stream-slow-client",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-15",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-benchmark-profile-trace",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-15-observability-slo",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-16",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-daily-tooling-gate",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-lifecycle-graceful-shutdown",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-16-config-container",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-16-deploy-restore",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-16-release-gates",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-ai-01",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-ai-02",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-ai-03",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-ai-04",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-ai-05",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-ai-06",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-ai-07",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-ai-08",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-17",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-18",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-harness-tool-contract-gate",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-19",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-harness-approval-reservation",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-harness-run-step-checkpoint",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-20",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-21",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-harness-mcp-untrusted-adapter",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-harness-sandbox-data-policy",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-22",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-harness-budget-ledger",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-harness-signed-manifest-envelope",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-harness-replay-eval-matrix",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-harness-durable-event-spine",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-23",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-harness-candidate-lifecycle",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-24",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "supplement-harness-handler-worker-skeleton",
+      "width": 1440,
+      "turns": 6
+    },
+    {
+      "id": "chapter-1",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-control-flow-declarations",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-real-test-file",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "chapter-2",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-utf8-string-byte-rune",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-strict-json-contract",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "chapter-3",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-container-contracts",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "chapter-4",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-interface-typed-nil",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-generics-when-useful",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "chapter-5",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-module-diagnostics",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-workspace-boundaries",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "chapter-6",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-error-chain",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-defer-panic-recover",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-testing-fuzz-cleanup",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "chapter-7",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-memory-model-race",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-sync-tool-choice",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "chapter-8",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-goroutine-lifecycle",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "chapter-9",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-io-boundaries",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-http-client-server",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-httptest-contract",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-09-authn-oidc",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-09-object-authz",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-09-http-boundary",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "chapter-10",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-10-tenant-defense",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "chapter-11",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-11-transaction-helper",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-11-isolation-locks",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-11-connection-pool",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-11-outbox-inbox",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "chapter-12",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "chapter-13",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-13-worker-pool",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-13-resilience",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "chapter-14",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-14-stream-slow-client",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "chapter-15",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-benchmark-profile-trace",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-15-observability-slo",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "chapter-16",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-daily-tooling-gate",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-lifecycle-graceful-shutdown",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-16-config-container",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-16-deploy-restore",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-backend-16-release-gates",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-ai-01",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-ai-02",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-ai-03",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-ai-04",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-ai-05",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-ai-06",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-ai-07",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-go-ai-08",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "chapter-17",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "chapter-18",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-harness-tool-contract-gate",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "chapter-19",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-harness-approval-reservation",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-harness-run-step-checkpoint",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "chapter-20",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "chapter-21",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-harness-mcp-untrusted-adapter",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-harness-sandbox-data-policy",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "chapter-22",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-harness-budget-ledger",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-harness-signed-manifest-envelope",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-harness-replay-eval-matrix",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-harness-durable-event-spine",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "chapter-23",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-harness-candidate-lifecycle",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "chapter-24",
+      "width": 390,
+      "turns": 6
+    },
+    {
+      "id": "supplement-harness-handler-worker-skeleton",
+      "width": 390,
+      "turns": 6
+    }
+  ],
+  "errors": []
+}

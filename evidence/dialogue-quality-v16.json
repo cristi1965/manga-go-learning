@@ -1,57 +1,9 @@
 {
   "status": "pass",
-  "units": 71,
-  "turns": 449,
-  "starts": {
-    "阿良": 22,
-    "李宝瓶": 4,
-    "阮秀": 2,
-    "崔东山": 30,
-    "周米粒": 5,
-    "陆沉": 3,
-    "宁姚": 1,
-    "陈景清": 6,
-    "左右": 1,
-    "文圣": 3,
-    "老瞎子": 2
-  },
-  "ends": {
-    "阿良": 3,
-    "周米粒": 30,
-    "李宝瓶": 8,
-    "阮秀": 4,
-    "宁姚": 24,
-    "陈平安": 3,
-    "左右": 1,
-    "老瞎子": 3,
-    "文圣": 3
-  },
-  "speakers": {
-    "阿良": 68,
-    "李宝瓶": 62,
-    "宁姚": 77,
-    "陈平安": 29,
-    "周米粒": 46,
-    "文圣": 32,
-    "阮秀": 42,
-    "老瞎子": 30,
-    "崔东山": 37,
-    "左右": 14,
-    "陆沉": 5,
-    "陈景清": 7
-  },
-  "fixed_template_units": [],
-  "consecutive_chen": [],
-  "consecutive_speaker": [],
+  "units": 79,
+  "turns": 474,
+  "book_sha256": "a904765ba462b9144c1bfd9f9bd02458645afbb937a1992332ecdebb93c54e44",
+  "failures": [],
   "duplicate_lines": [],
-  "long_lines": [],
-  "second_turn_chen": 2,
-  "literal_ellipsis": [],
-  "rhythm": {
-    "6": 70,
-    "5": 1,
-    "3": 8
-  },
-  "malformed_units": [],
-  "failures": []
+  "scope": "Structure and exact source parity only; no pedagogical score."
 }

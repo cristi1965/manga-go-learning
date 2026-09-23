@@ -1,0 +1,28 @@
+# AI 任务执行与恢复时序图
+
+写请求后断线时，为什么要先查原结果，不能直接重试。
+
+```mermaid
+sequenceDiagram
+    actor User as 用户
+    participant API as 接口
+    participant Run as 任务记录
+    participant Worker as 执行器
+    participant Tool as 工具
+
+    User->>API: 发起任务
+    API->>Run: 保存 Run 和 Step
+    API-->>User: 返回任务编号
+    Worker->>Run: 用租约领取 Step
+    Worker->>Tool: 带 CallID 执行
+    alt 收到成功回执
+        Tool-->>Worker: 结果 + receipt
+        Worker->>Run: 记为完成
+    else 连接中断，结果不明
+        Worker->>Run: 先保存 Unknown
+        Worker->>Tool: 用原 CallID 查结果
+        Tool-->>Worker: 返回原结果或未执行
+        Worker->>Run: 对账后再决定是否重试
+    end
+    Run-->>User: 展示可追溯结果
+```

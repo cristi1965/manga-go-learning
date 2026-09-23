@@ -1,0 +1,42 @@
+{
+  "definitions": 66,
+  "hashes": {
+    "interactive/term-help.js": "f4b9bc40c822daa95d11f0f10549b9e46bd39437411b0568e93088718305e8f4",
+    "interactive/term-definitions.js": "1265f424393d793e987af5aebad7a3ea3d917562b2748bb32d093b76d99c1791"
+  },
+  "checks": [
+    {
+      "width": 1440,
+      "dark": false,
+      "hover": true,
+      "click": true,
+      "keyboard": true,
+      "noEditorMutation": true
+    },
+    {
+      "width": 1440,
+      "dark": true,
+      "hover": true,
+      "click": true,
+      "keyboard": true,
+      "noEditorMutation": true
+    },
+    {
+      "width": 390,
+      "dark": false,
+      "hover": true,
+      "click": true,
+      "keyboard": true,
+      "noEditorMutation": true
+    },
+    {
+      "width": 390,
+      "dark": true,
+      "hover": true,
+      "click": true,
+      "keyboard": true,
+      "noEditorMutation": true
+    }
+  ],
+  "errors": []
+}

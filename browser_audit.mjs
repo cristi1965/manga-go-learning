@@ -26,7 +26,9 @@ function monitor(page) {
 
 async function inspect(viewport, dark = false) {
   const context = await browser.newContext({ viewport });
-  await context.addInitScript({ content: axe.source });
+  await context.addInitScript({
+    content: `${axe.source}; try { localStorage.setItem('jianjian-theme', '${dark ? 'dark' : 'light'}'); } catch (e) {}`
+  });
   const page = await context.newPage();
   monitor(page);
   const results = [];
@@ -111,6 +113,7 @@ const darkPage = await darkContext.newPage();
 monitor(darkPage);
 await darkPage.goto(`${base}/?v=${version}#chapter-1`, { waitUntil: 'networkidle' });
 await darkPage.locator('#themeToggle').click();
+await darkPage.waitForTimeout(300);
 const darkAxeViolations = (await darkPage.evaluate(async () => (await axe.run(document, { resultTypes: ['violations'] })).violations.map(({ id, impact }) => ({ id, impact }))));
 await darkContext.close();
 

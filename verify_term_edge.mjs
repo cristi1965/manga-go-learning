@@ -1,0 +1,10 @@
+import {chromium} from 'playwright';
+const browser=await chromium.launch({channel:'chrome',headless:true});const page=await browser.newPage();
+await page.goto('http://127.0.0.1:4173/#chapter-10');const term=page.locator('#technicalCard .term-trigger').first();await term.scrollIntoViewIfNeeded();await page.waitForTimeout(600);const box=await term.boundingBox();
+await page.evaluate(()=>{window.tipMutations=0;new MutationObserver(m=>window.tipMutations+=m.length).observe(document.querySelector('#termTooltip'),{childList:true,attributes:true,subtree:true});});
+await page.mouse.move(box.x+.5,box.y+box.height/2);await page.waitForTimeout(200);const before=await page.evaluate(()=>window.tipMutations);
+for(let i=0;i<20;i++)await page.mouse.move(box.x+.5+(i%2)*.2,box.y+box.height/2);
+const after=await page.evaluate(()=>window.tipMutations);if(before!==after)throw Error('tooltip rewritten during pointer movement');
+const next=await term.boundingBox();if(JSON.stringify(box)!==JSON.stringify(next))throw Error('hitbox moved');
+await page.mouse.move(box.x-1,box.y+box.height/2);await page.mouse.move(box.x+.5,box.y+box.height/2);await page.waitForTimeout(150);if(!await page.locator('#termTooltip').isVisible())throw Error('edge reentry hidden');
+console.log('PASS: stable hitbox, no mousemove mutations, edge re-entry retains tooltip');await browser.close();

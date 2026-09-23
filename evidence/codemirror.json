@@ -1,0 +1,23 @@
+{
+  "checks": [
+    {
+      "width": 1440,
+      "draft": true,
+      "reset": true,
+      "undo": true,
+      "dark": true,
+      "failAndPass": true,
+      "starter": true
+    },
+    {
+      "width": 390,
+      "draft": true,
+      "reset": true,
+      "undo": true,
+      "dark": true,
+      "failAndPass": true,
+      "starter": true
+    }
+  ],
+  "errors": []
+}

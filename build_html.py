@@ -28,9 +28,9 @@ GO_AI_PROJECT_MILESTONES = [
     {
         "id": "supplement-go-ai-01", "number": "16.D", "title": "模型适配器：先守住外部边界",
         "kicker": "里程碑 1/8 · Provider、超时与稳定错误",
-        "opening": ["账本摘要请求迟迟没有回来，HTTP 连接还占着，后面的请求开始排队。", "问题不在模型会不会回答，而在 Go 服务没有规定它多久必须回答、失败后留下什么。"],
-        "dialogue": [("文圣", "小平安呐，外部接口不设防，回头超时掀了你老底！"), ("宁姚", "调通只证明一次成功。接口隔离 Provider，context 传递超时。"), ("老瞎子", "空响应和 429 记明白，别当睁眼瞎全吞了。")],
-        "closing": "业务依赖小接口；Provider 负责协议转换，context 负责终止等待。",
+        "opening": ['陈平安接好了模型接口，点一下就能生成账单摘要。他把按钮交给宁姚：“可以用了。”', '第二次调用迟迟不返回。阿良盯着转圈图标：“它在算账，还是去考会计证了？”'],
+        "dialogue": [['陈平安', '第一次明明成功了。第二次慢一点，再等等不就好了？'], ['宁姚', '先说清最多等多久。给调用设置 deadline，并把 context 一直传到实际发请求的客户端。用户取消或时间到了，客户端要响应取消；只让页面停止转圈，后台请求可能还在等。'], ['陈平安', '那我以后换模型，业务代码又得跟着 SDK 重写？'], ['宁姚', '把业务需要的“生成摘要”写成一个小接口 Provider。每家模型各写一个适配器，负责调用 SDK、检查响应、把超时或限流转成业务能识别的错误。业务调用接口，不必到处认识各家的 SDK。'], ['阿良', '懂了。接电话的人可以换，“多久给答复、办不成怎么说”得先约好。别让转圈图标成了咱们唯一一个全年无休的员工。']],
+        "closing": '用假 Provider 分别模拟成功、超时和无效响应：检查返回值、错误类别以及取消是否传到调用边界。设置超时不等于保证远端已经停止处理。',
         "goal": "为模型调用建立可替换、可取消、可测试的 Go 边界。",
         "principles": ["业务层依赖 Provider 接口，不依赖具体 SDK。", "取消、deadline 和 request ID 必须传到底层。", "空响应、429、5xx 和畸形响应分别分类。"],
         "code": "type Provider interface { Complete(context.Context, Request) (Response, error) }",
@@ -2934,6 +2934,9 @@ def supplement_payload(module, source, stories, item: dict, index: int) -> dict:
 
 
 def go_ai_project_payload(source, item: dict) -> dict:
+    # Keep project dialogue in the same independently reviewed manuscript layer.
+    stories = json.loads((Path(__file__).resolve().parent / "manuscript" / "story-ai-projects.json").read_text(encoding="utf-8"))
+    item = {**item, **stories[item["id"]]}
     question, answer, choices, correct_index = item["quiz"]
     milestone_number = item["id"].rsplit("-", 1)[-1]
     lab_case = {
@@ -3033,6 +3036,9 @@ def main() -> None:
             "covers": ["tenant", "idempotency", "provider", "strict JSON", "tool policy", "lease", "fencing", "events", "audit", "eval"],
         }],
     })
+    from plain_language import apply_plain_language
+    briefs = apply_plain_language(payload)
+    (PROJECT / 'interactive' / 'lesson-briefs.js').write_text('export const lessonBriefs = ' + json.dumps(briefs, ensure_ascii=False, indent=2) + ';\n', encoding='utf-8')
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     DATA_OUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     runner_exercises = {

@@ -107,8 +107,8 @@ def load_story_layers(source) -> tuple[dict, dict]:
                     raise ValueError(f"{kind}:{unit_id} invalid dialogue turn")
                 speaker, text = turn
                 speakers.append(speaker)
-                if len(text) > 60:
-                    raise ValueError(f"{kind}:{unit_id} dialogue over 60 chars: {text}")
+                if len(text) > 180:
+                    raise ValueError(f"{kind}:{unit_id} dialogue over 180 chars: {text}")
                 if len(text) > longest["chars"]:
                     longest = {"kind": kind, "id": unit_id, "chars": len(text), "text": text}
             if not ({"陈平安", "文圣", "老瞎子"} & set(speakers)):

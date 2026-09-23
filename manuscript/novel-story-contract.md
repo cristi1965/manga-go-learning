@@ -1,5 +1,7 @@
 # 轻小说事故喜剧故事层契约
 
+2026-09-22：三个试点以 `specs/dialogue-redesign-pilot.md` 为准。允许完整解释、减少出场角色；旧的轮次、角色配额和短句建议不作为试点教学质量结论。
+
 ## 结构
 
 每个主章和补充单元只覆盖三部分：
@@ -52,3 +54,6 @@
   }
 }
 ```
+
+## 2026-09-22 全量重构（优先于上文旧配额）
+以 specs/learning-refactor/dialogue-rewrite.md 为准。不再对“谁开场、谁收尾、角色出场百分比”设质量门槛；不再要求40字内口号。允许完整解释，不强制切换人物或隐喻。story-ai-projects.json 是项目对白唯一维护入口；运行 python3 sync_dialogue.py 同步网页，再运行 python3 verify_dialogue_quality.py。自动检查不代表可读性评分。
