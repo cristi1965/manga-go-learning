@@ -115,7 +115,9 @@ h1 em { color: var(--blue); font-style: normal; display: block; margin-top: 4px;
 .text-button { border: 0; background: transparent; color: var(--blue); padding: 8px 16px; font-weight: 600; font-size: 14.5px; border-radius: var(--radius-pill); }
 .text-button:hover { background: var(--blue-soft); }
 .stat-strip { display: flex; gap: 24px; margin-top: 36px; color: var(--muted); font-size: 12.5px; align-items: baseline; }
-.author-note { max-width: 760px; margin: 16px 0 0; color: var(--muted); font-size: 12.5px; line-height: 1.7; }
+.author-note { max-width: 760px; margin: 18px 0 0; color: var(--muted); font-size: 12.5px; line-height: 1.85; }
+.author-note p { margin: 0 0 5px; }
+.author-note p:last-child { margin-bottom: 0; color: var(--ink-secondary); font-style: italic; }
 .author-note a { color: var(--blue); font-weight: 650; }
 .learning-paths { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 22px; }
 .learning-paths button { min-height: 64px; padding: 12px 16px; display: grid; gap: 3px; text-align: left; border: 1px solid var(--line); border-radius: 14px; color: var(--ink); background: var(--paper-strong); box-shadow: var(--shadow); transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
