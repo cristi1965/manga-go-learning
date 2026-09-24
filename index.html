@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f1e9">
+  <title>漫画Go学习 · 实践课程</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css?v=pages-1">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="回到首页"><span class="brand-mark">Go</span><span><strong>漫画Go学习</strong><small>Go 后端与系统工程</small></span></a>
+    <div class="top-actions">
+      <button class="icon-button menu-button" id="menuToggle" title="打开目录" aria-label="打开目录" aria-controls="chapterSidebar" aria-expanded="false">☰</button>
+      <button class="icon-button" id="searchToggle" title="搜索章节" aria-label="搜索章节">⌕</button>
+      <button class="icon-button" id="themeToggle" title="切换主题" aria-label="切换主题">◐</button>
+      <button class="icon-button" id="compactToggle" title="专注模式 (Alt+C)" aria-label="专注模式">⊡</button>
+      <button class="progress-button" id="progressButton" title="学习进度"><span id="progressLabel">0%</span><span class="progress-ring"><i id="progressRing"></i></span></button>
+    </div>
+  </header>
+  <aside class="hosting-notice" id="hostingNotice" hidden><b>在线阅读版</b><span>课程、漫画、图表和代码编辑均可使用；编译运行与工程验收需要在本地完整版完成。</span><a href="https://github.com/cristi1965/go-ai-enterprise-book" target="_blank" rel="noopener noreferrer">打开项目说明 ↗</a></aside>
+
+  <div class="app-shell" id="top">
+    <aside class="sidebar" id="chapterSidebar" aria-label="章节导航">
+      <div class="sidebar-head"><span>目录</span><button class="sidebar-collapse" id="sidebarCollapse" title="收起目录" aria-label="收起目录">‹</button></div>
+      <div id="chapterNav" class="chapter-nav"></div>
+      <div class="sidebar-foot"><span class="status-dot"></span><span id="savedStatus">进度保存在本机</span></div>
+    </aside>
+    <button class="sidebar-overlay" id="sidebarOverlay" aria-label="关闭目录"></button>
+
+    <a class="skip-link" href="#mainContent">跳到正文</a>
+    <main class="main-content" id="mainContent" tabindex="-1">
+      <section class="welcome" id="welcome">
+        <div class="welcome-copy">
+          <p class="eyebrow">GO → 后端 → AI 工程</p>
+          <h1>每次学会一件事，<br><em>用代码确认。</em></h1>
+          <p class="lead">先弄懂一个小例子，再改动、运行，最后独立完成任务。遇到陌生概念再补课，不必把每页从头读到尾。</p>
+          <p class="author-note">作者说明：原 GitHub 账号 <a href="https://github.com/suoutsky" target="_blank" rel="noopener noreferrer">suoutsky</a> 已无法找回，本项目现由 <a href="https://github.com/cristi1965" target="_blank" rel="noopener noreferrer">cristi1965</a> 继续维护。两个账号是本项目的关联账号。</p>
+          <div class="welcome-actions"><button class="primary-button" id="continueButton">继续上次学习 →</button><button class="text-button" id="startButton">进入第一课</button></div>
+          <section class="starter-panel" id="starterPanel"><h2>第一次写 Go？从这里开始</h2><p>四个小实验：打印 → 变量 → 判断 → 函数。已有基础可以直接选下方路线。</p><div id="starterMount"></div></section>
+          <h2>选择你要做出的东西</h2>
+          <div class="learning-paths" aria-label="选择学习路线"><button data-start-chapter="1"><b>写出正确的 Go 函数</b><span>第 1–8 章 · 输入、数据、错误与测试</span></button><button data-start-chapter="9"><b>做一个后端服务</b><span>第 9–16 章 · 请求、存储、并发与运行</span></button><button data-start-unit="supplement-go-ai-01"><b>接入 AI 并控制它的行为</b><span>8 个项目里程碑 · 在同一工程里逐步实现</span></button><button data-start-chapter="17"><b>验证 AI 系统是否可靠</b><span>第 17–24 章 · 工具、审批、评测与恢复</span></button></div>
+          <div id="todayRecommend"></div>
+          <div class="stat-strip"><span><strong id="statChapters">24</strong> 章主课</span><span><strong id="statSupplements">47</strong> 个参考单元</span><span hidden><strong id="statDialogues"></strong></span></div>
+        </div>
+        <div class="welcome-scene" aria-hidden="true"><div class="mountain mountain-one"></div><div class="mountain mountain-two"></div><div class="scene-table"></div><div class="scene-figure figure-al"></div><div class="scene-figure figure-chen"></div><div class="scene-dog">◡</div><div class="scene-note">原理机制<br><b>再到工程</b></div></div>
+      </section>
+
+      <section class="unit-view hidden" id="unitView">
+        <div class="unit-header"><div><p class="eyebrow" id="unitVolume"></p><h1 id="unitTitle"></h1><div class="unit-meta" id="unitMeta"></div><p id="transitionIn" class="transition-in"></p><p id="unitGoal" class="unit-goal"></p></div><div class="unit-actions"><button class="icon-button" id="prevButton" title="上一章" aria-label="上一章">←</button><button class="icon-button" id="nextButton" title="下一章" aria-label="下一章">→</button></div></div>
+        <div class="learning-ribbon" aria-label="学习难度"><button class="ribbon-step active" data-stage="understand"><b>1 理解任务</b><small>为什么、怎么做</small></button><button class="ribbon-step" data-stage="read"><b>2 看懂示例</b><small>输入、过程、输出</small></button><button class="ribbon-step" data-stage="practice"><b>3 独立练习</b><small>修改、运行、反馈</small></button></div>
+        <section class="incident-card stage-understand" id="incidentCard"></section>
+        <section class="comic-opening stage-understand" id="comicOpening" aria-label="开场漫画"></section>
+        <section class="overview-diagram stage-understand hidden" id="overviewDiagram"></section>
+
+        <div class="two-column stage-understand">
+          <section class="memory-card" id="memoryCard"></section>
+          <section class="glossary-card" id="glossaryCard"></section>
+        </div>
+        <section class="flow-card stage-understand" id="flowCard"></section>
+        <section class="technical-card stage-understand" id="technicalCard"></section>
+        <details class="story-extra stage-understand"><summary>继续看人物怎么把这件事说清楚</summary><section class="chat-card" id="chatCard"></section></details>
+        <section class="code-card stage-read" id="codeCard"></section>
+        <section class="exercise-card stage-practice" id="exerciseCard"></section>
+        <section class="supplement-list stage-practice" id="supplementList"></section>
+        <p class="transition-out stage-practice" id="transitionOut"></p>
+        <div class="unit-footer"><button class="secondary-button" id="stageButton">下一步：会读 <span>→</span></button><button class="secondary-button hidden" id="completeButton">标记本章完成 <span>✓</span></button><button class="secondary-button hidden" id="continueUnitButton">下一单元 <span>→</span></button><button class="text-button" id="backToTop">回到顶部</button></div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="searchDialog" class="search-dialog" aria-labelledby="dialogTitle"><form method="dialog" class="search-box"><div class="dialog-head"><h2 class="dialog-heading" id="dialogTitle" tabindex="-1">搜索教材</h2><button value="cancel" class="icon-button" aria-label="关闭">×</button></div><div class="search-line" id="searchLine"><input id="searchInput" autocomplete="off" placeholder="输入章节名、术语或想解决的问题…"></div><div id="searchResults" class="search-results"><p class="muted">输入关键词开始搜索</p></div></form></dialog>
+  <dialog id="tradingagentsDialog" class="ta-dialog" aria-labelledby="taDialogTitle"><div class="ta-dialog-content"><div class="ta-dialog-head"><div><span class="ta-badge">全栈实战联动</span><h2 id="taDialogTitle">TradingAgents: AI 多智能体 + Go 后端 + Wails 桌面端架构</h2></div><button class="icon-button" id="closeTradingAgentsDialog" aria-label="关闭">×</button></div><div class="ta-dialog-body"><div class="ta-callout"><b>三位一体：AI 大脑 × Go 高并发内核 × Wails 桌面端</b><p><b>1. AI 智能体大脑 (Python/LLM)</b>：基本面、技术面、新闻情绪、宏观分析师群体协同推演；<br><b>2. Go 高并发内核 (Backend)</b>：严格 JSON 反序列化、CAS 租约 Fencing、复式记账、毫秒级风控拦截；<br><b>3. Go Wails 原生桌面端 (Wails v2)</b>：纯 Go 单二进制内嵌前端资产，跨平台极速启动，内存仅数十 MB，零开销 IPC 双向绑定。</p></div><div class="ta-arch-flow"><div class="ta-flow-step"><span class="step-num">01</span><b>AI 多智能体推演</b><p>Fundamental, Technical, Sentiment 多 Agent 协作产出交易策略草案</p></div><span class="ta-flow-arrow" aria-hidden="true">➔</span><div class="ta-flow-step highlight"><span class="step-num">02</span><b>Go 生产级风控网关</b><p>Fail-Closed 严格 JSON 校验，未注册工具/未知字段立即熔断拒绝</p></div><span class="ta-flow-arrow" aria-hidden="true">➔</span><div class="ta-flow-step"><span class="step-num">03</span><b>CAS Lease & Fencing</b><p>单账户并发锁，单调递增 Token 彻底杜绝幽灵重复提单</p></div><span class="ta-flow-arrow" aria-hidden="true">➔</span><div class="ta-flow-step"><span class="step-num">04</span><b>Wails 桌面端实时渲染</b><p>Go 原生事件桥接，零延迟推送多智能体推演日志与持仓看板</p></div></div><div class="ta-code-box"><div class="ta-code-title"><b>Go Wails 原生桌面端启动与资产内嵌 (Wails v2)</b><span>app/backend/cmd/desktop/main.go</span></div><pre><code>//go:embed all:frontend/dist
+var assets embed.FS
+
+func main() {
+    app := NewDesktopApp() // 挂载本地 SQLite、行情扫描器与 LLM 客户端
+    wails.Run(&options.App{
+        Title:       "TradingAgents",
+        Width:       1440,
+        Height:      960,
+        AssetServer: &assetserver.Options{ Assets: assets },
+        OnStartup:   app.startup,
+        OnShutdown:  app.shutdown,
+        Bind:        []interface{}{ app }, // Go 原生方法直通前端 JS
+        Mac:         &mac.Options{ TitleBar: mac.TitleBarHidden() },
+    })
+}</code></pre></div><div class="ta-code-box"><div class="ta-code-title"><b>Go 交易决策接入契约 (Contract)</b><span>pkg/gateway/decision.go</span></div><pre><code>type TradeProposal struct {
+    TenantID       string          `json:"tenant_id"`
+    IdempotencyKey string          `json:"idempotency_key"`
+    Ticker         string          `json:"ticker"`
+    Action         TradeAction     `json:"action"` // "BUY" | "SELL" | "HOLD"
+    Confidence     float64         `json:"confidence"`
+    Agents         []AgentDecision `json:"agent_deliberations"`
+}
+
+// Fail Closed: 拒绝任何未知字段与尾随非法数据
+func DecodeTradeStrict(r io.Reader) (*TradeProposal, error) {
+    dec := json.NewDecoder(r)
+    dec.DisallowUnknownFields()
+    var p TradeProposal
+    if err := dec.Decode(&p); err != nil { return nil, ErrMaliciousPayload }
+    return &p, nil
+}</code></pre></div><div class="ta-dialog-footer"><a class="primary-button local-only" href="http://127.0.0.1:4180/" target="_blank" rel="noopener noreferrer">直达配套《漫画美股：TradingAgents》平台 <span>↗</span></a><button class="secondary-button" id="copyTradingAgentsArch" type="button">复制全栈集成架构说明</button></div></div></div></dialog>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="app.js?v=pages-1" type="module"></script>
+</body>
+</html>
