@@ -628,10 +628,10 @@
       "codeGuides": [
         "先读 go.mod，找到模块路径，再对照目录和 import。",
         "查看 main 如何创建存储、业务服务和请求处理器。",
-        "canImport 练习只判断题目给定的分层方向；它不能代替 Go 对真实目录的检查。"
+        "先看 Bill 和 ID 的大写首字母，再看小写 helper 为什么只留在包内。"
       ],
-      "task": "补全 canImport，拒绝 internal 导入 cmd，允许题目规定的其他方向；再按正文建目录，检查 internal 的可见范围，并运行 go test ./...。",
-      "accept": "canImport 的方向判断通过测试；能分别解释项目分层规则与 Go 的 internal 父目录树限制。允许的导入成功，范围外导入被 Go 拒绝。",
+      "task": "先预测结果，原样运行一次；只改指定的一处再运行；最后导出 Bill、ID 和 Label，让外部 package 的固定测试通过。",
+      "accept": "原例和改动后代码都运行成功；外部 package 能使用 Bill、ID 和 Label，helper 仍保持包内可见。",
       "transitionIn": "读取函数已经能接受不同实现。现在把启动、业务和存储代码分开放，并把它们连接起来。",
       "transitionOut": "接下来沿着一次读取失败，查看错误如何返回到请求处理器。",
       "workshop.title": "先选步骤，再动手练习",
@@ -639,13 +639,13 @@
       "workshop.fields.0.label": "先选本章要解决的问题",
       "workshop.fields.1.label": "再选实际要做的操作",
       "workshop.fields.2.label": "最后选检查结果的方法",
-      "workshop.codeExercise.title": "检查题目规定的包依赖方向",
-      "workshop.codeExercise.prompt": "实现 canImport：拒绝 internal 指向 cmd，允许 cmd 指向 internal 及同层依赖。这是本题的分层规则，不是完整的 Go 导入检查器。",
-      "workshop.codeExercise.testIntent": "测试检查 cmd、internal 和同层之间的题定依赖方向。",
+      "workshop.codeExercise.title": "让其他 package 只看到公开能力",
+      "workshop.codeExercise.prompt": "导出 Bill 和 Label，使外部 package 能创建账单并读取标签；小写 helper 保持包内可见。",
+      "workshop.codeExercise.testIntent": "固定测试来自另一个 package，只能使用导出的 Bill、ID 和 Label。",
       "workshop.codeExercise.hints": [
-        "用 strings.HasPrefix 检查 from 和 to 的目录前缀。",
-        "当 from 属于 internal 且 to 属于 cmd 时返回 false。",
-        "其他题目允许的方向返回 true，再运行测试核对。"
+        "Go 用名字首字母大小写决定是否导出。",
+        "先把 bill 和 id 改成 Bill 和 ID。",
+        "再把 label 改成 Label；helper 保持小写。"
       ],
       "workshop.codeExercise.failureHint": "先读第一条测试错误，核对它给出的输入和期望结果，再修改练习中的实现。",
       "selfCheck.0.question": "module 与 package 的边界有何不同？",
@@ -690,14 +690,14 @@
         "把 go.mod 误解成只准导入本模块"
       ],
       "workshop.fields.1.optionLabels": [
-        "补全 canImport，拒绝 internal 导入 cmd，允许题目规定的其他方向；再按正文建目录，检查 internal 的可见范围，并运行 go test ./...。",
+        "导出 Bill、ID 和 Label，再运行外部 package 的固定测试。",
         "业务层反向依赖 Gin 或 SQL 行",
         "只写实现，不运行练习要求的检查。"
       ],
       "workshop.fields.2.optionLabels": [
         "只检查成功的一次，不测试失败情况。",
         "看见程序有输出就结束，不逐项核对要求。",
-        "canImport 的方向判断通过测试；能分别解释项目分层规则与 Go 的 internal 父目录树限制。允许的导入成功，范围外导入被 Go 拒绝。"
+        "外部 package 能使用 Bill、ID 和 Label，helper 仍保持包内可见。"
       ]
     },
     "supplement-go-module-diagnostics": {
@@ -1245,7 +1245,7 @@
       "task": "辨认 go.mod、包和 internal 目录各管什么，再按依赖方向连接服务。",
       "why": "代码分到不同目录后，仍要知道谁可以导入谁、由谁创建实例。这样才能把各部分连接成可运行的服务。",
       "mechanism": "go.mod 记录模块路径和依赖。import 可以导入本模块、标准库，也可以导入已解析到的外部模块。 包把一组代码组织在一起。internal 的导入限制看目录位置，不是简单看它是否属于同一模块。",
-      "check": "canImport 的方向判断通过测试；能分别解释项目分层规则与 Go 的 internal 父目录树限制。允许的导入成功，范围外导入被 Go 拒绝。"
+      "check": "外部 package 能使用 Bill、ID 和 Label，helper 仍保持包内可见；go test ./... 通过。"
     },
     "6": {
       "task": "给读取失败加上账单编号，让调用方仍能判断是不是没有找到。",

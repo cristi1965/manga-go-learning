@@ -1,0 +1,44 @@
+{
+  "status": "pass",
+  "desktop": {
+    "continuousFlow": {
+      "code": true,
+      "mechanism": true,
+      "exercise": true,
+      "hiddenStageRules": 0
+    },
+    "predictionScroll": {
+      "before": 0,
+      "after": 0,
+      "delta": 0
+    },
+    "runScroll": {
+      "before": 0,
+      "after": 0,
+      "delta": 0
+    },
+    "resultTookFocus": false,
+    "hintScroll": {
+      "before": 3433,
+      "after": 3433,
+      "delta": 0
+    },
+    "supplementReturn": {
+      "originY": 4127,
+      "restoredY": 3914,
+      "originAnchorTop": 531.453125,
+      "restoredAnchorTop": 523.546875,
+      "delta": 7.90625
+    }
+  },
+  "mobile": {
+    "ribbonPosition": "static",
+    "overflow": 0,
+    "labelsVisible": true
+  },
+  "route": {
+    "chapter23": 31,
+    "chapter24": 32,
+    "milestone8": 33
+  }
+}

@@ -24,8 +24,15 @@ function monitor(page) {
   page.on('requestfailed', (request) => requestFailures.push(`${request.method()} ${request.url()}: ${request.failure()?.errorText || 'failed'}`));
 }
 
+async function fillCodeEditor(locator, value) {
+  await locator.evaluate((editor, nextValue) => {
+    editor.value = nextValue;
+    editor.dispatchEvent(new Event('input', { bubbles: true }));
+  }, value);
+}
+
 async function inspect(viewport, dark = false) {
-  const context = await browser.newContext({ viewport });
+  const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
   await context.addInitScript({
     content: `${axe.source}; try { localStorage.setItem('jianjian-theme', '${dark ? 'dark' : 'light'}'); } catch (e) {}`
   });
@@ -34,14 +41,30 @@ async function inspect(viewport, dark = false) {
   const results = [];
   for (const unit of units) {
     await page.goto(`${base}/?v=${version}#${unit.id}`, { waitUntil: 'networkidle' });
-    await page.locator('#unitTitle').waitFor();
+    await page.locator(`#unitView[data-ready="true"][data-unit-id="${unit.id}"]`).waitFor();
+    await page.waitForTimeout(50);
     if (dark && !(await page.locator('body').evaluate((element) => element.classList.contains('dark')))) await page.locator('#themeToggle').click();
+    const splitInitial = await page.evaluate(() => ({
+      explainVisible: Boolean(document.querySelector('#lessonExplainPane')?.offsetParent),
+      practiceVisible: Boolean(document.querySelector('#lessonPracticePane')?.offsetParent),
+      mobileTabsVisible: Boolean(document.querySelector('.lesson-mobile-tabs')?.offsetParent),
+    }));
+    const explainAxeViolations = viewport.width <= 900
+      ? await page.evaluate(async () => (await axe.run(document, { resultTypes: ['violations'] })).violations.map(({ id, impact, nodes }) => ({ stage: 'mobile-explain', id, impact, nodes: nodes.map(({ target, failureSummary }) => ({ target, failureSummary })) })))
+      : [];
+    if (viewport.width <= 900) await page.locator('[data-lesson-pane="practice"]').click();
     const result = await page.evaluate(async ({ id, kind }) => {
       const visible = [...document.querySelectorAll('button,input,textarea,select,a')].filter((element) => {
         const rect = element.getBoundingClientRect();
         return rect.width > 0 && rect.height > 0;
       });
-      const sizes = visible.map((element) => Math.round(Math.min(element.getBoundingClientRect().width, element.getBoundingClientRect().height)));
+      const sizes = visible.flatMap((element) => {
+        if (element.closest('.cm-editor') || element.matches('.term-trigger')) return [];
+        if (element.matches('a') && getComputedStyle(element).display === 'inline') return [];
+        const target = element.matches('input[type="radio"],input[type="checkbox"]') ? element.closest('label') : element;
+        const rect = target?.getBoundingClientRect();
+        return rect ? [Math.round(Math.min(rect.width, rect.height))] : [];
+      });
       const ids = [...document.querySelectorAll('[id]')].map((element) => element.id);
       const axeViolations = (await axe.run(document, { resultTypes: ['violations'] })).violations.map(({ id, impact, nodes }) => ({ stage: 'understand', id, impact, nodes: nodes.map(({ target, failureSummary }) => ({ target, failureSummary })) }));
       return {
@@ -53,10 +76,16 @@ async function inspect(viewport, dark = false) {
         duplicateIds: ids.length - new Set(ids).size,
         workshops: document.querySelectorAll('[data-workshop]').length,
         codeExercises: document.querySelectorAll('[data-run-exercise]').length,
+        foundationWorkspace: Boolean(document.querySelector('[data-foundation-workbench]')?.offsetParent),
+        foundationEditor: Boolean(document.querySelector('.foundation-code-shell .cm-host')?.offsetParent || document.querySelector('.foundation-editor')?.offsetParent),
+        foundationRunInViewport: (() => { const button = [...document.querySelectorAll('[data-run-foundation]')].find((item) => item.offsetParent); return Boolean(button) && button.getBoundingClientRect().top < innerHeight; })(),
         axeViolations,
       };
     }, unit);
-    await page.locator('button[data-stage="practice"]').click();
+    result.splitInitial = splitInitial;
+    result.axeViolations.push(...explainAxeViolations);
+    result.practicePaneVisible = Boolean(await page.locator('#lessonPracticePane').evaluate((element) => element.offsetParent));
+    if (viewport.width > 900) await page.locator('button[data-lesson-task="practice"]').click();
     const practiceViolations = await page.evaluate(async () => (await axe.run(document, { resultTypes: ['violations'] })).violations.map(({ id, impact, nodes }) => ({ stage: 'practice', id, impact, nodes: nodes.map(({ target, failureSummary }) => ({ target, failureSummary })) })));
     result.axeExecuted = true;
     result.axeStages = ['understand', 'practice'];
@@ -70,6 +99,22 @@ async function inspect(viewport, dark = false) {
 const desktop = await inspect({ width: 1440, height: 1000 });
 const mobile = await inspect({ width: 390, height: 844 });
 const darkMobile = await inspect({ width: 390, height: 844 }, true);
+for (const [surface, results] of Object.entries({ desktop, mobile, darkMobile })) {
+  for (const item of results) {
+    const mobileSurface = surface !== 'desktop';
+    if (mobileSurface && (!item.splitInitial.mobileTabsVisible || !item.splitInitial.explainVisible || item.splitInitial.practiceVisible || !item.practicePaneVisible)) {
+      throw new Error(`${surface} ${item.id} did not preserve the explain-to-code tab contract: ${JSON.stringify({initial:item.splitInitial,practicePaneVisible:item.practicePaneVisible})}`);
+    }
+    if (!mobileSurface && (!item.splitInitial.explainVisible || !item.splitInitial.practiceVisible || item.splitInitial.mobileTabsVisible)) {
+      throw new Error(`${surface} ${item.id} did not render the desktop split workspace: ${JSON.stringify(item.splitInitial)}`);
+    }
+  }
+  for (const item of results.filter(({ id }) => /^chapter-[1-8]$/.test(id))) {
+    if (!item.foundationWorkspace || !item.foundationEditor || !item.foundationRunInViewport) {
+      throw new Error(`${surface} ${item.id} did not open on the runnable foundation workbench: ${JSON.stringify({workspace:item.foundationWorkspace,editor:item.foundationEditor,runInViewport:item.foundationRunInViewport})}`);
+    }
+  }
+}
 const context = await browser.newContext({ viewport: { width: 720, height: 500 } });
 const page = await context.newPage();
 monitor(page);
@@ -91,19 +136,32 @@ const dialogClosed = !(await page.locator('#searchDialog').evaluate((element) =>
 const programmaticHeadingOutline = await page.locator('#unitTitle').evaluate((element) => getComputedStyle(element).outlineStyle);
 const keyboardPath = [];
 async function keyboardStep(name, locator, key = null) {
-  await locator.focus();
+  if (name === 'foundation-prediction') {
+    await page.locator('#unitTitle').focus();
+    for (let index = 0; index < 80; index += 1) {
+      await page.keyboard.press('Tab');
+      if (await locator.evaluate((element) => element === document.activeElement)) break;
+    }
+  } else {
+    await locator.focus();
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Shift+Tab');
+  }
   const focusVisible = await locator.evaluate((element) => element.matches(':focus-visible'));
   keyboardPath.push({ name, focusVisible });
   if (key) await page.keyboard.press(key);
 }
-await keyboardStep('stage-read', page.locator('button[data-stage="read"]'), 'Enter');
+await page.locator('[data-lesson-pane="practice"]').click();
+await keyboardStep('foundation-prediction', page.locator('.foundation-prediction input').first());
+await page.locator('[data-lesson-pane="explain"]').click();
+await keyboardStep('task-understand', page.locator('button[data-lesson-task="understand"]'), 'Enter');
+await keyboardStep('deep-dive', page.locator('.lesson-deep-dive > summary'), 'Enter');
 await keyboardStep('flow-node', page.locator('[data-flow="1"]'), 'Enter');
 await keyboardStep('technical-details', page.locator('#technicalCard summary'), 'Enter');
-await keyboardStep('stage-practice', page.locator('button[data-stage="practice"]'), 'Enter');
-await keyboardStep('code-editor', page.locator('[data-code-exercise] .code-editor'));
+await keyboardStep('task-practice', page.locator('button[data-lesson-task="practice"]'), 'Enter');
+await keyboardStep('code-editor', page.locator('[data-code-exercise] .cm-content'));
 await keyboardStep('run-code', page.locator('[data-code-exercise] [data-run-exercise]'));
 await keyboardStep('quiz-choice', page.locator('#exerciseCard .quiz-item').first().locator('input').first());
-await keyboardStep('workshop-field', page.locator('[data-workshop-field="0"]'));
 await keyboardStep('complete', page.locator('#completeButton'));
 await context.close();
 
@@ -114,7 +172,10 @@ monitor(darkPage);
 await darkPage.goto(`${base}/?v=${version}#chapter-1`, { waitUntil: 'networkidle' });
 await darkPage.locator('#themeToggle').click();
 await darkPage.waitForTimeout(300);
-const darkAxeViolations = (await darkPage.evaluate(async () => (await axe.run(document, { resultTypes: ['violations'] })).violations.map(({ id, impact }) => ({ id, impact }))));
+const darkExplainAxeViolations = await darkPage.evaluate(async () => (await axe.run(document, { resultTypes: ['violations'] })).violations.map(({ id, impact }) => ({ id, impact })));
+await darkPage.locator('[data-lesson-pane="practice"]').click();
+const darkPracticeAxeViolations = await darkPage.evaluate(async () => (await axe.run(document, { resultTypes: ['violations'] })).violations.map(({ id, impact }) => ({ id, impact })));
+const darkAxeViolations = [...darkExplainAxeViolations, ...darkPracticeAxeViolations];
 await darkContext.close();
 
 const reducedContext = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
@@ -131,18 +192,18 @@ const interactionContext = await browser.newContext({ viewport: { width: 390, he
 const interactionPage = await interactionContext.newPage();
 monitor(interactionPage);
 await interactionPage.goto(`${base}/?v=${version}#chapter-9`, { waitUntil: 'networkidle' });
-await interactionPage.locator('button[data-stage="practice"]').click();
+await interactionPage.locator('button[data-lesson-task="practice"]').click();
 const workshop = book.chapters[8].workshop;
 const rubricAnswers = JSON.parse(await readFile(path.join(root, 'runner/rubrics.json'), 'utf8'))['chapter-9'].map((decision) => decision[0]);
 for (let index = 0; index < workshop.fields.length; index += 1) {
   const wrong = workshop.fields[index].options.find((option) => option !== rubricAnswers[index]);
-  await interactionPage.locator(`[data-workshop-field="${index}"]`).selectOption({ label: wrong });
+  await interactionPage.locator(`[data-workshop-field="${index}"]`).selectOption({ value: wrong });
 }
 await interactionPage.locator('[data-submit-workshop]').click();
 await interactionPage.locator('.workshop-result.failure').waitFor();
 const wrongRejected = await interactionPage.locator('.workshop-result.failure').isVisible();
 const chapter9Answers = [book.chapters[8].goal, book.chapters[8].task, book.chapters[8].accept];
-for (let index = 0; index < workshop.fields.length; index += 1) await interactionPage.locator(`[data-workshop-field="${index}"]`).selectOption({ label: rubricAnswers[index] || chapter9Answers[index] });
+for (let index = 0; index < workshop.fields.length; index += 1) await interactionPage.locator(`[data-workshop-field="${index}"]`).selectOption({ value: rubricAnswers[index] || chapter9Answers[index] });
 await interactionPage.locator('[data-submit-workshop]').click();
 await interactionPage.locator('.workshop-result.success').waitFor();
 const validAccepted = await interactionPage.locator('.workshop-result.success').isVisible();
@@ -178,7 +239,7 @@ func HandleCreateRun(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write([]byte(\`{"status":"accepted"}\`))
 }
 `;
-await interactionPage.locator('[data-code-exercise] .code-editor').fill(chapter9Solution);
+await fillCodeEditor(interactionPage.locator('[data-code-exercise] .code-editor'), chapter9Solution);
 await interactionPage.locator('[data-code-exercise] [data-run-exercise]').click();
 await interactionPage.locator('[data-code-exercise] .run-result.success').waitFor({ timeout: 60000 });
 const chapter9CodeAccepted = await interactionPage.locator('.run-result.success').isVisible();
@@ -195,7 +256,7 @@ const reloadPersisted = (await interactionPage.locator('#completeButton').textCo
 const keywordResponse = await interactionContext.request.post(`${base}/api/check`, { data: { unitId: 'chapter-9', answers: ['当 dto principal 请求进入时，如果失败则拒绝，并通过测试保存证据。', '当返回 400 401 403 404 时，如果失败则拒绝，并通过测试保存证据。', '使用 httptest 检查 status；如果失败则返回，并通过测试保存证据。'] } });
 const keywordListRejected = keywordResponse.status() === 422;
 await interactionPage.goto(`${base}/?v=${version}#chapter-1`, { waitUntil: 'networkidle' });
-await interactionPage.locator('button[data-stage="practice"]').click();
+await interactionPage.locator('button[data-lesson-task="practice"]').click();
 const runButton = interactionPage.locator('[data-code-exercise] [data-run-exercise]');
 const editor = interactionPage.locator('[data-code-exercise] .code-editor');
 await runButton.click();
@@ -203,6 +264,41 @@ const editorLockedDuringRun = await editor.isDisabled();
 await interactionPage.locator('.run-result.failure').waitFor({ timeout: 30000 });
 const editorUnlockedAfterRun = !(await editor.isDisabled());
 const starterFailed = await interactionPage.locator('.run-result.failure').isVisible();
+const foundationChapter = book.chapters[0];
+await interactionPage.locator('[data-lesson-task="observe"]').click();
+await interactionPage.locator('[data-lesson-pane="practice"]').click();
+await interactionPage.locator(`.foundation-prediction input[value="${foundationChapter.foundationLesson.prediction.correctIndex}"]`).check();
+await interactionPage.locator('[data-check-prediction]').click();
+await interactionPage.locator('.foundation-code-shell [data-run-foundation]').click();
+await interactionPage.locator('.foundation-code-shell .run-result.success').waitFor({ timeout: 30000 });
+const changedFoundationCode = foundationChapter.foundationLesson.code.replace('settle(7, 10)', 'settle(7, 5)');
+await fillCodeEditor(interactionPage.locator('.foundation-editor'), changedFoundationCode);
+await interactionPage.locator('.foundation-code-shell [data-run-foundation]').click();
+await interactionPage.locator('.foundation-code-shell .run-result.success').waitFor({ timeout: 30000 });
+await interactionPage.locator('[data-lesson-task="practice"]').click();
+const chapter1Solution = `package main
+
+import "errors"
+
+var ErrInvalidPrice = errors.New("invalid price")
+var ErrInsufficientPayment = errors.New("insufficient payment")
+
+func settle(price, paid int64) (int64, error) {
+    if price <= 0 || paid < 0 { return 0, ErrInvalidPrice }
+    if paid < price { return 0, ErrInsufficientPayment }
+    return paid - price, nil
+}
+`;
+await fillCodeEditor(interactionPage.locator('[data-code-exercise] .code-editor'), chapter1Solution);
+await interactionPage.locator('[data-code-exercise] [data-run-exercise]').click();
+await interactionPage.locator('[data-code-exercise] .run-result.success').waitFor({ timeout: 30000 });
+const transfer = foundationChapter.selfCheck[0];
+const transferQuiz = interactionPage.locator('#exerciseCard .quiz-item[data-quiz="0"]');
+await transferQuiz.locator(`input[value="${transfer.correctIndex}"]`).check();
+await transferQuiz.locator('[data-submit-answer]').click();
+await interactionPage.locator('#completeButton').click();
+await interactionPage.locator('#completeButton', { hasText: '本节已完成' }).waitFor({ timeout: 30000 });
+const foundationCompletionAccepted = true;
 await interactionPage.evaluate((currentVersion) => {
   localStorage.setItem('manga-go-version', currentVersion);
   localStorage.setItem('jianjian-completed', JSON.stringify(['chapter-1', 'chapter-2']));
@@ -212,6 +308,10 @@ await interactionPage.evaluate((currentVersion) => {
   }));
 }, version);
 await interactionPage.reload({ waitUntil: 'networkidle' });
+await interactionPage.waitForFunction(() => {
+  const completed = JSON.parse(localStorage.getItem('jianjian-completed') || '[]');
+  return !completed.includes('chapter-1') && !completed.includes('chapter-2');
+}, null, { timeout: 130000 });
 const forgedCompletionCleared = !(await interactionPage.locator('#completeButton').textContent()).includes('本节已完成');
 const forgedStorageCleared = await interactionPage.evaluate(() => JSON.parse(localStorage.getItem('jianjian-completed') || '[]').length === 0);
 await interactionContext.close();
@@ -219,17 +319,15 @@ await interactionContext.close();
 const screenshotContext = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
 const screenshotPage = await screenshotContext.newPage();
 monitor(screenshotPage);
-await screenshotPage.goto(`${base}/?v=${version}#chapter-9`, { waitUntil: 'networkidle' });
-await screenshotPage.locator('button[data-stage="practice"]').click();
+await screenshotPage.goto(`${base}/?v=${version}#chapter-1`, { waitUntil: 'networkidle' });
 const desktopPath = path.join(root, 'evidence/browser-v18-desktop.png');
 await screenshotPage.screenshot({ path: desktopPath });
 await screenshotContext.close();
 const mobileContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
 const mobilePage = await mobileContext.newPage();
 monitor(mobilePage);
-await mobilePage.goto(`${base}/?v=${version}#chapter-9`, { waitUntil: 'networkidle' });
+await mobilePage.goto(`${base}/?v=${version}#chapter-1`, { waitUntil: 'networkidle' });
 await mobilePage.locator('#themeToggle').click();
-await mobilePage.locator('button[data-stage="practice"]').click();
 const mobilePath = path.join(root, 'evidence/browser-v18-mobile.png');
 await mobilePage.screenshot({ path: mobilePath });
 await mobileContext.close();
@@ -248,7 +346,7 @@ const evidence = {
   mobile: { viewport: { width: 390, height: 844 }, units: mobile },
   darkMobile: { viewport: { width: 390, height: 844 }, units: darkMobile },
   accessibility: { axeViolations: axeResults, darkAxeViolations, reflow200Percent: reflow, keyboard: { sidebarOpen, escapeFocus, dialogOpen, dialogClosed, learningPath: keyboardPath }, reducedMotion, programmaticHeadingOutline },
-  interactions: { structuredWorkshop: { wrongRejected, validAccepted, chapter9CodeAccepted, reloadPersisted, keywordListRejected }, staleResponse: { editorLockedDuringRun, editorUnlockedAfterRun, starterFailed }, forgedLocalStorage: { forgedCompletionCleared, forgedStorageCleared } },
+  interactions: { structuredWorkshop: { wrongRejected, validAccepted, chapter9CodeAccepted, reloadPersisted, keywordListRejected }, foundationLearningLoop: { accepted: foundationCompletionAccepted }, staleResponse: { editorLockedDuringRun, editorUnlockedAfterRun, starterFailed }, forgedLocalStorage: { forgedCompletionCleared, forgedStorageCleared } },
   runtime: { browserVersion },
   expectedConsoleErrors, consoleErrors: unexpectedConsoleErrors, pageErrors, requestFailures,
   screenshots: { desktop: await screenshot('evidence/browser-v18-desktop.png'), mobile: await screenshot('evidence/browser-v18-mobile.png') },

@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"crypto/sha256"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -72,7 +74,50 @@ func TestRunRejectsOversizedBody(t *testing.T) {
 	}
 }
 
-func TestProjectCompletionRequiresBothBoundRunProofs(t *testing.T) {
+func TestDatabaseCompletionRequiresBoundRunProofAndAnswers(t *testing.T) {
+	lesson := databaseCourseUnit{ID: "db-01"}
+	lesson.Prediction.CorrectIndex = 2
+	lesson.Quiz.CorrectIndex = 1
+	s := &server{
+		database:  map[string]databaseCourseUnit{"db-01": lesson},
+		dbVersion: "22.0.0",
+		runProofs: make(map[string]runProof),
+	}
+	digest := "sha256:database-code"
+	proof := s.issueRunProof("db-01", digest)
+	prediction := 2
+	requestBody := checkRequest{UnitID: "db-01", FoundationPrediction: &prediction, QuizAnswers: []int{1}, CodeDigest: digest, RunProof: proof}
+	encoded, err := json.Marshal(requestBody)
+	if err != nil {
+		t.Fatal(err)
+	}
+	request := httptest.NewRequest(http.MethodPost, "http://127.0.0.1:4173/api/check", strings.NewReader(string(encoded)))
+	request.Header.Set("Content-Type", "application/json")
+	response := httptest.NewRecorder()
+	s.check(response, request)
+	if response.Code != http.StatusOK {
+		t.Fatalf("status=%d body=%s", response.Code, response.Body.String())
+	}
+	var result checkResponse
+	if err := json.Unmarshal(response.Body.Bytes(), &result); err != nil {
+		t.Fatal(err)
+	}
+	if !result.OK || result.CompletionDigest == "" || result.VerifierVersion != "22.0.0" {
+		t.Fatalf("incomplete database proof: %+v", result)
+	}
+
+	requestBody.QuizAnswers = []int{0}
+	encoded, _ = json.Marshal(requestBody)
+	request = httptest.NewRequest(http.MethodPost, "http://127.0.0.1:4173/api/check", strings.NewReader(string(encoded)))
+	request.Header.Set("Content-Type", "application/json")
+	response = httptest.NewRecorder()
+	s.check(response, request)
+	if response.Code != http.StatusUnprocessableEntity {
+		t.Fatalf("wrong answer status=%d, want 422", response.Code)
+	}
+}
+
+func TestProjectCompletionRequiresOneBoundCombinedRunProof(t *testing.T) {
 	project := unit{ID: "supplement-go-ai-01"}
 	project.ProjectLab.ID = "ledger-agent-lab/provider"
 	project.SelfCheck = append(project.SelfCheck, struct {
@@ -83,9 +128,7 @@ func TestProjectCompletionRequiresBothBoundRunProofs(t *testing.T) {
 		exercises: map[string]codeExercise{project.ID: {Code: "package exercise"}},
 		runProofs: make(map[string]runProof),
 	}
-	labDigest := "sha256:lab-verified"
 	challengeDigest := "sha256:challenge-verified"
-	labProof := server.issueRunProof(project.ProjectLab.ID, labDigest, challengeDigest)
 	challengeProof := server.issueRunProof(project.ID, challengeDigest)
 
 	check := func(t *testing.T, body checkRequest, want int) checkResponse {
@@ -108,7 +151,7 @@ func TestProjectCompletionRequiresBothBoundRunProofs(t *testing.T) {
 		return result
 	}
 
-	base := checkRequest{UnitID: project.ID, QuizAnswers: []int{1}, CodeDigest: labDigest, RunProof: labProof}
+	base := checkRequest{UnitID: project.ID, QuizAnswers: []int{1}}
 	t.Run("missing challenge proof", func(t *testing.T) {
 		check(t, base, http.StatusUnprocessableEntity)
 	})
@@ -118,7 +161,7 @@ func TestProjectCompletionRequiresBothBoundRunProofs(t *testing.T) {
 		request.ChallengeRunProof = server.issueRunProof("supplement-go-ai-02", challengeDigest)
 		check(t, request, http.StatusUnprocessableEntity)
 	})
-	t.Run("complete dual evidence", func(t *testing.T) {
+	t.Run("complete combined evidence", func(t *testing.T) {
 		request := base
 		request.ChallengeDigest = challengeDigest
 		request.ChallengeRunProof = challengeProof
@@ -277,7 +320,7 @@ func TestProjectRunRejectsEmptyWrongPackageAndCrossSeam(t *testing.T) {
 			}
 		})
 	}
-	t.Run("compiles but fails milestone behavior", func(t *testing.T) {
+	t.Run("compiles but fails deadline contract", func(t *testing.T) {
 		code := `package ledgeragent
 import ("context"; "time")
 func invokeProvider(context.Context, Provider, time.Duration, ProviderRequest) ([]byte, error) { return nil, nil }
@@ -286,8 +329,8 @@ func invokeProvider(context.Context, Provider, time.Duration, ProviderRequest) (
 		if status != http.StatusUnprocessableEntity || result.OK || result.RunProof != "" {
 			t.Fatalf("status=%d result=%+v", status, result)
 		}
-		if !strings.Contains(result.Output, "TestMilestone01LearnerProvider") || !strings.Contains(result.Output, "FAIL") {
-			t.Fatalf("wrong implementation did not reach the real milestone test:\n%s", result.Output)
+		if !strings.Contains(result.Output, "TestLearner01ProviderDeadline") || !strings.Contains(result.Output, "derived timeout was not propagated") {
+			t.Fatalf("wrong implementation did not receive an actionable deadline failure:\n%s", result.Output)
 		}
 	})
 }
@@ -328,6 +371,149 @@ func invokeProvider(parent context.Context, p Provider, timeout time.Duration, r
 	_, _, err := s.runProjectSeam(context.Background(), seam, code)
 	if err == nil || !strings.Contains(err.Error(), "不允许的文件类型") {
 		t.Fatalf("symlink was not rejected: %v", err)
+	}
+}
+
+const fixtureCapstoneContract = `package main
+
+import "testing"
+
+func TestCoordinateAndReceipt(t *testing.T) {
+	receipt, err := CoordinateAndReceipt(RunRequest{TenantID: "tenant", RunID: "run", Input: "input"}, "call", func(string) (string, error) {
+		return "bill", nil
+	})
+	if err != nil || receipt.Outcome != "succeeded" || receipt.Digest == "" {
+		t.Fatalf("basic receipt failed: %#v err=%v", receipt, err)
+	}
+}
+`
+
+const fixtureCapstoneSolution = `package main
+
+import (
+	"crypto/sha256"
+	"errors"
+	"fmt"
+)
+
+var ErrInvalidRun = errors.New("invalid run parameters")
+
+type RunRequest struct {
+	TenantID string
+	RunID string
+	Input string
+}
+
+type RunReceipt struct {
+	TenantID string
+	RunID string
+	CallID string
+	Outcome string
+	Digest string
+}
+
+func CoordinateAndReceipt(req RunRequest, callID string, execute func(string) (string, error)) (RunReceipt, error) {
+	if req.TenantID == "" || req.RunID == "" || callID == "" {
+		return RunReceipt{}, ErrInvalidRun
+	}
+	receipt := RunReceipt{TenantID: req.TenantID, RunID: req.RunID, CallID: callID}
+	output, err := execute(req.Input)
+	if err != nil {
+		receipt.Outcome = "failed"
+		return receipt, nil
+	}
+	receipt.Outcome = "succeeded"
+	receipt.Digest = fmt.Sprintf("sha256:%x", sha256.Sum256([]byte(output)))
+	return receipt, nil
+}
+`
+
+func TestCapstoneLabRunsChapter24ContractAndBindsProof(t *testing.T) {
+	chapter := unit{ID: "chapter-24"}
+	chapter.ProjectLab.ID = "ledger-agent-lab/capstone"
+	s := &server{
+		root:      projectFixture(t),
+		book:      book{Version: "test", Chapters: []unit{chapter}},
+		exercises: map[string]codeExercise{"chapter-24": {Test: fixtureCapstoneContract}},
+		slots:     make(chan struct{}, 2),
+		runProofs: make(map[string]runProof),
+	}
+	result, status := runProjectRequest(t, s, "ledger-agent-lab/capstone", fixtureCapstoneSolution)
+	if status != http.StatusOK || !result.OK {
+		t.Fatalf("status=%d result=%+v", status, result)
+	}
+	if !strings.Contains(result.Command, "go test -race -timeout 5s -v -run "+capstoneTestPattern) {
+		t.Fatalf("unexpected capstone command: %q", result.Command)
+	}
+	for _, name := range []string{
+		"TestCoordinateAndReceipt",
+		"TestCapstoneInputDraftConfirmBillReceipt",
+		"TestCapstoneRejectsInvalidIdentityBeforeDraft",
+		"TestCapstoneFailedBillHasNoSuccessDigest",
+	} {
+		if !strings.Contains(result.Output, "--- PASS: "+name) {
+			t.Fatalf("capstone output missing %s:\n%s", name, result.Output)
+		}
+	}
+	challenge := sha256.Sum256([]byte("test\x00exercise-chapter-24\x00" + fixtureCapstoneSolution))
+	if !s.validBoundRunProof(result.RunProof, "ledger-agent-lab/capstone", result.ArtifactDigest, fmt.Sprintf("sha256:%x", challenge)) {
+		t.Fatal("capstone proof was not bound to the chapter-24 exercise source")
+	}
+}
+
+func TestCapstoneAndBackpressureUseDistinctLabIDs(t *testing.T) {
+	if _, ok := projectSeamForLab("ledger-agent-lab/capstone"); ok {
+		t.Fatal("capstone must not resolve to a milestone seam")
+	}
+	if _, ok := projectSeamForLab("ledger-agent-lab/all"); ok {
+		t.Fatal("legacy all alias must not resolve to milestone 08")
+	}
+	seam, ok := projectSeamForLab("ledger-agent-lab/backpressure")
+	if !ok || seam.Number != "08" || seam.Function != "reserveWorkerSlot" {
+		t.Fatalf("backpressure seam = %+v ok=%v", seam, ok)
+	}
+}
+
+func TestCapstoneRejectsLedgerAgentPackage(t *testing.T) {
+	s := &server{
+		book:      book{Version: "test"},
+		exercises: map[string]codeExercise{"chapter-24": {Test: fixtureCapstoneContract}},
+		slots:     make(chan struct{}, 2),
+		runProofs: make(map[string]runProof),
+	}
+	result, status := runProjectRequest(t, s, "ledger-agent-lab/capstone", "package ledgeragent\n")
+	if status != http.StatusUnprocessableEntity || result.OK || !strings.Contains(result.Output, "必须使用 package main") {
+		t.Fatalf("status=%d result=%+v", status, result)
+	}
+}
+
+func TestMilestone01BlockingImplementationReturnsConcreteFailureQuickly(t *testing.T) {
+	s := &server{
+		root:      projectFixture(t),
+		book:      book{Version: "test"},
+		exercises: map[string]codeExercise{"supplement-go-ai-01": {Test: fixtureLearnerContract}},
+		slots:     make(chan struct{}, 2),
+		runProofs: make(map[string]runProof),
+	}
+	code := `package ledgeragent
+import ("context"; "time")
+func invokeProvider(_ context.Context, provider Provider, _ time.Duration, req ProviderRequest) ([]byte, error) {
+	return provider.Decide(context.Background(), req)
+}
+`
+	started := time.Now()
+	result, status := runProjectRequest(t, s, "exercise-supplement-go-ai-01", code)
+	if elapsed := time.Since(started); elapsed > 15*time.Second {
+		t.Fatalf("blocking M1 implementation took %v", elapsed)
+	}
+	if status != http.StatusUnprocessableEntity || result.OK || result.RunProof != "" {
+		t.Fatalf("status=%d result=%+v", status, result)
+	}
+	if !strings.Contains(result.Output, "invokeProvider did not return within 250ms") {
+		t.Fatalf("M1 failure is not actionable:\n%s", result.Output)
+	}
+	if strings.Contains(result.Output, "运行超过 30 秒") {
+		t.Fatalf("M1 fell through to the outer request timeout:\n%s", result.Output)
 	}
 }
 

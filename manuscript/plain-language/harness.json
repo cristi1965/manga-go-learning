@@ -31,16 +31,16 @@
         "Provider 返回后再次检查 ctx.Err，错误不要重新包装。"
       ],
       "projectExercise.failureHint": "若测试提示 no 截止时间，说明仍把 parent 传给了 Provider；若慢响应被接受，返回前漏查了 ctx.Err。",
-      "selfCheck.0.question": "模型迟迟不回，怎样让调用停止：本页最重要的做法是什么？",
-      "selfCheck.0.answer": "继续校验响应结构与业务语义，200 只证明传输成功。",
+      "selfCheck.0.question": "模型调用已超过截止时间，或父 context 已取消，调用方应该怎样处理？",
+      "selfCheck.0.answer": "立即停止等待并返回对应错误，不接受随后到达的结果。",
       "selfCheck.0.choiceLabels": [
-        "直接写入账本，SDK 已经成功。",
-        "继续校验响应结构与业务语义，200 只证明传输成功。",
-        "把原始响应完整写入日志再决定。"
+        "继续等待，只要远端最终返回就当作成功。",
+        "立即停止等待并返回对应错误，不接受随后到达的结果。",
+        "只让页面停止转圈，后台调用仍无限等待。"
       ],
       "selfCheck.0.feedback": [
         "这项没有回答当前问题。请对照本页例子，再看它解决的是哪一步。",
-        "对。继续校验响应结构与业务语义，200 只证明传输成功。",
+        "对。截止时间或父 context 取消后要立即停止等待，并拒绝过期结果。",
         "这项没有回答当前问题。请对照本页例子，再看它解决的是哪一步。"
       ]
     },
@@ -309,16 +309,16 @@
       ]
     },
     "supplement-go-ai-08": {
-      "title": "把前七步接起来，逐项检查能否交付",
+      "title": "并发容量满了，怎样及时拒绝",
       "principles": [
         "普通测试和数据竞争检查都要通过。",
         "故障、安全和恢复用例决定是否允许发布。",
         "本地假模型测试只验证应用处理方式，不能证明真实供应商的服务水平。"
       ],
-      "task": "运行完整实验，逐条说明模型、工具、恢复和审计测试防止什么问题。",
-      "accept": "模型、工具、去重、租户、接管编号、事件、审计和评测用例通过；真实供应商表现另行验证。",
-      "goal": "跑完整实验，说明每个测试检查什么、没检查什么。",
-      "kicker": "跑完整实验，说明每个测试检查什么、没检查什么。",
+      "task": "实现非阻塞容量预留，先运行背压专项测试，再运行完整 race 测试矩阵。",
+      "accept": "有空位时成功占位；满载时立即拒绝；释放后容量可以再次使用。",
+      "goal": "让服务在容量耗尽时快速拒绝，而不是无界等待或创建 goroutine。",
+      "kicker": "先限制并发，再用明确的过载结果保护系统。",
       "analogy": "像停车场满位就及时告知，不让新车堵在入口；离开一辆以后，空位又可以使用。",
       "pitfalls": [
         "只验证一次成功演示",
@@ -326,9 +326,9 @@
         "没有失败后的状态与证据"
       ],
       "codeGuides": [
-        "verificationCommand 没有参数，返回测试命令字符串。",
-        "先跑普通测试，再用 -race 检查数据竞争。",
-        "返回命令不等于运行过；要实际执行并检查退出结果。"
+        "select 尝试向容量 channel 写入一个占位。",
+        "写入成功表示获得执行名额。",
+        "default 表示当前没有容量，必须立即返回 false。"
       ],
       "projectExercise.title": "非阻塞预留 Worker 容量",
       "projectExercise.prompt": "补全 reserveWorkerSlot：容量可用时立即占位，满载或 nil channel 时立即返回 false，HTTP 层据此返回 429。",
@@ -339,16 +339,16 @@
         "default 分支返回 false，天然覆盖满载和 nil channel。"
       ],
       "projectExercise.failureHint": "若满载测试挂住，缺少 default；若返回 true 却未占位，只做了容量观察而没有发送。",
-      "selfCheck.0.question": "把前七步接起来，逐项检查能否交付：本页最重要的做法是什么？",
-      "selfCheck.0.answer": "证明本地应用边界和失败语义；不能证明真实 Provider 的 SLA。",
+      "selfCheck.0.question": "Worker 容量已经占满，新请求应当怎样处理？",
+      "selfCheck.0.answer": "立即返回可识别的过载结果，让调用方稍后重试。",
       "selfCheck.0.choiceLabels": [
-        "证明任何真实模型都稳定可用。",
-        "证明本地应用边界和失败语义；不能证明真实 Provider 的 SLA。",
-        "证明系统不再需要线上监控。"
+        "继续阻塞等待，直到出现空位。",
+        "立即返回可识别的过载结果，让调用方稍后重试。",
+        "新建不受限制的 goroutine。"
       ],
       "selfCheck.0.feedback": [
         "这项没有回答当前问题。请对照本页例子，再看它解决的是哪一步。",
-        "对。证明本地应用边界和失败语义；不能证明真实 Provider 的 SLA。",
+        "对。满载时应快速失败，并把过载状态明确返回给调用方。",
         "这项没有回答当前问题。请对照本页例子，再看它解决的是哪一步。"
       ]
     },
@@ -377,13 +377,13 @@
       ],
       "transitionIn": "上一卷已能把奶茶钱记进账本。现在让模型帮忙理解用户的话，但先只生成草稿。",
       "transitionOut": "草稿和写账已经分开。下一章比较两个工具，看看谁真的修改了账本。",
-      "workshop.codeExercise.title": "验证模型决策：严格 校验失败就拒绝执行",
-      "workshop.codeExercise.prompt": "实现 ValidateDecision：answer 与 tool 互斥，未知 Kind 与字段混杂必须返回 ErrInvalidDecision。",
-      "workshop.codeExercise.testIntent": "固定测试会验证决策状态机 校验失败就拒绝执行：答案与工具互斥，拒绝未知 Kind 与混合参数。",
+      "workshop.codeExercise.title": "确认之前，不得保存订单草稿",
+      "workshop.codeExercise.prompt": "实现 CommitDraft：字段非法或未确认时返回错误且账本保持不变，确认后只追加一笔。",
+      "workshop.codeExercise.testIntent": "固定测试会直接检查坏草稿和未确认草稿都没有改变账本，确认后只新增一笔。",
       "workshop.codeExercise.hints": [
-        "使用 switch 严格匹配 Kind 为 answer 或 tool。",
-        "answer 类型要求 Answer 非空且 ToolName 为空。",
-        "tool 类型要求 ToolName 非空且 Answer 为空，其余均返回 ErrInvalidDecision。"
+        "先检查 ID 与 AmountCents，坏草稿返回 ErrInvalidDraft。",
+        "再检查 Confirmed；未确认返回 ErrNotConfirmed。",
+        "所有守门条件通过后，最后一步才 append 到 ledger。"
       ],
       "workshop.codeExercise.failureHint": "先看第一条报错，再展开提示；一次只改 TODO 所在函数。",
       "workshop.title": "把本页做法用到例子里",
@@ -1319,7 +1319,7 @@
       ]
     },
     "chapter-24": {
-      "title": "把模型、账本和恢复流程接起来",
+      "title": "重复提交后，怎样恢复同一笔记账请求",
       "principles": [
         "判断重复请求时，一起核对用户所属组织、已登录用户、操作和入口编号。首次创建还保存两份内容指纹：输入的摘要和执行配置的摘要，并记录谁能查看结果。组织在代码中叫 tenant。",
         "同一所有者再提交 entry-0827，摘要相同返回原任务；输入或配置变了则返回 409，不另执行写账。",
@@ -1329,9 +1329,9 @@
       ],
       "task": "推演同一人重复提交、同一人改输入、不同人使用同编号、已提交账单但回执响应丢失四种情况。",
       "accept": "同人同摘要复用，改摘要报冲突，不同所有者隔离，丢响应后按原编号查回执；实现还要用唯一约束与故障测试检查。",
-      "shortTitle": "把模型、账本和恢复流程接起来",
-      "goal": "串起请求去重、授权、写账和回执查询，让重复提交或程序断线时仍能查清结果。",
-      "mnemonic": "串起请求去重、授权、写账和回执查询，让重复提交或程序断线时仍能查清结果。",
+      "shortTitle": "重复提交后，怎样恢复同一笔记账请求",
+      "goal": "只聚焦两件事：重复提交返回原任务，响应丢失后用原请求编号查回执。",
+      "mnemonic": "重复提交查原任务，结果未知查原回执；不换编号再写一次。",
       "analogy": "像餐厅接单：同一位客人反复报同一订单号，只查原单；另一位客人报这个号，不能拿走前者的餐。后厨没回消息时，先查有没有出餐。",
       "pitfalls": [
         "固定步骤能完成，却让模型自由决定下一步，增加不必要的不确定性。",
@@ -1344,14 +1344,14 @@
         "找到旧任务时，CanReadRun 再查当前用户能否读取；不允许就返回 ErrNotFound，通过才返回任务。"
       ],
       "transitionIn": "用户提交记账请求时网络超时，客户端马上重试。入口要先判断是不是原请求。",
-      "transitionOut": "从理解用户的话到真正写账，各步都留下记录。重复提交返回原任务，结果未知先查回执，断线后能还原过程。",
-      "workshop.codeExercise.title": "执行一次任务，生成结果摘要",
-      "workshop.codeExercise.prompt": "补全 CoordinateAndReceipt：检查租户、任务和调用编号，执行传入函数；失败时记录 failed 且摘要为空，成功时记录 succeeded 并计算输出的 SHA-256 摘要。摘要能标识内容，不是数字签名，也不能单独证明结果来自可信执行者。",
-      "workshop.codeExercise.testIntent": "测试检查参数校验、执行函数调用、失败结果和成功输出的 SHA-256 摘要。本题没有签名密钥或验签流程。",
+      "transitionOut": "主线到此完成请求去重与断线恢复；完整架构和交付清单放在结业扩展。Wails + React 保留为独立的 Go 语法路线。",
+      "workshop.codeExercise.title": "重复请求复用原任务与回执",
+      "workshop.codeExercise.prompt": "补全 StartOrResume：首次提交保存输入摘要；同租户、同编号、同输入的重试直接返回原记录和原回执；改了输入则返回 ErrIdempotencyConflict。",
+      "workshop.codeExercise.testIntent": "测试直接检查首次创建、同输入重试恢复原回执、改输入报冲突；总装测试另外检查输入到回执的链路。",
       "workshop.codeExercise.hints": [
-        "TenantID、RunID 和 callID 都不能为空，否则返回 ErrInvalidRun。",
-        "执行失败时返回包含原编号、failed 状态和空摘要的回执，并保留错误。",
-        "执行成功后计算 SHA-256，格式为 sha256:十六进制，状态为 succeeded。"
+        "用 TenantID + '/' + RunID 作为 key，避免不同小店的同号订单相互覆盖。",
+        "先算 Input 的 SHA-256 摘要；找到旧记录时先比摘要。",
+        "摘要相同返回 previous,false,nil；不同返回 ErrIdempotencyConflict；没找到才创建。"
       ],
       "workshop.codeExercise.failureHint": "先看第一条报错，再展开提示；一次只改 TODO 所在函数。",
       "workshop.title": "把本页做法用到例子里",
@@ -1488,7 +1488,7 @@
       "check": "越权参数、路径和网络被拒绝；每轮有改动、测试和评审记录；预算耗尽转人工；不能绕过分支保护合并。"
     },
     "chapter-24": {
-      "task": "串起请求去重、授权、写账和回执查询，让重复提交或程序断线时仍能查清结果。",
+      "task": "只处理请求去重与断线恢复：重复提交返回原任务，结果未知时按原编号查询回执。",
       "why": "重复点击、网络断开和程序退出都很常见，各层需要用同一套请求关系查结果。",
       "mechanism": "判断重复请求时，一起核对用户所属组织、已登录用户、操作和入口编号。首次创建还保存两份内容指纹：输入的摘要和执行配置的摘要，并记录谁能查看结果。组织在代码中叫 tenant。同一所有者再提交 entry-0827，摘要相同返回原任务；输入或配置变了则返回 409，不另执行写账。",
       "check": "同人同摘要复用，改摘要报冲突，不同所有者隔离，丢响应后按原编号查回执；实现还要用唯一约束与故障测试检查。"

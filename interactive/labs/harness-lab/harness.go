@@ -76,6 +76,17 @@ func (t *FakeTool) Calls(callID string) int {
 	return t.calls[callID]
 }
 
+// Lookup only reads the receipt recorded for CallID; it never invokes the tool.
+func (t *FakeTool) Lookup(binding Binding) (string, Receipt, bool) {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	output, ok := t.outputs[binding.CallID]
+	if !ok {
+		return "", Receipt{}, false
+	}
+	return output, makeReceipt(binding, output), true
+}
+
 type Engine struct {
 	mu    sync.Mutex
 	steps map[string]*Step
@@ -140,7 +151,23 @@ func (e *Engine) Execute(binding Binding, cmd Command, loseReceipt bool) (string
 }
 
 func (e *Engine) Reconcile(binding Binding, cmd Command) (string, error) {
-	return e.Execute(binding, cmd, false)
+	e.mu.Lock()
+	step := e.steps[binding.StepID]
+	if step == nil || !sameBinding(step.Binding, binding) || binding.CommandDigest != digest(cmd.TenantID, cmd.SubjectID, cmd.Tool, cmd.Input) {
+		e.mu.Unlock()
+		return "", ErrBindingMismatch
+	}
+	if step.State == Completed {
+		output := step.Output
+		e.mu.Unlock()
+		return output, nil
+	}
+	e.mu.Unlock()
+	output, receipt, ok := e.tool.Lookup(binding)
+	if !ok {
+		return "", ErrUnknownOutcome
+	}
+	return e.Settle(binding, output, receipt)
 }
 
 func (e *Engine) Settle(binding Binding, output string, receipt Receipt) (string, error) {

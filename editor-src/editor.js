@@ -35,9 +35,12 @@ const darkSurface = EditorView.theme({
  '.cm-cursor,.cm-dropCursor':{borderLeftColor:'#ffffff'},
  '.cm-gutters':{color:'#b8c2d0',backgroundColor:'#182334',borderRightColor:'#435066'},
  '.cm-activeLine,.cm-activeLineGutter':{backgroundColor:'#263247'},
- '.cm-selectionBackground,&.cm-focused .cm-selectionBackground,::selection':{backgroundColor:'#36577a'}
+ '.cm-selectionBackground,&.cm-focused .cm-selectionBackground':{backgroundColor:'rgba(70,130,190,.42)'},
+ '.cm-content ::selection':{backgroundColor:'rgba(70,130,190,.42)',color:'#f4f8ff'}
 },{dark:true});
-function themeExtensions(){return dark()?[darkSurface,syntaxHighlighting(darkContrast),theme]:[theme];}
+// Every editor uses a dark code surface in both page themes, so its syntax
+// palette must not fall back to CodeMirror's low-contrast light defaults.
+function themeExtensions(){return [darkSurface,syntaxHighlighting(darkContrast),theme];}
 new MutationObserver(()=>{
  for(const entry of live){
   if(!entry.host.isConnected){entry.observer.disconnect();entry.view.destroy();live.delete(entry);continue;}
@@ -53,6 +56,7 @@ export function mountCodeEditor(textarea){
   if(!update.docChanged||syncing)return;
   valueProperty.set.call(textarea,update.state.doc.toString());textarea.dispatchEvent(new Event('input',{bubbles:true}));
  })]});
+ view.scrollDOM.tabIndex=0;
  const sync=()=>{const text=valueProperty.get.call(textarea);if(text!==view.state.doc.toString()){syncing=true;view.dispatch({changes:{from:0,to:view.state.doc.length,insert:text}});syncing=false;}};
  Object.defineProperty(textarea,'value',{configurable:true,get(){return valueProperty.get.call(this)},set(v){valueProperty.set.call(this,v);sync();}});
  textarea.addEventListener('input',sync);

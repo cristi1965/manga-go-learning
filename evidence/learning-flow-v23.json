@@ -1,0 +1,74 @@
+{
+  "status": "pass",
+  "desktop": {
+    "continuousFlow": {
+      "code": true,
+      "mechanism": true,
+      "exercise": true,
+      "storyHook": true,
+      "hiddenStageRules": 0,
+      "workspaceColumns": 2,
+      "mobileTabsHidden": true
+    },
+    "predictionScroll": {
+      "before": 4,
+      "after": 4,
+      "delta": 0
+    },
+    "runScroll": {
+      "before": 4,
+      "after": 4,
+      "delta": 0
+    },
+    "resultTookFocus": false,
+    "hintScroll": {
+      "before": 2428,
+      "after": 2428,
+      "delta": 0
+    },
+    "supplementReturn": {
+      "originY": 1799,
+      "restoredY": 1799,
+      "originAnchorTop": 531.09375,
+      "restoredAnchorTop": 531.09375,
+      "delta": 0
+    }
+  },
+  "starter": {
+    "continueHidden": true,
+    "panelVisible": true,
+    "answerHiddenBeforeRun": true,
+    "answerVisibleAfterRun": true,
+    "nextLockedAfterOriginal": true,
+    "nextEnabledAfterVerifiedChange": true,
+    "twoChecksVisible": true
+  },
+  "agent": {
+    "runDisabledBeforePrediction": true,
+    "runEnabledAfterPrediction": true,
+    "feedbackConnectsPrediction": true,
+    "fourStageTraceVerified": true,
+    "exerciseAligned": true
+  },
+  "mobile": {
+    "ribbonPosition": "static",
+    "overflow": 0,
+    "labelsVisible": true,
+    "tabsVisible": true,
+    "explainInitiallyVisible": true,
+    "practiceInitiallyHidden": true,
+    "contractColumnsVisible": true,
+    "paneRestore": {
+      "explainDelta": 3,
+      "practiceDelta": 3
+    }
+  },
+  "route": {
+    "chapter23": 31,
+    "chapter24": 33,
+    "milestone3": 22,
+    "milestone4": 23,
+    "milestone8": 32,
+    "capstoneLab": "ledger-agent-lab/capstone"
+  }
+}

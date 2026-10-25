@@ -157,14 +157,14 @@
         ],
         [
           "陈平安",
-          "练习里的 canImport 就是 Go 的导入规则吗？"
+          "外部 package 怎样知道哪些名字可以用？"
         ],
         [
           "宁姚",
-          "不是。练习只检查题目规定的 internal 不能反向依赖 cmd。真实项目还要检查目录可见范围，并关闭本地工作区测试，确认发布依赖齐全。"
+          "看首字母。Bill、ID 和 Label 大写开头，外部可以引用；helper 小写开头，只留在 billing 包内。"
         ]
       ],
-      "closing": "canImport 的方向判断通过测试；能分别解释项目分层规则与 Go 的 internal 父目录树限制。允许的导入成功，范围外导入被 Go 拒绝。"
+      "closing": "对外只暴露 Bill、ID 和 Label，helper 保持包内可见；固定测试从另一个 package 验证这条边界。"
     },
     "6": {
       "opening": [

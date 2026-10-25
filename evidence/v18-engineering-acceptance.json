@@ -2,18 +2,18 @@
   "status": "pass",
   "claim": "engineering acceptance",
   "score": 100,
-  "version": "18.7.0",
-  "generatedAt": "2026-09-18T11:55:16.187180+00:00",
+  "version": "19.0.0",
+  "generatedAt": "2026-10-23T03:32:54.644462+00:00",
   "environment": {
-    "python": "3.12.14",
+    "python": "3.13.0",
     "go": "go version go1.25.5 darwin/arm64",
     "platform": "darwin",
-    "runnerPort": 63988,
-    "runnerPid": 40715
+    "runnerPort": 60431,
+    "runnerPid": 46609
   },
   "checks": [
     {
-      "command": "/Users/jingxin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 build_html.py",
+      "command": "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3 build_html.py",
       "status": "pass"
     },
     {
@@ -29,7 +29,7 @@
       "status": "pass"
     },
     {
-      "command": "/Users/jingxin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 verify_dialogue_quality.py",
+      "command": "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3 verify_dialogue_quality.py",
       "status": "pass"
     },
     {
@@ -113,168 +113,168 @@
       "case": "exercise-1",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:699d497ac0dc3c156c61e229f7dac5ec3371449ffafeed0831809d4adfd2e165",
+      "digest": "sha256:790c0f73795f1a1c68bda96fb6f892ebf67a2c985a6c88aa002b98c4e9d11202",
       "runProof": true
     },
     {
       "case": "exercise-2",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:45dd2ed0d9832fd5810e28acde35fac0bd73f1692d08afaecda9079d0ff5a7e2",
+      "digest": "sha256:8bdb8084103605e86c5f9a0625399e1c6c8ffb2816c2fc646fbf9b773d29de0c",
       "runProof": true
     },
     {
       "case": "exercise-3",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:a32c86c13a92f6d7bb98fd3627e00691c5bf3a8a0fbd6398415eff8c1e9c095e",
+      "digest": "sha256:9f52cbb70041aeb73bc9979072adf7771f57ecbfaa2b3480dacf4872dd20357b",
       "runProof": true
     },
     {
       "case": "exercise-4",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:47df565c167bbc31cfada5ec0d22f9e0f63ac8a977fcb0a7f309dd4ea9e94c66",
+      "digest": "sha256:6843124c01ec8326096e5a622b88e1ee57499b1fde892903dfeba09fcb5be551",
       "runProof": true
     },
     {
       "case": "exercise-5",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:bbb7bb4dbb3171557e826a2046996e5f44b0ccc66c183611a688d7c225dc360e",
+      "digest": "sha256:d020c32fcdcad31f55a0b475eb9970b6729c92fbb03e5c0f7b9d7acf47806d61",
       "runProof": true
     },
     {
       "case": "exercise-6",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:3cb6ea154bdea369dea9e6951fc35c6ac46448a1fd1c7895d18ac53c619b8cbc",
+      "digest": "sha256:22935d85d56a359534a1c595048e53eef81a8de64299e6ac79ba201fb41fc083",
       "runProof": true
     },
     {
       "case": "exercise-7",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:e84642243a6d99aa382b1ec6ff3e805466856e6f7d385f9b86a704260c81e79d",
+      "digest": "sha256:c53c745e199509944d15a42e741960fa08cb723bd3d094416eb705808b37f6f6",
       "runProof": true
     },
     {
       "case": "exercise-8",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:8cfef02b4517a317de6a055ecfbc61573c5f46fcda2ec629ab78473eb08056f9",
+      "digest": "sha256:d2063c1340a37d6db95e43c92d07ea2cc3063e69ef77cd4520b1d7ea2ce8ad29",
       "runProof": true
     },
     {
       "case": "exercise-9",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:31f5a317b103a118d4f7cbf332d5d73e56362cdefdba4d2d27c5ff393a18b99c",
+      "digest": "sha256:0088a455ca6b6f700df31c74549db1e289dcf90decd4b8b0d6c9cd8d4decfabb",
       "runProof": true
     },
     {
       "case": "exercise-10",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:cc1883309bf11ab39c5954a984af61992d7a8247fc7234fb670c7c7750a844d3",
+      "digest": "sha256:64e61b497cf5a95cfe7abf44398fdbec1ba35a3641ad22801f144c5f60692aa3",
       "runProof": true
     },
     {
       "case": "exercise-11",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:6d97f6fd2fcf987fc823565e35a37064fae4a0cf70b57d91379b5d77b1f0404d",
+      "digest": "sha256:b9f2ecf2320209354ef671c57cb7f72539f409c89e7a1b57efa2261411020b12",
       "runProof": true
     },
     {
       "case": "exercise-12",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:be3e2fe879ac81f8a0bfcf62196cba1164ffc208e140394a0650587ce03da50a",
+      "digest": "sha256:f562d636747dc756c2e3debe9c512be3e5354693682a107b1e1eb3dbcb7bb87e",
       "runProof": true
     },
     {
       "case": "exercise-13",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:041ecae56198ab6399cf99dcdb8d5a55d9f2950fccb68b9eab29589a3a417392",
+      "digest": "sha256:4fae3afdbbd06927a853a286ea167301de88c0675169952b32da39f0b8cc89c3",
       "runProof": true
     },
     {
       "case": "exercise-14",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:7e1b5762c7013de8cce4ef24cd747fc0abc7ad591149ad1e7079caa3659d5028",
+      "digest": "sha256:c34e00c34f763d6ddee3c248c1e994d0f2c3c4ef5d92ef7a95a5eb7eaac9cf1e",
       "runProof": true
     },
     {
       "case": "exercise-15",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:3011dd2c1a0ea4f3135d2584c160d6c122ff2769ebaba52af220505639a72705",
+      "digest": "sha256:2d6b2c725a4efa8c02958d05992f03ad4c3d7d54639745750495a7dd1e88bd99",
       "runProof": true
     },
     {
       "case": "exercise-16",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:76da2c10cd03bdd5eaa6a999e9dfa3bf4594c0c87169e7cd9e96a8348c18b5ae",
+      "digest": "sha256:5b6eda604b63f3031295f2bb77a83dfe1fed95f4d54a4b427015959d4b5df280",
       "runProof": true
     },
     {
       "case": "exercise-17",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:9925136aa5711072817e73a51772f18701ca026a18b81c84a353279a2da17440",
+      "digest": "sha256:4ebed8859877a2fdb9292c637fee29c30dab7162cb78f83792bfee5c61dbddb2",
       "runProof": true
     },
     {
       "case": "exercise-18",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:3961e5efc330b6ba7cd661d0cddf5fb02a33c0c58b4ff93d67b033b0df0ee11c",
+      "digest": "sha256:7d5efa3a172b68bfbb495854d1b7d4a79f8d686d3e2c29e1ee4a0ff884e3639d",
       "runProof": true
     },
     {
       "case": "exercise-19",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:da50383608b0425e91a29bda4fbf90318daa81edf45e8b265b7d925d30d2a5c7",
+      "digest": "sha256:d2682461db0bf52f9f452c909e3d79525ec2683420600c0506312cf7ee1c8578",
       "runProof": true
     },
     {
       "case": "exercise-20",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:754b9e344d74a60d45e5669573cb9caf9524c01b7efdbbbbac852090153d5f03",
+      "digest": "sha256:7622379243d1ebf38b459f41d1f36a30bda8df11d3d740d280483bd36e1cd728",
       "runProof": true
     },
     {
       "case": "exercise-21",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:cbc8435f9b823d56db0cbf5370a7cc80a67654fb75965d60400c08518e7a0932",
+      "digest": "sha256:46f7eb0c9cc8c70c41306442f427ba9d14c4230880d374886089b8264c17e34f",
       "runProof": true
     },
     {
       "case": "exercise-22",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:ca8c8dcc031e22f69e513d8cfa6e8ab7c0e0eb76f8971b0252786467063c4318",
+      "digest": "sha256:7fa2074caef2347c4b61ec66e60deeaeae924a1c97e6af6bf4e6418daebb08ea",
       "runProof": true
     },
     {
       "case": "exercise-23",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:137b49db9fea30fae1a57abe204ce832598be9c1a5468cd29604fa3fc62e4643",
+      "digest": "sha256:b0a9366636e54bf9f69df430d7fd30d53e9102e08818ec149384d6b701d8f08e",
       "runProof": true
     },
     {
       "case": "exercise-24",
       "starterStatus": 422,
       "solutionStatus": 200,
-      "digest": "sha256:3844ae4ecec8ba10a8908dee016084fda0030bc622d3758aaf40d819cae948c3",
+      "digest": "sha256:bcbef86c6d751675522656e8af80c1ff54dcb305e4ecbc93aec3632daea3cad1",
       "runProof": true
     },
     {
@@ -282,7 +282,7 @@
       "starterStatus": 422,
       "solutionStatus": 200,
       "labStatus": 200,
-      "digest": "sha256:65886e7b3103d01ca8d3dd0eea2cfcffa87fdb50c66d4cb146fd496275aa8c3c",
+      "digest": "sha256:922e59e1ffdd2398fee8372027463e0a03607ac9dc848ac25801e2622a0286a0",
       "runProof": true,
       "labProof": true,
       "milestoneTestPassed": true,
@@ -293,7 +293,7 @@
       "starterStatus": 422,
       "solutionStatus": 200,
       "labStatus": 200,
-      "digest": "sha256:49053a486571192356d9e6b7cc6185ab82659b48e0ed7f92b49fa742c7c17831",
+      "digest": "sha256:579475a7001aee6a480f2e14985cf9f8e3e939435268dbefbcd0b77974d343d6",
       "runProof": true,
       "labProof": true,
       "milestoneTestPassed": true,
@@ -304,7 +304,7 @@
       "starterStatus": 422,
       "solutionStatus": 200,
       "labStatus": 200,
-      "digest": "sha256:2cbe9b2d7e039d865c4b33a2d40b1f31e0c86b81456383de477ba79cda24d372",
+      "digest": "sha256:1cdec74cc594a9e210914b064a737f15c9c0768a784ff86960faabdc40e399b0",
       "runProof": true,
       "labProof": true,
       "milestoneTestPassed": true,
@@ -315,7 +315,7 @@
       "starterStatus": 422,
       "solutionStatus": 200,
       "labStatus": 200,
-      "digest": "sha256:f6e779f2dd858e2ddfcf242dcae7d2c5cf0ae1f2d0f8119f175f0e9734449ec1",
+      "digest": "sha256:9e7a0b2a73883f03719e6587bd5741de1992d363131279d62e3d6601748a46cd",
       "runProof": true,
       "labProof": true,
       "milestoneTestPassed": true,
@@ -326,7 +326,7 @@
       "starterStatus": 422,
       "solutionStatus": 200,
       "labStatus": 200,
-      "digest": "sha256:25fa82bf00657d059583a51ffe4428017975b1354d45b34e6b08e301c9d09aa9",
+      "digest": "sha256:f462a57ed88ea0653729ac8f15a4c37fe257bf907f6d78b89418c7e920229fed",
       "runProof": true,
       "labProof": true,
       "milestoneTestPassed": true,
@@ -337,7 +337,7 @@
       "starterStatus": 422,
       "solutionStatus": 200,
       "labStatus": 200,
-      "digest": "sha256:4d8ebcafe9e6c5be47920d1a5e84db70e6973989bfe9f486859c4c42b0c27f25",
+      "digest": "sha256:3d348a9f8975544cb26c446c80c3358de301ac333cb147d1a3f2b2c340240397",
       "runProof": true,
       "labProof": true,
       "milestoneTestPassed": true,
@@ -348,7 +348,7 @@
       "starterStatus": 422,
       "solutionStatus": 200,
       "labStatus": 200,
-      "digest": "sha256:18ac0cc017653066aafe638612dfb2dad248a362270551f0d885a077828f645d",
+      "digest": "sha256:16eaba4dc0123a34f93ec89ee2b47cff7e4642d6c149e44e37ac723bbc7cfa31",
       "runProof": true,
       "labProof": true,
       "milestoneTestPassed": true,
@@ -359,88 +359,16 @@
       "starterStatus": 422,
       "solutionStatus": 200,
       "labStatus": 200,
-      "digest": "sha256:1cb0592a6eae7a5ac337019d27dc281b3b5d04985fbad4f5c778a1a4544a0866",
+      "digest": "sha256:d7d31b35e05f995e0eca114d84691140cce27034a386b9df0a0dc4b5bf2a2bc9",
       "runProof": true,
       "labProof": true,
       "milestoneTestPassed": true,
       "learnerContractPassed": true
     },
     {
-      "case": "workshop-1-pass",
-      "status": 200,
-      "digest": "sha256:d051fb89a4fe78953e7c009bf9ad79fca7d89dac5dd294c703074acfc3dca955"
-    },
-    {
-      "case": "workshop-1-fail",
-      "status": 422
-    },
-    {
-      "case": "workshop-2-pass",
-      "status": 200,
-      "digest": "sha256:97e053a0b9b0c30853ec8bbbd488aa98a54261c05b03d354ce90c99104489665"
-    },
-    {
-      "case": "workshop-2-fail",
-      "status": 422
-    },
-    {
-      "case": "workshop-3-pass",
-      "status": 200,
-      "digest": "sha256:476828c5ed41ec499d0e180da89af65af62835d60655421c6dc500b0ba198344"
-    },
-    {
-      "case": "workshop-3-fail",
-      "status": 422
-    },
-    {
-      "case": "workshop-4-pass",
-      "status": 200,
-      "digest": "sha256:d206c26c3c1e443ad425cdafccc322cbc87f9585d28d0da3f355d7c9e4d36a64"
-    },
-    {
-      "case": "workshop-4-fail",
-      "status": 422
-    },
-    {
-      "case": "workshop-5-pass",
-      "status": 200,
-      "digest": "sha256:730557e9ccbfb660c16980a6cb40b0dfc9c566b2fc7d315960ea48d83349ce31"
-    },
-    {
-      "case": "workshop-5-fail",
-      "status": 422
-    },
-    {
-      "case": "workshop-6-pass",
-      "status": 200,
-      "digest": "sha256:756b96d6b68e274698ae577a678d8b75de798755083029788c836c60ebfec8df"
-    },
-    {
-      "case": "workshop-6-fail",
-      "status": 422
-    },
-    {
-      "case": "workshop-7-pass",
-      "status": 200,
-      "digest": "sha256:b02d07406607920d67629561da3d84a7e4146fc6dcb8c62149d08626bca8d4c0"
-    },
-    {
-      "case": "workshop-7-fail",
-      "status": 422
-    },
-    {
-      "case": "workshop-8-pass",
-      "status": 200,
-      "digest": "sha256:490f1356e279e17921ff56d6f9794d398919d36197da34e0972464928d3194e6"
-    },
-    {
-      "case": "workshop-8-fail",
-      "status": 422
-    },
-    {
       "case": "workshop-9-pass",
       "status": 200,
-      "digest": "sha256:93d663b1b1b8189713eafbe26d633625c080bd777359370ff66a307f1b796d4f"
+      "digest": "sha256:ffe2621fc5b0d939c4645789a14b1a69395b57657bf6597abe8c7f7d7268f317"
     },
     {
       "case": "workshop-9-fail",
@@ -449,7 +377,7 @@
     {
       "case": "workshop-10-pass",
       "status": 200,
-      "digest": "sha256:55357cc90bcea492d82ab75b9ded93530f8686971e4bc6097c0381b99447f400"
+      "digest": "sha256:4e4919748b308e1e93744b933cbd1f7ca28d254ec5f5cfca0a2d20e560810753"
     },
     {
       "case": "workshop-10-fail",
@@ -458,7 +386,7 @@
     {
       "case": "workshop-11-pass",
       "status": 200,
-      "digest": "sha256:a6c9612b59239adb135338d07cb8d1ecc9235f75903d20f56378e0b52558a143"
+      "digest": "sha256:e54e552c2e3fe3ef1290185ac1dfc5ec18e520da69f68683e5ee49c5c01ce480"
     },
     {
       "case": "workshop-11-fail",
@@ -467,7 +395,7 @@
     {
       "case": "workshop-12-pass",
       "status": 200,
-      "digest": "sha256:1f7106a8d3b9637077664564511ff7e59e8543cc1312b579f693c587bc09d766"
+      "digest": "sha256:f484b5ea67c7bda8f060f8c02aa506e1bb9fe15dcc5d233b415cc9b92ea7536f"
     },
     {
       "case": "workshop-12-fail",
@@ -476,7 +404,7 @@
     {
       "case": "workshop-13-pass",
       "status": 200,
-      "digest": "sha256:0343836cb353208130613bfe7aa0550d50b4bc60b07f58a19b30a762c2080c3b"
+      "digest": "sha256:f6693ce931054cc39e31af5d1ffc357e17c84e5cd4d675d9ad282c22993ab339"
     },
     {
       "case": "workshop-13-fail",
@@ -485,7 +413,7 @@
     {
       "case": "workshop-14-pass",
       "status": 200,
-      "digest": "sha256:8ba0adcbda91b867a8477e941a890f94be5a475e96cdde23ffa2b273f78470b7"
+      "digest": "sha256:6e93a090cb8f4efcb777d29539116e6e38435753dee14321cf899caf2de9f860"
     },
     {
       "case": "workshop-14-fail",
@@ -494,7 +422,7 @@
     {
       "case": "workshop-15-pass",
       "status": 200,
-      "digest": "sha256:71cb7b02d234bb42dc5555482165ca47a87176a310f5610effc1a3413d00aaab"
+      "digest": "sha256:143aab5663455191d482a4642b27552e11e9cc059400498ae0d3e38c089a638c"
     },
     {
       "case": "workshop-15-fail",
@@ -503,7 +431,7 @@
     {
       "case": "workshop-16-pass",
       "status": 200,
-      "digest": "sha256:b02a6c1a364efd32c5e25d65ca49dfdbd47dfc08a9fd9d955b9729e46279e1ce"
+      "digest": "sha256:41d374bc1057559fd220af63a882f8814b2a5ea63ab72cc7efe574089dc0a6ea"
     },
     {
       "case": "workshop-16-fail",
@@ -512,7 +440,7 @@
     {
       "case": "workshop-17-pass",
       "status": 200,
-      "digest": "sha256:2059f79ec53a818f4f49653cb668dae70e0395a67046c6f1663f987807efb8d8"
+      "digest": "sha256:f30fe81d3c56eee3d0271600e151c37b19e9e749af7dce84d8ab042356ad5209"
     },
     {
       "case": "workshop-17-fail",
@@ -521,7 +449,7 @@
     {
       "case": "workshop-18-pass",
       "status": 200,
-      "digest": "sha256:db343c90b588705d3cb61f7bb305a669240650f6705207b077594e703b59fc72"
+      "digest": "sha256:b7cb1595c0bf1c5d817a5e4b917569df6f00dc5de12070645ab59987963228ad"
     },
     {
       "case": "workshop-18-fail",
@@ -530,7 +458,7 @@
     {
       "case": "workshop-19-pass",
       "status": 200,
-      "digest": "sha256:a03f52fa0c6fa894d1edffae3bcd17fb3b8147d67ea31d791a700a6a5df08208"
+      "digest": "sha256:4c46f6043f522be0579ab8f6ba052ff2118956ca7306d5a7f6e073df19b22855"
     },
     {
       "case": "workshop-19-fail",
@@ -539,7 +467,7 @@
     {
       "case": "workshop-20-pass",
       "status": 200,
-      "digest": "sha256:07e30b8ae5369f403dedd4f0bd22cbe1a98f4125de8b49e04f66ee3f75a755d0"
+      "digest": "sha256:cc171d36fc3e4cdac60218e42cac15784d31568cce27609b94e389b58f08c246"
     },
     {
       "case": "workshop-20-fail",
@@ -548,7 +476,7 @@
     {
       "case": "workshop-21-pass",
       "status": 200,
-      "digest": "sha256:331759942285f471adb6020bc32733517cba8ca745c20c16f5b2159c9e62576f"
+      "digest": "sha256:5c4ae0025f6189f4c8fe9f966625100cf9b5d6652c839173ffdfe195fa249017"
     },
     {
       "case": "workshop-21-fail",
@@ -557,7 +485,7 @@
     {
       "case": "workshop-22-pass",
       "status": 200,
-      "digest": "sha256:f545e2325486eacb165a56fea35c842a761016fe264355af6958094f206a7c58"
+      "digest": "sha256:1b3673ad671b317da0b101e44ad9ad8bab44e62997f214fbcdf99fcfb8633d16"
     },
     {
       "case": "workshop-22-fail",
@@ -566,25 +494,16 @@
     {
       "case": "workshop-23-pass",
       "status": 200,
-      "digest": "sha256:a0da6b713fa8c2e6f6e0fa9369c1a41c9e595b407fce14ed6567fce41c5bb972"
+      "digest": "sha256:184f10604a8ab3b3bd31404ad88263b80784f6666cfac01bdc8225260ca06eda"
     },
     {
       "case": "workshop-23-fail",
       "status": 422
     },
     {
-      "case": "workshop-24-pass",
-      "status": 200,
-      "digest": "sha256:270f75d41f5cb76870d2a7fd07de0d02ccace29c422ec7bc7ec731b45e03833e"
-    },
-    {
-      "case": "workshop-24-fail",
-      "status": 422
-    },
-    {
       "case": "completion-valid",
       "status": 200,
-      "digest": "sha256:c844cb2d94e5af8213f097ecc6e37be3ab3f03eb8f6cbd19a4e7f3ad996117e3"
+      "digest": "sha256:48622687020194389f4fc7c3b09bd09aacf07cbb1a5feb1a37d3040d5e0e585c"
     },
     {
       "case": "completion-empty-proof",
@@ -605,7 +524,7 @@
     {
       "case": "project-completion-valid",
       "status": 200,
-      "digest": "sha256:59c4913234a72207b01d3e679dbd3d9908bdac78c8fb4fabc387ca45cf5b66f7"
+      "digest": "sha256:ad45e467c22fda29435eb1793c57c01143338f3cc64875b2b0e5010f03d6e95c"
     },
     {
       "case": "project-completion-no-challenge",
@@ -620,7 +539,24 @@
       "status": 422
     },
     {
-      "case": "project-completion-tampered-lab",
+      "case": "project-completion-tampered-challenge",
+      "status": 422
+    },
+    {
+      "case": "capstone-completion-valid",
+      "status": 200,
+      "digest": "sha256:435f926716f496546705d6281527f65339b804bdf7ac576cf95b9609843cad12"
+    },
+    {
+      "case": "capstone-completion-no-challenge",
+      "status": 422
+    },
+    {
+      "case": "capstone-completion-forged-lab",
+      "status": 422
+    },
+    {
+      "case": "capstone-completion-tampered-lab",
       "status": 422
     }
   ],
@@ -628,32 +564,33 @@
     "chapters": 24,
     "supplements": 55,
     "projectMilestones": 8,
-    "workshopsPositive": 24,
-    "workshopsNegative": 24,
+    "workshopsPositive": 16,
+    "workshopsNegative": 16,
+    "foundationLearningLoops": 8,
     "codeExercises": 32,
-    "dialogueTurns": 448
+    "dialogueTurns": 474
   },
   "sha256": {
-    "VERSION": "64c531a67b4c54a664e1e868e90e3c605a700d0547b9962affe2c404b95f6883",
-    "build_html.py": "f5fe7721d93a7a2944946387dce199ffc790e8c3ff789f017bca068d47c54adc",
-    "verify_v18.py": "7aaa99b7f7ce0fb3623b69d66bf0032a9cb9948b000082b8c58b33050c244d9b",
+    "VERSION": "a8a00744aade5d590bb835aca14a22b45b389d086f9e8689536517614951f249",
+    "build_html.py": "de278d5f06d6626559722fbef4d955e8e51c26a84bd13931e3e63b5b748b9fcd",
+    "verify_v18.py": "871af7483956abe80f5797000d71bd9694a24960a4ea1e988453bb0c8ff3940d",
     "verify-v18.sh": "044dd8b323ba6d35f18f3e681227d0afc15165cd1b1763be49996eaa66037686",
-    "interactive/index.html": "171f59499968c7da6bf0d60ddb1249452567b36c2855bb3305e06ca8aea17d2e",
-    "interactive/app.js": "5bff31447c9407c12fce3d93c5bce532e999312a2f74813baa0a5e5bff0636be",
-    "interactive/styles.css": "cccdd50d409ba39a7f98910a9f945fc889d081525d66cf1382454ddfca8e93e1",
-    "interactive/data/book.json": "b9f61e29641ae3d53cbe7ee515a330a3712f2345225e421e1a25eb74775562af",
-    "runner/main.go": "225763ca5ee4e317cfc19d17cd44a426f8c93091764fcff6e3d2832286549eb9",
-    "runner/main_test.go": "4babbcf0d39e6121f6e4906f59bf736ed6447b84b77538c19abc08bec70e9421",
-    "runner/exercises.json": "25b80fb5dbddd2f1f04e2636122c1aa995c5042a815e54e9e31e01c28e4aa53d",
+    "interactive/index.html": "8ab10f3170ba9ddf8345f9b25d0d516be7da8e59e6bd11b2a4c392b0cd15f466",
+    "interactive/app.js": "f4fadc3bf6b1364ff8a1ed6fc53a35611b441af0dea563a46b828b2445e3e19a",
+    "interactive/styles.css": "0cbedaf4ee73c598dc972fa505ff076a7b8d93de53a431d3f50eb204229ae85f",
+    "interactive/data/book.json": "1f2fbb6995de89fb15e6dc23b3fda8bf6b51a0daf2beaf8e43fc4c14e9363e3b",
+    "runner/main.go": "f7974d35ecff7292c77c2d0a9bea08369ba1a0f23f6feb974c9050dc8e6705a6",
+    "runner/main_test.go": "b6f8ce5312684bcebb79ec1a10c9ad97f1c3d7f78f920c6b1a7771362837971e",
+    "runner/exercises.json": "d5cc40f0b549717eaf7769469ba36c9e13dbb1111a5dae0f211fdf0391af2286",
     "runner/rubrics.json": "26c004e11b36b0e164b0dbbd3f82a5df259011f0e9252f3a51ebf8ba79b2fe72",
     "labs/harness-lab/go.mod": "40b1455a3c7ad1499c0ea2a9a3f06778d57daec835890d8638a1fa4ea20be9ba",
-    "labs/harness-lab/harness.go": "07807ad2e04d20227a4c1ef17c37943b80b16300113c59b13bfb4fbf0fa654ec",
+    "labs/harness-lab/harness.go": "7418378769808ad1ae3d7a491db996a2e5d16658522d28cb67a8e1dc8a65a4ff",
     "labs/harness-lab/harness_test.go": "7a5f4153d52e3840b2d263229f2b058a267aaa1984bc6a65d61cb697ff818dae",
-    "browser_audit.mjs": "6a2e54df1326bd12869cee71ed1a32a7e46e5ecb338eaa9d03c21df5407cad30",
-    "enterprise_learning_audit.mjs": "b0e14ed05ba55004fc28029f41643bc066d754005fc29da2651707e921f3c5e7",
-    "package.json": "6b997a3796f666524be37d2570530cc5c6d94b6a0ffe5a2fe42bad448d13b60e",
-    "package-lock.json": "0b376a2316f008098e032047b02934b859523f3e12bec466f4e15f488011a562",
-    "evidence/browser-v18.json": "952fe2871e1239b8b3858b05bc81a55ca9e75138df931da6062df7ce2ded6945",
+    "browser_audit.mjs": "6e37d1872aa6293711533e25b4fd65464067071fc6165c449ef1cc976e69bbd4",
+    "enterprise_learning_audit.mjs": "0097a068a8a383161d482b4fc503b733bb652aa6a708c9a1ee1993c264b6c011",
+    "package.json": "baa42ecd8873caf0f4dc8dce3047ec902b32a243109f0a1d5191b37db5125c51",
+    "package-lock.json": "64ec56362f2539b47698ad4b2c59b7cf833ce1ed78f7d21c76694c574a583179",
+    "evidence/browser-v18.json": "654df729f181ae90d0e508f3e0ebcc8b798ec7b6289a91a8805e477a761cdba1",
     "labs/ledger-agent/README.md": "7566eb6ab3aa528a7d3e0384d18f479228fba486bd2da9d611c511b7b72a1eb4",
     "labs/ledger-agent/cmd/server/main.go": "1fae0195d46f92d2e5d7024805cad25cfe10980d5fa7385d209a180763256016",
     "labs/ledger-agent/eval.go": "7db5927eb1ab18dc7767b3ae756c695369f8de01e5c7c6d7adf7ee19c06883ea",

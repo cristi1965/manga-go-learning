@@ -2,8 +2,8 @@
   "status": "pass",
   "units": 79,
   "turns": 474,
-  "book_sha256": "a904765ba462b9144c1bfd9f9bd02458645afbb937a1992332ecdebb93c54e44",
+  "book_sha256": "1f2fbb6995de89fb15e6dc23b3fda8bf6b51a0daf2beaf8e43fc4c14e9363e3b",
   "failures": [],
   "duplicate_lines": [],
-  "scope": "Structure and exact source parity only; no pedagogical score."
+  "scope": "Structure and source parity after approved learner-facing terminology normalization; no pedagogical score."
 }

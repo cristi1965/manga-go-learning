@@ -201,7 +201,7 @@ def main() -> None:
                 lab_output = lab.get("output", "")
                 api.append({"case": f"project-exercise-{unit_id}", "starterStatus": starter_status, "solutionStatus": solved_status, "labStatus": lab_status, "digest": solved.get("artifactDigest"), "runProof": bool(solved.get("runProof")), "labProof": bool(lab.get("runProof")), "milestoneTestPassed": f"--- PASS: TestMilestone{milestone_number}" in lab_output, "learnerContractPassed": f"--- PASS: TestLearner{milestone_number}" in lab_output})
             rubrics = json.loads((ROOT / "runner" / "rubrics.json").read_text(encoding="utf-8"))
-            for index, chapter in enumerate(book["chapters"], 1):
+            for index, chapter in enumerate(book["chapters"][8:23], 9):
                 if chapter["id"] in rubrics:
                     expected = [decision[0] for decision in rubrics[chapter["id"]]]
                 else:
@@ -212,10 +212,19 @@ def main() -> None:
                 api.append({"case": f"workshop-{index}-fail", "status": status})
 
             chapter = book["chapters"][0]
+            baseline_status, baseline = post(base, "/api/run", {"unitId": chapter["id"], "code": chapter["foundationLesson"]["code"]})
+            changed_code = chapter["foundationLesson"]["code"].replace("settle(7, 10)", "settle(7, 5)")
+            changed_status, changed = post(base, "/api/run", {"unitId": chapter["id"], "code": changed_code})
+            if baseline_status != 200 or changed_status != 200:
+                raise RuntimeError("foundation baseline/change execution failed")
             completion_payload = {
                 "unitId": chapter["id"],
-                "answers": [chapter[key] for key in ("goal", "task", "accept")],
                 "quizAnswers": [quiz["correctIndex"] for quiz in chapter["selfCheck"]],
+                "foundationPrediction": chapter["foundationLesson"]["prediction"]["correctIndex"],
+                "foundationBaselineDigest": baseline["artifactDigest"],
+                "foundationBaselineRunProof": baseline["runProof"],
+                "foundationChangedDigest": changed["artifactDigest"],
+                "foundationChangedRunProof": changed["runProof"],
                 "codeDigest": solved_proofs[1]["artifactDigest"],
                 "runProof": solved_proofs[1]["runProof"],
             }
@@ -237,8 +246,6 @@ def main() -> None:
             project_completion = {
                 "unitId": project_id,
                 "quizAnswers": [quiz["correctIndex"] for quiz in project["selfCheck"]],
-                "codeDigest": project_evidence["lab"]["artifactDigest"],
-                "runProof": project_evidence["lab"]["runProof"],
                 "challengeDigest": project_evidence["challenge"]["artifactDigest"],
                 "challengeRunProof": project_evidence["challenge"]["runProof"],
             }
@@ -248,9 +255,31 @@ def main() -> None:
                 ("project-completion-no-challenge", {"challengeRunProof": ""}),
                 ("project-completion-forged-challenge", {"challengeRunProof": "run:forged"}),
                 ("project-completion-cross-unit-challenge", {"challengeRunProof": project_proofs[project_units[1]["id"]]["challenge"]["runProof"]}),
-                ("project-completion-tampered-lab", {"codeDigest": "sha256:forged"}),
+                ("project-completion-tampered-challenge", {"challengeDigest": "sha256:forged"}),
             ):
                 status, _ = post(base, "/api/check", project_completion | changes)
+                api.append({"case": case, "status": status})
+
+            capstone = book["chapters"][23]
+            capstone_lab_status, capstone_lab = post(base, "/api/run", {"unitId": capstone["projectLab"]["id"], "code": solutions[24]})
+            if capstone_lab_status != 200:
+                raise RuntimeError(f"capstone project run failed: {capstone_lab_status} {capstone_lab}")
+            capstone_completion = {
+                "unitId": capstone["id"],
+                "quizAnswers": [quiz["correctIndex"] for quiz in capstone["selfCheck"]],
+                "challengeDigest": solved_proofs[24]["artifactDigest"],
+                "challengeRunProof": solved_proofs[24]["runProof"],
+                "codeDigest": capstone_lab["artifactDigest"],
+                "runProof": capstone_lab["runProof"],
+            }
+            status, body = post(base, "/api/check", capstone_completion)
+            api.append({"case": "capstone-completion-valid", "status": status, "digest": body.get("completionDigest")})
+            for case, changes in (
+                ("capstone-completion-no-challenge", {"challengeRunProof": ""}),
+                ("capstone-completion-forged-lab", {"runProof": "run:forged"}),
+                ("capstone-completion-tampered-lab", {"codeDigest": "sha256:forged"}),
+            ):
+                status, _ = post(base, "/api/check", capstone_completion | changes)
                 api.append({"case": case, "status": status})
 
             expected_status = {"valid": 200, "cross-origin": 403, "trailing-json": 400, "oversized": 413, "wrong-content-type": 415, "child-process-import": 422, "start-process": 422, "host-file-read": 200, "file-limit": 422, "sandbox": 200, "symlink-home-read": 200, "host-env-secret": 200, "bounded-output": 200, "timeout": 422}
@@ -277,6 +306,12 @@ def main() -> None:
                 elif item["case"].startswith("project-completion-"):
                     if item["status"] != 422:
                         raise RuntimeError(f"project completion proof bypassed: {item}")
+                elif item["case"] == "capstone-completion-valid":
+                    if item["status"] != 200 or not item["digest"]:
+                        raise RuntimeError(f"capstone completion gate failed: {item}")
+                elif item["case"].startswith("capstone-completion-"):
+                    if item["status"] != 422:
+                        raise RuntimeError(f"capstone completion proof bypassed: {item}")
                 elif item["status"] != expected_status[item["case"]]:
                     raise RuntimeError(f"API gate failed: {item}")
             if next(item for item in api if item["case"] == "sandbox")["output"] != "true true":
@@ -337,7 +372,7 @@ def main() -> None:
         if [{"id": item.get("id"), "kind": item.get("kind")} for item in units] != expected_unit_list:
             raise RuntimeError(f"browser {surface} unit identities do not match book.json")
         for item in units:
-            expected_workshops = 1 if item["kind"] == "chapter" else 0
+            expected_workshops = 1 if item["kind"] == "chapter" and not item["id"] in {f"chapter-{index}" for index in range(1, 9)} else 0
             if item.get("axeStages") != ["understand", "practice"] or not item.get("axeExecuted") or item["overflow"] or item["badControls"] or item["badImages"] or item["duplicateIds"] or item["minControl"] < 44 or item["workshops"] != expected_workshops:
                 raise RuntimeError(f"browser {surface} acceptance failed: {item}")
     accessibility = browser_evidence.get("accessibility", {})
@@ -351,7 +386,7 @@ def main() -> None:
     expected_keyboard = {"sidebarOpen": True, "escapeFocus": "menuToggle", "dialogOpen": True, "dialogClosed": True}
     if any(keyboard.get(key) != value for key, value in expected_keyboard.items()) or not accessibility.get("reducedMotion"):
         raise RuntimeError("browser keyboard or reduced-motion acceptance failed")
-    expected_learning_path = ["stage-read", "flow-node", "technical-details", "stage-practice", "code-editor", "run-code", "quiz-choice", "workshop-field", "complete"]
+    expected_learning_path = ["foundation-prediction", "anchor-mechanism", "deep-dive", "flow-node", "technical-details", "anchor-exercise", "code-editor", "run-code", "quiz-choice", "complete"]
     learning_path = keyboard.get("learningPath", [])
     if [item.get("name") for item in learning_path] != expected_learning_path or not all(item.get("focusVisible") for item in learning_path):
         raise RuntimeError(f"browser keyboard learning path acceptance failed: {learning_path}")
@@ -360,7 +395,7 @@ def main() -> None:
     if not browser_evidence.get("runtime", {}).get("browserVersion"):
         raise RuntimeError("browser runtime version was not recorded")
     interactions = browser_evidence.get("interactions", {})
-    if not all(interactions.get("structuredWorkshop", {}).values()) or not all(interactions.get("staleResponse", {}).values()) or not all(interactions.get("forgedLocalStorage", {}).values()):
+    if not all(interactions.get("structuredWorkshop", {}).values()) or not all(interactions.get("foundationLearningLoop", {}).values()) or not all(interactions.get("staleResponse", {}).values()) or not all(interactions.get("forgedLocalStorage", {}).values()):
         raise RuntimeError("browser interaction acceptance failed")
     for screenshot in browser_evidence.get("screenshots", {}).values():
         actual = hashlib.sha256((ROOT / screenshot["path"]).read_bytes()).hexdigest()
@@ -370,7 +405,7 @@ def main() -> None:
     tracked = ["VERSION", "build_html.py", "verify_v18.py", "verify-v18.sh", "interactive/index.html", "interactive/app.js", "interactive/styles.css", "interactive/data/book.json", "runner/main.go", "runner/main_test.go", "runner/exercises.json", "runner/rubrics.json", "labs/harness-lab/go.mod", "labs/harness-lab/harness.go", "labs/harness-lab/harness_test.go", "browser_audit.mjs", "enterprise_learning_audit.mjs", "package.json", "package-lock.json", "evidence/browser-v18.json"]
     tracked += sorted(str(path.relative_to(ROOT)) for path in (ROOT / "labs" / "ledger-agent").rglob("*") if path.is_file())
     hashes = {path: hashlib.sha256((ROOT / path).read_bytes()).hexdigest() for path in tracked}
-    report = {"status": "pass", "claim": "engineering acceptance", "score": 100, "version": book["version"], "generatedAt": datetime.now(timezone.utc).isoformat(), "environment": {"python": sys.version.split()[0], "go": subprocess.check_output(["go", "version"], text=True).strip(), "platform": sys.platform, "runnerPort": port, "runnerPid": process.pid}, "checks": checks, "api": api, "coverage": {"chapters": 24, "supplements": len(supplements), "projectMilestones": len(project_units), "workshopsPositive": 24, "workshopsNegative": 24, "codeExercises": 24 + len(project_units), "dialogueTurns": book["stats"]["dialogueTurns"]}, "sha256": hashes}
+    report = {"status": "pass", "claim": "engineering acceptance", "score": 100, "version": book["version"], "generatedAt": datetime.now(timezone.utc).isoformat(), "environment": {"python": sys.version.split()[0], "go": subprocess.check_output(["go", "version"], text=True).strip(), "platform": sys.platform, "runnerPort": port, "runnerPid": process.pid}, "checks": checks, "api": api, "coverage": {"chapters": 24, "supplements": len(supplements), "projectMilestones": len(project_units), "workshopsPositive": 16, "workshopsNegative": 16, "foundationLearningLoops": 8, "codeExercises": 24 + len(project_units), "dialogueTurns": book["stats"]["dialogueTurns"]}, "sha256": hashes}
     OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"status": "pass", "score": 100, "report": str(OUT)}, ensure_ascii=False))
 

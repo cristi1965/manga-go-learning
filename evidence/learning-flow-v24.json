@@ -1,0 +1,101 @@
+{
+  "status": "pass",
+  "desktop": {
+    "continuousFlow": {
+      "code": true,
+      "storyHook": true,
+      "hiddenStageRules": 0,
+      "legacyAnchors": 0,
+      "lessonTasks": 3,
+      "workspaceColumns": 2,
+      "mobileTabsHidden": true
+    },
+    "understandTask": {
+      "before": 4,
+      "after": 4,
+      "delta": 0
+    },
+    "practiceTask": {
+      "before": 4,
+      "after": 4,
+      "delta": 0
+    },
+    "stickyTaskSwitch": {
+      "before": 4,
+      "after": 4,
+      "delta": 0
+    },
+    "workspaceBlank": 0,
+    "predictionScroll": {
+      "before": 4,
+      "after": 4,
+      "delta": 0
+    },
+    "runScroll": {
+      "before": 12,
+      "after": 12,
+      "delta": 0
+    },
+    "resultTookFocus": false,
+    "hintScroll": {
+      "before": 937,
+      "after": 937,
+      "delta": 0
+    },
+    "supplementReturn": {
+      "originY": 937,
+      "restoredY": 937,
+      "originAnchorTop": 694.59375,
+      "restoredAnchorTop": 694.59375,
+      "delta": 0
+    }
+  },
+  "starter": {
+    "continueHidden": true,
+    "panelVisible": true,
+    "answerHiddenBeforeRun": true,
+    "answerVisibleAfterRun": true,
+    "nextLockedAfterOriginal": true,
+    "nextEnabledAfterVerifiedChange": true,
+    "twoChecksVisible": true
+  },
+  "agent": {
+    "runDisabledBeforePrediction": true,
+    "runEnabledAfterPrediction": true,
+    "feedbackConnectsPrediction": true,
+    "fourStageTraceVerified": true,
+    "exerciseAligned": true
+  },
+  "mobile": {
+    "taskbarPosition": "sticky",
+    "overflow": 0,
+    "taskLabelsVisible": true,
+    "lessonTasks": 3,
+    "tabsVisible": true,
+    "explainInitiallyVisible": true,
+    "practiceInitiallyHidden": true,
+    "contractColumnsVisible": true,
+    "stickyTaskSwitch": {
+      "before": 425,
+      "after": 425,
+      "delta": 0
+    },
+    "workspaceBlank": 0,
+    "paneRestore": {
+      "explainDelta": 0,
+      "practiceDelta": 0
+    },
+    "supplementReturn": {
+      "pane": "true",
+      "anchorDelta": 0
+    }
+  },
+  "route": {
+    "chapter23": 31,
+    "chapter24": 33,
+    "milestone3": 22,
+    "milestone4": 23,
+    "milestone8": 32,
+    "capstoneLab": "ledger-agent-lab/capstone"
+  }
+}

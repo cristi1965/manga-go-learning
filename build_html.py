@@ -8,6 +8,7 @@ import tempfile
 from pathlib import Path
 
 from build_capstone_starter import build_starter_zip
+from build_database_curriculum import write_database_curriculum
 
 
 PROJECT = Path(__file__).resolve().parent
@@ -21,8 +22,63 @@ LAB_DIR = PROJECT / "labs" / "harness-lab"
 INTERACTIVE_LAB_DIR = OUT_DIR / "labs" / "harness-lab"
 LEDGER_LAB_DIR = PROJECT / "labs" / "ledger-agent"
 INTERACTIVE_LEDGER_LAB_DIR = OUT_DIR / "labs" / "ledger-agent"
+WAILS_GO_LAB_DIR = PROJECT / "labs" / "wails-go-syntax"
+INTERACTIVE_WAILS_GO_LAB_DIR = OUT_DIR / "labs" / "wails-go-syntax"
 RUNNER_EXERCISES_OUT = PROJECT / "runner" / "exercises.json"
 RUNNER_RUBRICS_OUT = PROJECT / "runner" / "rubrics.json"
+
+WAILS_GO_SYNTAX_PATH = {
+    2: {
+        "step": "1/6", "id": "wails-go-syntax/struct-json", "testName": "TestStructJSON",
+        "title": "观察 struct 在 React 窗口的结果",
+        "goFocus": "struct、大写导出字段、JSON tag",
+        "wailsRole": "连接壳已预置；本节不要求理解 App、方法或 Bind。",
+        "reactRole": "只展示 Go 返回的 JSON；本节不学 React 状态。",
+        "observe": "把 AmountCents 的 tag 从 amount_cents 改错，固定测试会指出 JSON 契约变了。",
+    },
+    4: {
+        "step": "2/6", "id": "wails-go-syntax/method", "testName": "TestMethodReceiver",
+        "title": "用方法接收者保存界面操作",
+        "goFocus": "*App 指针接收者、方法调用、依赖字段",
+        "wailsRole": "把同一个 App 实例交给 Bind，每次点击都调用它的公开方法。",
+        "reactRole": "触发 SaveBill，不保存 Go 内部状态。",
+        "observe": "测试会确认方法对同一个 App 依赖进行了更新。",
+    },
+    5: {
+        "step": "3/6", "id": "wails-go-syntax/interface", "testName": "TestInterfaceBoundary",
+        "title": "只向窗口暴露必要的 Go 边界",
+        "goFocus": "interface、隐式实现、大写导出与小写封装",
+        "wailsRole": "只绑定 Desktop App，不把存储实现交给前端。",
+        "reactRole": "只能调用生成的公开方法，看不到小写名称。",
+        "observe": "测试注入一个很小的 fake store，证明 App 依赖的是接口而非具体类型。",
+    },
+    6: {
+        "step": "4/6", "id": "wails-go-syntax/errors", "testName": "TestErrorChain",
+        "title": "让 React 看到失败，不丢掉 Go 错误身份",
+        "goFocus": "error、多返回值、fmt.Errorf %w、errors.Is",
+        "wailsRole": "把 Go 方法的 error 变成前端 Promise 拒绝。",
+        "reactRole": "在 catch 分支展示失败，不自行猜测业务结果。",
+        "observe": "固定测试使用 errors.Is，确认包装后仍能识别 ErrInvalidAmount。",
+    },
+    7: {
+        "step": "5/6", "id": "wails-go-syntax/concurrency", "testName": "TestConcurrentRefresh",
+        "title": "把连续点击变成可检测的并发代码",
+        "goFocus": "goroutine、sync.WaitGroup、Mutex、go test -race",
+        "wailsRole": "允许同一个 App 方法被多次调用，不代替 Go 同步。",
+        "reactRole": "连续触发刷新并展示最后计数。",
+        "observe": "实验并发调用 1000 次，并用 race detector 检查数据竞争。",
+        "race": True,
+    },
+    8: {
+        "step": "6/6", "id": "wails-go-syntax/context", "testName": "TestContextCancellation",
+        "title": "让窗口生命周期取消 Go 任务",
+        "goFocus": "context.Context、Done channel、goroutine 退出",
+        "wailsRole": "OnStartup 收到 context，再交给需要取消的 Go 方法。",
+        "reactRole": "只显示开始、取消和结束状态。",
+        "observe": "测试取消 context 后等待 goroutine 退出，并检查 context.Canceled。",
+        "race": True,
+    },
+}
 
 GO_AI_PROJECT_MILESTONES = [
     {
@@ -33,10 +89,10 @@ GO_AI_PROJECT_MILESTONES = [
         "closing": '用假 Provider 分别模拟成功、超时和无效响应：检查返回值、错误类别以及取消是否传到调用边界。设置超时不等于保证远端已经停止处理。',
         "goal": "为模型调用建立可替换、可取消、可测试的 Go 边界。",
         "principles": ["业务层依赖 Provider 接口，不依赖具体 SDK。", "取消、deadline 和 request ID 必须传到底层。", "空响应、429、5xx 和畸形响应分别分类。"],
-        "code": "type Provider interface { Complete(context.Context, Request) (Response, error) }",
+        "code": "type Provider interface { Decide(context.Context, ProviderRequest) ([]byte, error) }",
         "task": "运行企业实验，观察成功、超时与畸形响应如何进入不同结果。",
         "accept": "Provider 可替换；超时停止工作；错误保留类别且不生成伪成功结果。",
-        "quiz": ("模型 SDK 已经返回 200，业务层下一步最可靠的判断是什么？", "继续校验响应结构与业务语义，200 只证明传输成功。", ["直接写入账本，SDK 已经成功。", "继续校验响应结构与业务语义，200 只证明传输成功。", "把原始响应完整写入日志再决定。"], 1),
+        "quiz": ("模型调用已超过截止时间，或父 context 已取消，调用方应该怎样处理？", "立即停止等待并返回对应错误，不接受随后到达的结果。", ["继续等待，只要远端最终返回就当作成功。", "立即停止等待并返回对应错误，不接受随后到达的结果。", "只让页面停止转圈，后台调用仍无限等待。"], 1),
     },
     {
         "id": "supplement-go-ai-02", "number": "16.E", "title": "结构化决策：模型输出仍是不可信输入",
@@ -117,17 +173,17 @@ GO_AI_PROJECT_MILESTONES = [
         "quiz": ("一次越权工具调用被拒绝，但最终文字答案正确，这条 eval 应怎样计分？", "安全项失败；文字正确不能抵消越权尝试。", ["整体通过，因为最终答案正确。", "安全项失败；文字正确不能抵消越权尝试。", "从样本集中删除这个异常值。"], 1),
     },
     {
-        "id": "supplement-go-ai-08", "number": "16.K", "title": "企业验收：交付一个可控 Ledger Agent",
-        "kicker": "里程碑 8/8 · 从测试、race 到故障证据",
+        "id": "supplement-go-ai-08", "number": "16.K", "title": "并发背压：容量满时明确拒绝",
+        "kicker": "里程碑 8/8 · 并发上限、背压与总装前检查",
         "opening": ["所有功能演示都成功了，但发布前没人试过并发重复、Provider 超时和工具越权。", "企业交付不是再看一次 happy path，而是主动制造失败并证明系统守住边界。"],
         "dialogue": [("李宝瓶", "小师叔！测试全绿了，我们的大账本是不是天下第一稳啦？"), ("陈平安", "race、恢复、安全和审计缺一块，就只能算未验证。"), ("文圣", "蜉蝣见青天，见天地后如履薄冰；代码落定才算真！")],
         "closing": "企业级不是功能数量，而是失败发生时仍然可控、可解释、可恢复。",
-        "goal": "运行完整 Ledger Agent 测试矩阵并理解每条证据的边界。",
+        "goal": "为 HTTP Worker 设置明确的并发容量，并在总装前理解每条测试证据的边界。",
         "principles": ["正常测试和 race 测试同时通过。", "故障、安全和恢复用例是发布门禁。", "本地 fake provider 不冒充真实供应商 SLA。"],
-        "code": "func verificationCommand() string {\n    return \"go test ./... && go test -race ./...\"\n}",
-        "task": "运行完整企业实验，阅读每个测试名并说明它保护的生产风险。",
-        "accept": "模型、工具、幂等、租户、fence、事件、审计和 eval 用例全部通过。",
-        "quiz": ("本地 fake provider 全部测试通过，能够证明什么？", "证明本地应用边界和失败语义；不能证明真实 Provider 的 SLA。", ["证明任何真实模型都稳定可用。", "证明本地应用边界和失败语义；不能证明真实 Provider 的 SLA。", "证明系统不再需要线上监控。"], 1),
+        "code": "func reserveWorkerSlot(slots chan struct{}) bool {\n    select {\n    case slots <- struct{}{}:\n        return true\n    default:\n        return false\n    }\n}",
+        "task": "实现非阻塞容量预留，先运行背压专项测试，再运行完整 race 测试矩阵。",
+        "accept": "容量未满时成功预留；容量已满时立即拒绝；完整 race 测试作为总装前的独立门禁通过。",
+        "quiz": ("Worker 容量已经占满，新请求应当怎样处理？", "立即返回可识别的过载结果，让调用方稍后重试。", ["继续阻塞等待，直到出现空位。", "立即返回可识别的过载结果，让调用方稍后重试。", "新建不受限制的 goroutine。"], 1),
     },
 ]
 
@@ -1001,40 +1057,40 @@ func TestSettle(t *testing.T) {
 }''',
     },
     2: {
-        "title": "让账单 JSON 契约稳定",
+        "title": "让奶茶订单 JSON 契约稳定",
         "prompt": "补全字段与 JSON tag，让编码结果只暴露 id 和 amount_cents。",
         "code": '''package main
 import "encoding/json"
-type Bill struct {
+type Order struct {
     // TODO: 导出字段，并写出正确的 json tag。
     id string
     amount int64
 }
-func encodeBill(b Bill) ([]byte,error){ return json.Marshal(b) }
+func encodeOrder(order Order) ([]byte,error){ return json.Marshal(order) }
 ''',
         "test": '''package main
 import ("encoding/json"; "testing")
-func TestBillJSON(t *testing.T){
- raw,err:=encodeBill(Bill{ID:"b1",AmountCents:1200}); if err!=nil{t.Fatal(err)}
+func TestOrderJSON(t *testing.T){
+ raw,err:=encodeOrder(Order{ID:"order-001",AmountCents:1200}); if err!=nil{t.Fatal(err)}
  var got map[string]any; if err:=json.Unmarshal(raw,&got);err!=nil{t.Fatal(err)}
- if len(got)!=2 || got["id"]!="b1" || got["amount_cents"]!=float64(1200){t.Fatalf("unexpected JSON: %s",raw)}
+ if len(got)!=2 || got["id"]!="order-001" || got["amount_cents"]!=float64(1200){t.Fatalf("unexpected JSON: %s",raw)}
 }''',
     },
     3: {
-        "title": "复制一份真正独立的剑谱",
-        "prompt": "实现 clone，使修改副本不会改到原 slice。",
+        "title": "复制一份独立的订单编号列表",
+        "prompt": "实现 cloneOrderIDs，使修改副本不会改到原订单编号 slice。",
         "code": '''package main
-func clone(src []string) []string {
+func cloneOrderIDs(src []string) []string {
     // TODO: 不能只把 slice 头复制一份。
     return src
 }
 ''',
         "test": '''package main
 import "testing"
-func TestCloneIsIndependent(t *testing.T){
- src:=[]string{"a","b"}; got:=clone(src); got[0]="changed"
- if src[0]!="a"{t.Fatalf("source was mutated: %v",src)}
- if len(got)!=2 || got[1]!="b"{t.Fatalf("bad clone: %v",got)}
+func TestOrderIDCloneIsIndependent(t *testing.T){
+ src:=[]string{"order-001","order-002"}; got:=cloneOrderIDs(src); got[0]="changed"
+ if src[0]!="order-001"{t.Fatalf("source was mutated: %v",src)}
+ if len(got)!=2 || got[1]!="order-002"{t.Fatalf("bad clone: %v",got)}
 }''',
     },
     4: {
@@ -1050,45 +1106,64 @@ func readName(store Reader, id string) (string,error){
         "test": '''package main
 import "testing"
 type fakeReader struct{}
-func (fakeReader) Get(id string)(string,error){return "bill:"+id,nil}
-func TestSmallInterface(t *testing.T){got,err:=readName(fakeReader{},"7");if err!=nil||got!="bill:7"{t.Fatalf("got %q %v",got,err)}}''',
+func (fakeReader) Get(id string)(string,error){return "order:"+id,nil}
+func TestSmallInterface(t *testing.T){got,err:=readName(fakeReader{},"001");if err!=nil||got!="order:001"{t.Fatalf("got %q %v",got,err)}}''',
     },
     5: {
-        "title": "守住包依赖方向",
-        "prompt": "实现 canImport：cmd 可以依赖 internal；internal 不能反向依赖 cmd；同层允许。",
-        "code": '''package main
-import "strings"
-func canImport(from, to string) bool {
-    _ = strings.HasPrefix
-    // TODO: 阻止 internal -> cmd 的反向依赖。
-    return true
+        "title": "让其他 package 只看到公开能力",
+        "prompt": "导出 Order 和 Label，使外部 package 能创建订单并读取标签；小写 helper 保持包内可见。",
+        "code": '''package orders
+
+// TODO: 把订单类型和字段改成外部 package 可见。
+type order struct {
+    id string
+}
+
+// TODO: 导出 Label，参数使用导出的订单类型。
+func label(order order) string {
+    return helper(order.id)
+}
+
+func helper(id string) string {
+    return "order:" + id
 }
 ''',
-        "test": '''package main
-import "testing"
-func TestDependencyDirection(t *testing.T){cases:=[]struct{from,to string;want bool}{{"cmd/api","internal/bill",true},{"internal/bill","cmd/api",false},{"internal/bill","internal/store",true}};for _,c:=range cases{if got:=canImport(c.from,c.to);got!=c.want{t.Fatalf("%s -> %s = %v, want %v",c.from,c.to,got,c.want)}}}''',
+        "test": '''package orders_test
+
+import (
+    "testing"
+    orders "manga-go-exercise"
+)
+
+func TestExportedPackageAPI(t *testing.T) {
+    got := orders.Label(orders.Order{ID: "001"})
+    if got != "order:001" {
+        t.Fatalf("got %q", got)
+    }
+}
+''',
     },
     6: {
         "title": "包装错误但别剪断因果",
-        "prompt": "实现 loadBill，保留 ErrNotFound，使 errors.Is 仍能识别它。",
+        "prompt": "实现 loadOrder，保留 ErrNotFound，使 errors.Is 仍能识别它。",
         "code": '''package main
 import ("errors"; "fmt")
 var ErrNotFound=errors.New("not found")
-func loadBill(id string) error {
+func loadOrder(id string) error {
     // TODO: 用 %w 包装 ErrNotFound，并带上 id。
-    return fmt.Errorf("bill %s failed",id)
+    return fmt.Errorf("order %s failed",id)
 }
 ''',
         "test": '''package main
 import ("errors"; "strings"; "testing")
-func TestWrappedCause(t *testing.T){err:=loadBill("b7");if !errors.Is(err,ErrNotFound){t.Fatalf("cause lost: %v",err)};if !strings.Contains(err.Error(),"b7"){t.Fatalf("id missing: %v",err)}}''',
+func TestWrappedCause(t *testing.T){err:=loadOrder("order-007");if !errors.Is(err,ErrNotFound){t.Fatalf("cause lost: %v",err)};if !strings.Contains(err.Error(),"order-007"){t.Fatalf("id missing: %v",err)}}''',
     },
     7: {
-        "title": "并发计数不能丢",
-        "prompt": "补全 count，使 1000 个 goroutine 全部结束且无数据竞争。",
+        "title": "并发备餐计数不能丢",
+        "prompt": "补全 countPrepared，使 1000 个并发备餐任务全部结束且无数据竞争。",
         "code": '''package main
 import "sync"
-func count(n int) int {
+func countPrepared(n int) int {
     var wg sync.WaitGroup
     total := 0
     for i:=0;i<n;i++ { wg.Add(1); go func(){ defer wg.Done(); total++ }() }
@@ -1098,7 +1173,7 @@ func count(n int) int {
 ''',
         "test": '''package main
 import "testing"
-func TestCount(t *testing.T){for i:=0;i<20;i++{if got:=count(1000);got!=1000{t.Fatalf("got %d",got)}}}''',
+func TestPreparedCount(t *testing.T){for i:=0;i<20;i++{if got:=countPrepared(1000);got!=1000{t.Fatalf("got %d",got)}}}''',
         "race": True,
     },
     8: {
@@ -1554,24 +1629,27 @@ func TestCanaryEvaluation(t *testing.T) {
 ''',
     },
     17: {
-        "title": "验证模型决策：严格 Fail Closed",
-        "prompt": "实现 ValidateDecision：answer 与 tool 互斥，未知 Kind 与字段混杂必须返回 ErrInvalidDecision。",
+        "title": "确认之前，不得保存订单草稿",
+        "prompt": "实现 CommitDraft：先校验订单草稿，再检查 Confirmed；未确认或字段非法时返回错误且订单列表保持不变。",
         "code": '''package main
 
 import "errors"
 
-var ErrInvalidDecision = errors.New("invalid decision")
+var (
+	ErrInvalidDraft = errors.New("invalid draft")
+	ErrNotConfirmed = errors.New("draft not confirmed")
+)
 
-type Decision struct {
-	Kind     string
-	Answer   string
-	ToolName string
+type OrderDraft struct {
+	ID          string
+	AmountCents int64
+	Confirmed   bool
 }
 
-func ValidateDecision(d Decision) error {
-	// TODO: 1. 若 Kind == "answer"：Answer 不能为空且 ToolName 必须为空
-	//       2. 若 Kind == "tool"：ToolName 不能为空且 Answer 必须为空
-	//       3. 其他任何 Kind 或混合状态均返回 ErrInvalidDecision (Fail Closed)
+func CommitDraft(d OrderDraft, orders *[]OrderDraft) error {
+	// TODO: 1. ID 为空或 AmountCents <= 0，返回 ErrInvalidDraft
+	//       2. Confirmed 为 false，返回 ErrNotConfirmed
+	//       3. 只有全部通过后，才 append 到 orders
 	return nil
 }
 ''',
@@ -1582,23 +1660,23 @@ import (
 	"testing"
 )
 
-func TestValidateDecision(t *testing.T) {
-	if err := ValidateDecision(Decision{Kind: "answer", Answer: "Done"}); err != nil {
-		t.Fatal("answer should be valid")
+func TestCommitDraftRequiresValidationAndConfirmation(t *testing.T) {
+	orders := []OrderDraft{}
+	if err := CommitDraft(OrderDraft{AmountCents: 1200, Confirmed: true}, &orders); !errors.Is(err, ErrInvalidDraft) {
+		t.Fatal("missing ID must be rejected")
 	}
-	if err := ValidateDecision(Decision{Kind: "tool", ToolName: "read"}); err != nil {
-		t.Fatal("tool should be valid")
+	if err := CommitDraft(OrderDraft{ID: "order-001", AmountCents: 1200}, &orders); !errors.Is(err, ErrNotConfirmed) {
+		t.Fatal("unconfirmed draft must be rejected")
 	}
-	for _, bad := range []Decision{
-		{Kind: "answer", Answer: ""},
-		{Kind: "answer", Answer: "ok", ToolName: "leak"},
-		{Kind: "tool", ToolName: ""},
-		{Kind: "tool", ToolName: "read", Answer: "leak"},
-		{Kind: "unknown"},
-	} {
-		if !errors.Is(ValidateDecision(bad), ErrInvalidDecision) {
-			t.Fatalf("expected ErrInvalidDecision for %#v", bad)
-		}
+	if len(orders) != 0 {
+		t.Fatal("rejected drafts must not change the order list")
+	}
+	confirmed := OrderDraft{ID: "order-001", AmountCents: 1200, Confirmed: true}
+	if err := CommitDraft(confirmed, &orders); err != nil {
+		t.Fatalf("confirmed draft should commit: %v", err)
+	}
+	if len(orders) != 1 || orders[0].ID != "order-001" {
+		t.Fatalf("want one committed order, got %#v", orders)
 	}
 }
 ''',
@@ -1830,8 +1908,8 @@ func TestPassEvaluationGate(t *testing.T) {
 ''',
     },
     24: {
-        "title": "结业总装：调度执行并签署审计回执",
-        "prompt": "实现 CoordinateAndReceipt：跨模块串联请求校验、任务执行、失败收口与成功时的 SHA-256 审计摘要签署。",
+        "title": "结业总装：重复请求复用原任务",
+        "prompt": "本题先省略 owner 与 operation，只练最小幂等核心。实现 StartOrResume：首次请求创建记录；同租户、同编号、同输入复用原记录与回执；同编号不同输入返回冲突。",
         "code": '''package main
 
 import (
@@ -1841,6 +1919,7 @@ import (
 )
 
 var ErrInvalidRun = errors.New("invalid run parameters")
+var ErrIdempotencyConflict = errors.New("idempotency conflict")
 
 type RunRequest struct {
 	TenantID string
@@ -1856,14 +1935,29 @@ type RunReceipt struct {
 	Digest   string
 }
 
+type RunEntry struct {
+	InputDigest string
+	Receipt     RunReceipt
+}
+
+func StartOrResume(entries map[string]RunEntry, req RunRequest) (RunEntry, bool, error) {
+	// TODO: 1. TenantID 和 RunID 不能为空
+	// 2. key 必须同时包含 TenantID 和 RunID
+	// 3. 用 SHA-256 计算 Input 摘要
+	// 4. 已有同摘要记录：返回原记录，created=false
+	// 5. 已有不同摘要：返回 ErrIdempotencyConflict
+	// 6. 否则保存新记录，created=true
+	return RunEntry{}, false, nil
+}
+
 func CoordinateAndReceipt(req RunRequest, callID string, execute func(string) (string, error)) (RunReceipt, error) {
-	// TODO: 结业总装协调器：
-	// 1. 校验 req.TenantID, req.RunID, callID 均不能为空，否则返回 ErrInvalidRun
-	// 2. 调用 execute(req.Input)
-	// 3. 若 execute 出错，Outcome="failed"，Digest 为空的 RunReceipt
-	// 4. 若 execute 成功，Outcome="succeeded"，计算输出内容的 sha256 摘要（格式为 "sha256:十六进制"）
-	// 5. 返回装配完成的最终审计回执
-	return RunReceipt{}, nil
+	if req.TenantID == "" || req.RunID == "" || callID == "" { return RunReceipt{}, ErrInvalidRun }
+	out, err := execute(req.Input)
+	receipt := RunReceipt{TenantID:req.TenantID, RunID:req.RunID, CallID:callID}
+	if err != nil { receipt.Outcome = "failed"; return receipt, nil }
+	receipt.Outcome = "succeeded"
+	receipt.Digest = fmt.Sprintf("sha256:%x", sha256.Sum256([]byte(out)))
+	return receipt, nil
 }
 ''',
         "test": '''package main
@@ -1876,7 +1970,18 @@ import (
 )
 
 func TestCoordinateAndReceipt(t *testing.T) {
-	_, err := CoordinateAndReceipt(RunRequest{TenantID: "", RunID: "r1"}, "c1", func(string) (string, error) { return "ok", nil })
+	entries := map[string]RunEntry{}
+	req := RunRequest{TenantID:"shop", RunID:"entry-0827", Input:"milk-tea:1200"}
+	first, created, err := StartOrResume(entries, req)
+	if err != nil || !created || first.InputDigest == "" { t.Fatalf("first request = %#v, %v, %v", first, created, err) }
+	first.Receipt = RunReceipt{TenantID:"shop", RunID:"entry-0827", Outcome:"succeeded", Digest:"sha256:receipt"}
+	entries["shop/entry-0827"] = first
+	again, created, err := StartOrResume(entries, req)
+	if err != nil || created || again.Receipt.Digest != "sha256:receipt" { t.Fatalf("retry did not recover original receipt: %#v, %v, %v", again, created, err) }
+	_, _, err = StartOrResume(entries, RunRequest{TenantID:"shop", RunID:"entry-0827", Input:"changed"})
+	if !errors.Is(err, ErrIdempotencyConflict) { t.Fatalf("changed input must conflict, got %v", err) }
+
+	_, err = CoordinateAndReceipt(RunRequest{TenantID: "", RunID: "r1"}, "c1", func(string) (string, error) { return "ok", nil })
 	if !errors.Is(err, ErrInvalidRun) {
 		t.Fatalf("want ErrInvalidRun, got %v", err)
 	}
@@ -1909,28 +2014,29 @@ func settle(price,paid int64)(int64,error){if price<=0{return 0,ErrInvalidPrice}
 ''',
     2: '''package main
 import "encoding/json"
-type Bill struct { ID string `json:"id"`; AmountCents int64 `json:"amount_cents"` }
-func encodeBill(b Bill)([]byte,error){return json.Marshal(b)}
+type Order struct { ID string `json:"id"`; AmountCents int64 `json:"amount_cents"` }
+func encodeOrder(order Order)([]byte,error){return json.Marshal(order)}
 ''',
     3: '''package main
-func clone(src []string)[]string{return append([]string(nil),src...)}
+func cloneOrderIDs(src []string)[]string{return append([]string(nil),src...)}
 ''',
     4: '''package main
 type Reader interface { Get(id string)(string,error) }
 func readName(store Reader,id string)(string,error){return store.Get(id)}
 ''',
-    5: '''package main
-import "strings"
-func canImport(from,to string)bool{return !(strings.HasPrefix(from,"internal/")&&strings.HasPrefix(to,"cmd/"))}
+    5: '''package orders
+type Order struct { ID string }
+func Label(order Order) string { return helper(order.ID) }
+func helper(id string) string { return "order:" + id }
 ''',
     6: '''package main
 import("errors";"fmt")
 var ErrNotFound=errors.New("not found")
-func loadBill(id string)error{return fmt.Errorf("load bill %s: %w",id,ErrNotFound)}
+func loadOrder(id string)error{return fmt.Errorf("load order %s: %w",id,ErrNotFound)}
 ''',
     7: '''package main
 import "sync"
-func count(n int)int{var wg sync.WaitGroup;var mu sync.Mutex;total:=0;for i:=0;i<n;i++{wg.Add(1);go func(){defer wg.Done();mu.Lock();total++;mu.Unlock()}()};wg.Wait();return total}
+func countPrepared(n int)int{var wg sync.WaitGroup;var mu sync.Mutex;total:=0;for i:=0;i<n;i++{wg.Add(1);go func(){defer wg.Done();mu.Lock();total++;mu.Unlock()}()};wg.Wait();return total}
 ''',
     8: '''package main
 import "context"
@@ -2173,26 +2279,26 @@ func EvaluateCanary(m CanaryMetrics, maxRate float64) (bool, string) {
 
 import "errors"
 
-var ErrInvalidDecision = errors.New("invalid decision")
+var (
+	ErrInvalidDraft = errors.New("invalid draft")
+	ErrNotConfirmed = errors.New("draft not confirmed")
+)
 
-type Decision struct {
-	Kind     string
-	Answer   string
-	ToolName string
+type OrderDraft struct {
+	ID          string
+	AmountCents int64
+	Confirmed   bool
 }
 
-func ValidateDecision(d Decision) error {
-	switch d.Kind {
-	case "answer":
-		if d.Answer != "" && d.ToolName == "" {
-			return nil
-		}
-	case "tool":
-		if d.ToolName != "" && d.Answer == "" {
-			return nil
-		}
+func CommitDraft(d OrderDraft, orders *[]OrderDraft) error {
+	if d.ID == "" || d.AmountCents <= 0 {
+		return ErrInvalidDraft
 	}
-	return ErrInvalidDecision
+	if !d.Confirmed {
+		return ErrNotConfirmed
+	}
+	*orders = append(*orders, d)
+	return nil
 }
 ''',
     18: '''package main
@@ -2304,6 +2410,7 @@ import (
 )
 
 var ErrInvalidRun = errors.New("invalid run parameters")
+var ErrIdempotencyConflict = errors.New("idempotency conflict")
 
 type RunRequest struct {
 	TenantID string
@@ -2319,6 +2426,21 @@ type RunReceipt struct {
 	Digest   string
 }
 
+type RunEntry struct { InputDigest string; Receipt RunReceipt }
+
+func StartOrResume(entries map[string]RunEntry, req RunRequest) (RunEntry, bool, error) {
+	if req.TenantID == "" || req.RunID == "" { return RunEntry{}, false, ErrInvalidRun }
+	key := req.TenantID + "/" + req.RunID
+	digest := fmt.Sprintf("sha256:%x", sha256.Sum256([]byte(req.Input)))
+	if previous, ok := entries[key]; ok {
+		if previous.InputDigest != digest { return RunEntry{}, false, ErrIdempotencyConflict }
+		return previous, false, nil
+	}
+	entry := RunEntry{InputDigest:digest}
+	entries[key] = entry
+	return entry, true, nil
+}
+
 func CoordinateAndReceipt(req RunRequest, callID string, execute func(string) (string, error)) (RunReceipt, error) {
 	if req.TenantID == "" || req.RunID == "" || callID == "" {
 		return RunReceipt{}, ErrInvalidRun
@@ -2332,6 +2454,308 @@ func CoordinateAndReceipt(req RunRequest, callID string, execute func(string) (s
 }
 ''',
 })
+
+FOUNDATION_LESSONS = {
+    1: {
+        "title": "先让程序算出找零",
+        "purpose": "把两个整数交给函数，用条件判断决定能不能找零。",
+        "concepts": ["变量", "函数", "if 条件"],
+        "code": '''package main
+
+import (
+    "errors"
+    "fmt"
+)
+
+var ErrInvalidPrice = errors.New("invalid price")
+var ErrInsufficientPayment = errors.New("insufficient payment")
+
+func settle(price, paid int64) (int64, error) {
+    if price <= 0 || paid < 0 {
+        return 0, ErrInvalidPrice
+    }
+    if paid < price {
+        return 0, ErrInsufficientPayment
+    }
+    return paid - price, nil
+}
+
+func main() {
+    amount, err := settle(7, 10)
+    fmt.Println(amount, err)
+}
+''',
+        "prediction": {"question": "价格是 7，付款是 10，会打印什么？", "choices": ["找零 3，没有错误", "得到 17，没有错误", "找零 0，付款不足"], "correctIndex": 0, "wrongFeedback": "先看 settle 的两个参数，再按顺序检查两个 if，最后才做 paid-price。"},
+        "expectedOutput": "3 <nil>",
+        "changedOutput": "0 insufficient payment",
+        "changeMarker": "settle(7, 5)",
+        "changedOutputCheck": "0 insufficient payment",
+        "changePrompt": "只把 `settle(7, 10)` 中的 10 改成 5，再运行一次。",
+        "explanation": "付款额小于价格时，`if` 分支提前返回 0 和“付款不足”；否则才执行减法。",
+        "enterpriseBridge": "服务端会用同样的条件判断在入口拦住非法请求。",
+        "transferCheck": {"question": "企业接口收到非法金额时，最先应该在哪里拦住？", "choices": ["函数或服务入口的条件检查", "数据库写入之后", "只在日志里记录"], "correctIndex": 0, "answer": "先在函数或服务入口检查，不让非法数据进入后续流程。"},
+    },
+    2: {
+        "title": "把奶茶订单变成稳定的 JSON",
+        "purpose": "用 struct 保存一笔奶茶订单，再按约定的字段名编码成 JSON。",
+        "concepts": ["struct", "导出字段", "JSON tag"],
+        "code": '''package main
+
+import (
+    "encoding/json"
+    "fmt"
+)
+
+type Order struct {
+    ID          string `json:"id"`
+    AmountCents int64  `json:"amount_cents"`
+}
+
+func main() {
+    raw, err := json.Marshal(Order{ID: "order-001", AmountCents: 1200})
+    if err != nil {
+        fmt.Println("编码失败:", err)
+        return
+    }
+    fmt.Println(string(raw))
+}
+''',
+        "prediction": {"question": "程序会使用哪个 JSON 字段名？", "choices": ["amount_cents", "AmountCents", "amount"], "correctIndex": 0, "wrongFeedback": "看 AmountCents 右边的 json tag；Go 字段名和对外 JSON 字段名可以不同。"},
+        "expectedOutput": '{"id":"order-001","amount_cents":1200}',
+        "changedOutput": '{"id":"order-001","amount_cents":2500}',
+        "changeMarker": "AmountCents: 2500",
+        "changedOutputCheck": '"amount_cents":2500',
+        "changePrompt": "只把 `1200` 改成 `2500`，观察 JSON 中哪一部分变化。",
+        "explanation": "字段首字母大写后可被 `encoding/json` 访问；tag 决定对外的字段名。",
+        "enterpriseBridge": "企业 API 用 DTO 和 JSON tag 固定接口契约，避免内部改名破坏客户端。",
+        "transferCheck": {"question": "Go 内部字段改名，但 API 不能变，应该保持什么？", "choices": ["JSON tag 不变", "删掉 tag", "把字段改成小写"], "correctIndex": 0, "answer": "保持 JSON tag 不变，对外契约就不会随 Go 命名改动。"},
+    },
+    3: {
+        "title": "复制一份互不影响的订单编号",
+        "purpose": "复制订单编号 slice，让修改副本时原订单保持不变。",
+        "concepts": ["slice", "append", "底层数组"],
+        "code": '''package main
+
+import "fmt"
+
+func cloneOrderIDs(src []string) []string {
+    return append([]string(nil), src...)
+}
+
+func main() {
+    original := []string{"order-001", "order-002"}
+    copied := cloneOrderIDs(original)
+    copied[0] = "changed"
+    fmt.Println("原数据:", original)
+    fmt.Println("副本:", copied)
+}
+''',
+        "prediction": {"question": "修改 copied[0] 后，original[0] 是什么？", "choices": ["order-001", "changed", "空字符串"], "correctIndex": 0, "wrongFeedback": "看 cloneOrderIDs 是否把元素复制到新的底层数组，不要只看 slice 变量名。"},
+        "expectedOutput": "原数据: [order-001 order-002]\n副本: [changed order-002]",
+        "changedOutput": "原数据: [changed order-002]\n副本: [changed order-002]",
+        "changeMarker": "copied := original",
+        "changedOutputCheck": "原数据: [changed b]",
+        "changePrompt": "把 `cloneOrderIDs(original)` 改成 `original`，再看原订单编号为什么也被改了。",
+        "explanation": "slice 本身只描述一段数据；显式复制元素后，两个 slice 才不再共享同一块底层数组。",
+        "enterpriseBridge": "跨 goroutine 或跨请求传递集合前，常用复制隔离可变数据。",
+        "transferCheck": {"question": "一份 slice 要交给另一个 goroutine 独立修改，最安全的起点是？", "choices": ["先复制元素", "只复制 slice 变量", "同时直接修改"], "correctIndex": 0, "answer": "先复制元素，避免两个 slice 共享同一底层数组。"},
+    },
+    4: {
+        "title": "只要求调用方真正需要的方法",
+        "purpose": "用一个只有 Get 方法的小接口，替换不同的数据来源。",
+        "concepts": ["interface", "方法", "依赖替换"],
+        "code": '''package main
+
+import "fmt"
+
+type Reader interface {
+    Get(id string) (string, error)
+}
+
+type MemoryOrders map[string]string
+
+func (orders MemoryOrders) Get(id string) (string, error) {
+    name, ok := orders[id]
+    if !ok {
+        return "", fmt.Errorf("订单 %s 不存在", id)
+    }
+    return name, nil
+}
+
+func readName(store Reader, id string) (string, error) {
+    return store.Get(id)
+}
+
+func main() {
+    name, err := readName(MemoryOrders{"order-001": "珍珠奶茶"}, "order-001")
+    fmt.Println(name, err)
+}
+''',
+        "prediction": {"question": "MemoryOrders 为什么能传给 readName？", "choices": ["它实现了 Get 方法", "它的名字包含 Orders", "它是 map"], "correctIndex": 0, "wrongFeedback": "只对照 Reader 要求的方法签名：类型名和底层结构都不是判定条件。"},
+        "expectedOutput": "珍珠奶茶 <nil>",
+        "changedOutput": " 订单 order-002 不存在",
+        "changeMarker": "readName(MemoryOrders{\"order-001\": \"珍珠奶茶\"}, \"order-002\")",
+        "changedOutputCheck": "订单 order-002 不存在",
+        "changePrompt": "只把最后一个参数 `\"order-001\"` 改成 `\"order-002\"`，观察失败结果。",
+        "explanation": "Go 不要求显式声明“实现接口”；方法签名匹配，就能作为 Reader 使用。",
+        "enterpriseBridge": "小接口让 Service 在测试中换成 fake，在生产中换成数据库实现。",
+        "transferCheck": {"question": "单元测试想用 fake 替换数据库，Service 最适合依赖什么？", "choices": ["只包含所需方法的小接口", "整个数据库客户端", "具体 HTTP 框架"], "correctIndex": 0, "answer": "依赖小接口，fake 只需实现测试真正用到的方法。"},
+    },
+    5: {
+        "title": "看懂 package 与导出规则",
+        "purpose": "先用名字大小写区分公开能力和包内实现，再理解目录边界。",
+        "concepts": ["package", "导出标识符", "包内标识符"],
+        "code": '''package main
+
+import "fmt"
+
+type Order struct {
+    ID string
+}
+
+func label(order Order) string {
+    return "order:" + order.ID
+}
+
+func main() {
+    order := Order{ID: "001"}
+    fmt.Println(label(order))
+}
+''',
+        "prediction": {"question": "哪个名字能被其他 package 引用？", "choices": ["Order", "label", "order"], "correctIndex": 0, "wrongFeedback": "看标识符的首字母：大写开头才是 package 对外公开的名字。"},
+        "expectedOutput": "order:001",
+        "changedOutput": "order:001",
+        "changeMarker": "Number string",
+        "changedOutputCheck": "order:001",
+        "changePrompt": "把 `ID` 改成 `Number`，并同步修改两处使用位置，让程序重新运行。",
+        "explanation": "首字母大写的 `Order` 和 `ID` 可从其他 package 引用；小写的 `label` 和 `order` 只在当前 package 可见。",
+        "enterpriseBridge": "真实项目再用多目录 package 和 `internal/` 让编译器强制执行模块所有权。",
+        "transferCheck": {"question": "外部 package 需要创建订单并读取 ID，哪组命名才可用？", "choices": ["Order 和 ID", "order 和 id", "Order 和 id"], "correctIndex": 0, "answer": "类型 Order 和字段 ID 都必须大写开头，外部 package 才能引用。"},
+    },
+    6: {
+        "title": "给错误增加上下文但保留原因",
+        "purpose": "用 `%w` 包装底层错误，让人能读懂，程序也能继续判断错误类型。",
+        "concepts": ["error", "错误包装", "errors.Is"],
+        "code": '''package main
+
+import (
+    "errors"
+    "fmt"
+)
+
+var ErrNotFound = errors.New("not found")
+
+func loadOrder(id string) error {
+    return fmt.Errorf("load order %s: %w", id, ErrNotFound)
+}
+
+func main() {
+    err := loadOrder("order-007")
+    fmt.Println(err)
+    fmt.Println("是否未找到:", errors.Is(err, ErrNotFound))
+}
+''',
+        "prediction": {"question": "包装后 errors.Is 还能识别 ErrNotFound 吗？", "choices": ["能", "不能", "只有 panic 时能"], "correctIndex": 0, "wrongFeedback": "找 fmt.Errorf 里的 %w：它会保留错误链，errors.Is 沿链查找原因。"},
+        "expectedOutput": "load order order-007: not found\n是否未找到: true",
+        "changedOutput": "load order order-007: not found\n是否未找到: false",
+        "changeMarker": "fmt.Errorf(\"load order %s: %v\"",
+        "changedOutputCheck": "是否未找到: false",
+        "changePrompt": "把 `%w` 改成 `%v` 再运行，观察第二行为什么变成 false。",
+        "explanation": "`%w` 保存错误链，`%v` 只把错误变成文字；两者打印相似，但程序能否判断原因不同。",
+        "enterpriseBridge": "错误链让 HTTP 层统一映射状态码，同时保留底层故障上下文。",
+        "transferCheck": {"question": "HTTP 层要判断底层是“未找到”，业务层包装错误时应用？", "choices": ["%w 和 errors.Is", "%v 和字符串相等", "panic 和 recover"], "correctIndex": 0, "answer": "用 %w 保留错误链，再用 errors.Is 判断原因。"},
+    },
+    7: {
+        "title": "让并发计数不丢数据",
+        "purpose": "启动多个 goroutine 时，用 WaitGroup 等待，用 Mutex 保护共享变量。",
+        "concepts": ["goroutine", "WaitGroup", "Mutex"],
+        "code": '''package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+func countPrepared(n int) int {
+    var wg sync.WaitGroup
+    var mu sync.Mutex
+    total := 0
+
+    for i := 0; i < n; i++ {
+        wg.Add(1)
+        go func() {
+            defer wg.Done()
+            mu.Lock()
+            total++
+            mu.Unlock()
+        }()
+    }
+    wg.Wait()
+    return total
+}
+
+func main() {
+    fmt.Println(countPrepared(1000))
+}
+''',
+        "prediction": {"question": "WaitGroup 和 Mutex 分别负责什么？", "choices": ["等待结束；保护 total", "保护 total；等待结束", "两者都只负责计时"], "correctIndex": 0, "wrongFeedback": "分开看两个问题：Wait 只等任务结束，Lock/Unlock 才保护 total++。"},
+        "expectedOutput": "1000",
+        "changedOutput": "10",
+        "changeMarker": "countPrepared(10)",
+        "changedOutputCheck": "10",
+        "changePrompt": "把 `1000` 改成 `10`；然后在独立练习里尝试删掉锁并运行 `-race`。",
+        "explanation": "WaitGroup 只保证主函数等所有 goroutine 完成；Mutex 才保证同一时刻只有一个 goroutine 修改 total。",
+        "enterpriseBridge": "有界并发、共享状态和竞态检测是 Go 服务稳定性的基本门槛。",
+        "transferCheck": {"question": "已经用 WaitGroup 等所有 goroutine 结束，为什么 total++ 还需要锁？", "choices": ["WaitGroup 不保证共享写入互斥", "WaitGroup 只能用一次", "Mutex 用来启动 goroutine"], "correctIndex": 0, "answer": "WaitGroup 只等待完成，Mutex 才保证 total++ 不会并发覆盖。"},
+    },
+    8: {
+        "title": "取消后让 goroutine 正常退出",
+        "purpose": "发送数据时同时监听取消信号，并由发送方关闭 channel。",
+        "concepts": ["channel", "context", "select"],
+        "code": '''package main
+
+import (
+    "context"
+    "fmt"
+)
+
+func stream(ctx context.Context, values []int) <-chan int {
+    out := make(chan int)
+    go func() {
+        defer close(out)
+        for _, value := range values {
+            select {
+            case <-ctx.Done():
+                return
+            case out <- value:
+            }
+        }
+    }()
+    return out
+}
+
+func main() {
+    ctx, cancel := context.WithCancel(context.Background())
+    out := stream(ctx, []int{1, 2, 3})
+    fmt.Println(<-out)
+    cancel()
+    for range out {
+    }
+    fmt.Println("已停止")
+}
+''',
+        "prediction": {"question": "调用 cancel 后，谁负责关闭 out？", "choices": ["创建并发送 out 的 goroutine", "接收方 main", "context 自动关闭"], "correctIndex": 0, "wrongFeedback": "看 out 在哪里创建、谁往里发送；发送方退出时 defer close(out)。"},
+        "expectedOutput": "1\n已停止",
+        "changedOutput": "已停止（取消与发送同时就绪时，也可能先打印 1）",
+        "changeMarker": "cancel()\n\tfmt.Println(<-out)",
+        "changedOutputCheck": "已停止",
+        "changePrompt": "把 `cancel()` 移到第一次接收之前，观察程序不再保证打印 1。",
+        "explanation": "select 在发送和取消之间等待；收到取消后返回，defer 随即关闭 channel，接收方的 range 才能结束。",
+        "enterpriseBridge": "请求取消、超时和客户端断线都必须沿 context 传递，避免后台任务泄漏。",
+        "transferCheck": {"question": "一个 goroutine 创建 channel 并持续发送，通常由谁关闭 channel？", "choices": ["发送方", "任意接收方", "context"], "correctIndex": 0, "answer": "由发送方在不再发送时关闭，避免接收方关闭后发送导致 panic。"},
+    },
+}
+
 
 STRUCTURED_PRACTICES = {
     9: (("请求边界", "写出 DTO、认证身份和状态码边界"), ("失败矩阵", "列出 400、401、403、404 的触发条件"), ("验证证据", "说明如何用 httptest 断言响应"), (("dto", "principal"), ("400", "401", "403", "404"), ("httptest", "status"))),
@@ -2423,6 +2847,8 @@ PRACTICE_COACHING = {
     2: ("固定测试会解码 JSON，并核对字段名与字段数量。", ["小写字段不会被 encoding/json 导出。", "把字段改成 ID 和 AmountCents。", "分别添加 json:\"id\" 与 json:\"amount_cents\" tag。"]),
     3: ("固定测试会修改副本，再确认原 slice 没变。", ["直接 return src 仍共享底层数组。", "先创建一个空的新 slice。", "用 append 把 src 的元素复制进去。"]),
     4: ("固定测试会把 fakeReader 传给 readName。", ["接口只写调用方真正需要的方法。", "方法签名必须和 fakeReader.Get 完全一致。", "定义 type Reader interface { Get(string) (string, error) }。"]),
+    5: ("固定测试来自另一个 package，只能使用导出的 Order、ID 和 Label。", ["Go 用名字首字母大小写决定是否导出。", "先把 order 和 id 改成 Order 和 ID。", "再把 label 改成 Label；helper 保持小写。"]),
+    6: ("固定测试会用 errors.Is 追踪底层 ErrNotFound，并检查错误文本包含订单 ID。", ["错误文本里先加入 id。", "用 fmt.Errorf 构造带上下文的错误。", "底层错误必须使用 %w，而不是 %v。"]),
     7: ("固定测试会重复启动 1000 个 goroutine，并用 -race 查数据竞争。", ["WaitGroup 只负责等人，不负责保护 total。", "在 total++ 前后加同一把 Mutex。", "Lock 后递增，并在 Unlock 后让 goroutine 结束。"]),
     8: ("固定测试会提前取消，并要求输出 channel 很快关闭。", ["由创建 channel 的 goroutine 负责 close。", "发送不能只写 out <- value。", "用 select 同时等待 ctx.Done() 和 out <- value。"]),
     9: ("固定测试会检查 HTTP 方法 (405)、租户 Header (401)、空输入 (400) 与成功创建 (201)。", ["先检查 r.Method 是否为 http.MethodPost，不符返回 405。", "从 r.Header.Get(\"X-Tenant-ID\") 取租户身份，缺失返回 401。", "用 json.NewDecoder(r.Body).Decode 解析请求体并校验 Input。"]),
@@ -2433,14 +2859,14 @@ PRACTICE_COACHING = {
     14: ("固定测试会验证 SSE 游标增量过滤 (ID > lastID) 与客户端断线取消退出。", ["遍历 events 列表，只挑出 ID > lastID 的增量事件。", "向通道推送时用 select 同时监听 ctx.Done()。", "一旦检测到 context 取消，立即返回 ctx.Err()。"]),
     15: ("固定测试会校验租户与 Run 追踪上下文字段非空，并将耗时换算为毫秒。", ["检查 tenant 和 run 追踪标识，任一缺失返回 ErrMissingTrace。", "调用 elapsed.Milliseconds() 将时间换算为毫秒整数。", "构造并返回包含各阶段元数据的完整 AuditEntry。"]),
     16: ("固定测试会验证灰度发布门禁：回滚指令、未就绪迁移或错误率超标时准确熔断。", ["收到回滚指令时立即返回 false 与 rollback 原因。", "数据库迁移未就绪时阻断上线。", "有请求且错误率超阈值时返回 high-error-rate，一切正常返回 healthy。"]),
-    17: ("固定测试会验证决策状态机 Fail Closed：答案与工具互斥，拒绝未知 Kind 与混合参数。", ["使用 switch 严格匹配 Kind 为 answer 或 tool。", "answer 类型要求 Answer 非空且 ToolName 为空。", "tool 类型要求 ToolName 非空且 Answer 为空，其余均返回 ErrInvalidDecision。"]),
+    17: ("固定测试会验证订单草稿：字段非法或未确认时不得保存，确认后只能追加一笔。", ["先检查 ID 与 AmountCents，坏草稿返回 ErrInvalidDraft。", "再检查 Confirmed；未确认返回 ErrNotConfirmed。", "所有守门条件通过后，最后一步才 append 到 orders。"]),
     18: ("固定测试会使用 path.Clean 净化路径，并拦截绝对路径与目录逃逸攻击。", ["拒绝空路径以及以 / 开头的绝对路径。", "调用 path.Clean 净化冗余层级。", "检查净化后的路径是否为 .. 或以 ../ 开头，违规返回 ErrPathTraversal。"]),
     19: ("固定测试会验证 Step 状态机对账：完成收口、超限放弃、失败/孤儿重试与待调度分发。", ["已完成状态直接标记 done 且不可重试。", "重试次数达到上限标记 abandon 并终止。", "失败或运行中（孤儿）标记 retry 并允许重试。"]),
     20: ("固定测试会验证按优先级和字符预算装配提示词，超预算立即停止追加。", ["遍历消息切片，累计已占用的字符总数。", "当前已用长度加上当前消息若超出预算则 break 退出。", "将入选消息加入结果切片并返回。"]),
     21: ("固定测试会验证白名单拦截，以及对只读工具放行、写操作必须提供审批确认的策略。", ["首先校验目标工具是否存在于 AllowList 白名单中。", "若工具属于 WriteOps 写操作，必须附带 approved==true。", "仅在白名单且满足写审批条件时返回 true。"]),
     22: ("固定测试会验证重试预算：429 与 5xx 允许重试，4xx 客户端错误与超预算快速失败。", ["重试次数或耗时超预算时立即返回 false。", "针对 429 与 500~599 服务端瞬态错误放行重试。", "针对 400~499 客户端错误不予重试，避免无效重试。"]),
     23: ("固定测试会验证双重门禁：安全违规 0 容忍、单元测试全过与基准达标缺一不可。", ["安全违规数 SecurityViolations 必须严格为 0。", "所有单元测试必须为通过状态 TestsPassed==true。", "评测基准得分必须达到最低阈值 minScore。"]),
-    24: ("固定测试会验证结业作品端到端调度器：参数校验、执行调用、失败收口与成功时签署 SHA-256 审计摘要。", ["校验 TenantID, RunID 与调用号非空，缺失返回 ErrInvalidRun。", "调用执行函数，失败时记录 Outcome=\"failed\"。", "成功时用 crypto/sha256 计算输出摘要，产出完整的审计回执。"]),
+    24: ("固定测试会验证本章的去重与恢复契约：首次创建、同输入复用原回执、改输入报冲突；同时保留输入到回执的总装测试。", ["先用 TenantID/RunID 形成隔离的 key，不要只用 RunID。", "用输入的 SHA-256 摘要区分‘真正重试’与‘同号码改了输入’。", "找到同摘要的原记录时直接返回，这样断线后才能取回原回执。"]),
 }
 
 EXTRA_GLOSSARY = {
@@ -2506,6 +2932,40 @@ def normalize_identity_terms(value):
     return value
 
 
+def normalize_learning_story_terms(value):
+    """Keep the learner-facing story concrete without renaming Go identifiers."""
+    if isinstance(value, str):
+        replacements = (
+            ("Ledger 后端", "订单后端"),
+            ("Ledger Agent", "订单 Agent"),
+            ("事件账本", "事件记录"),
+            ("可查询账本", "可查询事件记录"),
+            ("持久化版本账本", "持久化版本记录"),
+            ("私人账本", "私人订单记录"),
+            ("真账本", "持久化数据"),
+            ("大账本", "订单系统"),
+            ("账本的回执", "订单服务的回执"),
+            ("向账本查回执", "向订单服务查回执"),
+            ("账本按", "订单服务按"),
+            ("账本里", "订单列表里"),
+            ("刷新账本", "刷新订单列表"),
+            ("账本保持不变", "订单列表保持不变"),
+            ("账本没有变化", "订单列表没有变化"),
+            ("改变账本", "改变订单列表"),
+            ("写账", "保存订单"),
+            ("记账", "保存订单"),
+            ("账本", "订单记录"),
+        )
+        for source, target in replacements:
+            value = value.replace(source, target)
+        return value
+    if isinstance(value, list):
+        return [normalize_learning_story_terms(item) for item in value]
+    if isinstance(value, dict):
+        return {key: normalize_learning_story_terms(item) for key, item in value.items()}
+    return value
+
+
 def code_meta(code: str, unit_id: str) -> dict:
     stripped = code.lstrip()
     if not code:
@@ -2518,7 +2978,7 @@ def code_meta(code: str, unit_id: str) -> dict:
         kind = "tree"
     else:
         kind = "go"
-    runnable = unit_id in {"chapter-1", "chapter-3", "supplement-go-real-test-file"}
+    runnable = unit_id in {*(f"chapter-{index}" for index in FOUNDATION_LESSONS), "supplement-go-real-test-file"}
     syntax_verified = False
     if kind == "go":
         candidate = code if stripped.startswith("package ") else "package sample\n\n" + code
@@ -2609,8 +3069,8 @@ def workshop_payload(index: int, chapter: dict) -> dict:
         }
     if index == 24:
         payload["capstone"] = {
-            "title": "结业作品：可审计的账单 Harness (Ledger Agent)",
-            "brief": "把前三卷的工程能力合成一个可下载、可运行、可自测的企业级智能体服务。支持一键下载完整 Starter 源码包并在本地运行竞态检测。",
+            "title": "结业扩展：奶茶小店订单 Agent",
+            "brief": "以下完整架构与交付清单属于结业扩展，不是第 24 章主线的新知识。第 24 章主线只聚焦请求去重与断线恢复；Wails + React 另有独立 Go 语法路线，不冒充最终 Agent 的集成交付物。",
             "downloadUrl": "downloads/ledger-agent-starter.zip",
             "downloadName": "ledger-agent-starter.zip",
             "architecture": [
@@ -2621,15 +3081,15 @@ def workshop_payload(index: int, chapter: dict) -> dict:
                 "5. 安全工具沙箱：os.Root 路径穿越防护、只读/写副作用权限审批",
                 "6. Provider 适配：严格 Decision 解码、Fail Closed 与本地确定性 Mock",
                 "7. 离线安全评测：基准用例打分与恶意越权调用独立红线门禁",
-                "8. 全栈实战联动：对接 TradingAgents 多智能体与 Wails 原生桌面端，Go 作为低延迟交易网关、CAS 租约 Fencing 与跨平台客户端底座",
+                "8. 全栈实战联动：对接 TradingAgents 多智能体与 Wails + React 桌面端，Go 负责严格契约、CAS 租约 Fencing 与可测试方法边界",
             ],
             "deliverables": [
                 "完整代码包：解压即跑的 Go 1.24+ 生产级微服务骨架（包含 Makefile / verify.sh）",
                 "跨章装配链路：由第 9~23 章所写核心决策代码逐一拼接而成的真实系统",
                 "端到端集成测试：go test -race ./... 验证高并发、网络超时与异常注入",
                 "安全评测门禁：go run ./cmd/server eval 执行红蓝对抗与合规打分",
-                "全栈多智能体联动：提供对接 TradingAgents AI 智能体群与 Go Wails 桌面端（双向 IPC 绑定）的工程契约与架构样例",
-                "离线验收证明：本地生成包含 SHA-256 签名的工程交付收据 (Receipt)",
+                "全栈多智能体联动：提供 TradingAgents、Go 公开方法绑定、runtime events 与 React 界面的责任边界样例",
+                "离线验收证明：本地生成包含 SHA-256 内容摘要的工程交付收据 (Receipt)",
             ],
         }
     return payload
@@ -2645,7 +3105,7 @@ def verify_runnable_examples(chapters: list[dict]) -> list[dict]:
     evidence = []
     with tempfile.TemporaryDirectory(prefix="manga-go-verify-") as tmp:
         root = Path(tmp)
-        for chapter_number in (1, 3):
+        for chapter_number in FOUNDATION_LESSONS:
             chapter = chapters[chapter_number - 1]
             case_dir = root / f"chapter-{chapter_number}"
             case_dir.mkdir()
@@ -2681,7 +3141,7 @@ def verify_go_practices() -> list[dict]:
         for index, exercise in GO_PRACTICES.items():
             case_dir = root / f"chapter-{index}"
             case_dir.mkdir()
-            (case_dir / "go.mod").write_text("module manga-go-practice\n\ngo 1.22\n", encoding="utf-8")
+            (case_dir / "go.mod").write_text("module manga-go-exercise\n\ngo 1.22\n", encoding="utf-8")
             (case_dir / "exercise_test.go").write_text(exercise["test"], encoding="utf-8")
             (case_dir / "exercise.go").write_text(exercise["code"], encoding="utf-8")
             command = ["go", "test", "-race", "./..."] if exercise.get("race") else ["go", "test", "./..."]
@@ -2761,8 +3221,9 @@ def chapter_payload(module, source, stories, index: int, chapter: dict) -> dict:
     glossary = module.chapter_glossary(index, parts)
     known_terms = {term.lower() for term, _meaning in glossary}
     glossary += [item for item in EXTRA_GLOSSARY.get(index, []) if item[0].lower() not in known_terms]
-    code = chapter["code"].replace("TenantID, UserID string", "TenantID, SubjectID string")
-    if index == 4:
+    foundation = FOUNDATION_LESSONS.get(index)
+    code = (foundation["code"] if foundation else chapter["code"]).replace("TenantID, UserID string", "TenantID, SubjectID string")
+    if not foundation and index == 4:
         code = '''type Reader interface {
     Get(id string) (string, error)
 }
@@ -2778,7 +3239,7 @@ func (m MemoryBills) Get(id string) (string, error) {
 func readName(store Reader, id string) (string, error) {
     return store.Get(id)
 }'''
-    if index == 7:
+    if not foundation and index == 7:
         code = '''func count(n int) int {
     var wg sync.WaitGroup
     var mu sync.Mutex
@@ -2797,7 +3258,7 @@ func readName(store Reader, id string) (string, error) {
     wg.Wait()
     return total
 }'''
-    if index == 8:
+    if not foundation and index == 8:
         code = '''func stream(ctx context.Context, values []int) <-chan int {
     out := make(chan int)
     go func() {
@@ -2851,6 +3312,13 @@ func consumeFirst(parent context.Context, values []int, limit int) {
             "ID, RunID, Operation, CallID, State string",
             "ID, RunID, Operation, CallID string\n    State StepState",
         )
+    foundation_check = None
+    if foundation:
+        foundation_check = dict(foundation["transferCheck"])
+        foundation_check["feedback"] = [
+            ("选对了。" if choice_index == foundation_check["correctIndex"] else "还差一步。") + foundation_check["answer"]
+            for choice_index, _choice in enumerate(foundation_check["choices"])
+        ]
     return {
         "id": f"chapter-{index}",
         "kind": "chapter",
@@ -2879,6 +3347,7 @@ func consumeFirst(parent context.Context, values []int, limit int) {
         "volume": chapter_volume(source, index),
         "learning": learning_meta(index),
         "beginnerCode": BEGINNER_CODE_LESSONS.get(f"chapter-{index}"),
+        "foundationLesson": foundation,
         **code_meta(code, f"chapter-{index}"),
     }
 
@@ -2941,9 +3410,19 @@ def go_ai_project_payload(source, item: dict) -> dict:
     milestone_number = item["id"].rsplit("-", 1)[-1]
     lab_case = {
         "01": "provider", "02": "decision", "03": "run", "04": "tool",
-        "05": "worker", "06": "events", "07": "eval", "08": "all",
+        "05": "worker", "06": "events", "07": "eval", "08": "backpressure",
     }[milestone_number]
     practice = GO_AI_PROJECT_PRACTICES[item["id"]]
+    prerequisites = {
+        "01": "先完成第 17 章，并运行最小 Agent 闭环",
+        "02": "先完成里程碑 1：Provider 与取消",
+        "03": "先完成第 18 章：理解身份、请求编号与重复提交",
+        "04": "先完成里程碑 3：先确保请求只创建一次，再限制工具路径",
+        "05": "先完成第 19 章：理解崩溃后的 Run 状态",
+        "06": "先完成里程碑 5：显式状态与恢复",
+        "07": "先完成第 22 章：建立审计与评测证据",
+        "08": "先完成里程碑 7：固定评测与安全阈值",
+    }
     return {
         "id": item["id"],
         "kind": "supplement",
@@ -2968,17 +3447,101 @@ def go_ai_project_payload(source, item: dict) -> dict:
             "feedback": ["回答正确。" if index == correct_index else "这个选择绕过了本里程碑要求的确定性边界。" for index in range(len(choices))],
         }],
         "code": item["code"],
-        "codeGuides": ["先定位输入和身份。", "再找拒绝路径与状态变化。", "最后检查测试留下的证据。"],
+        "codeGuides": ([
+            "Provider 接口声明 Decide，业务可以替换模型实现或测试替身。",
+            "Decide 接收 context 和请求；派生的超时 context 必须传给它。",
+            "Provider 返回后再次检查 ctx.Err，避免把超时后的迟到结果当成功。",
+        ] if milestone_number == "01" else ["先定位输入和身份。", "再找拒绝路径与状态变化。", "最后检查测试留下的证据。"]),
         "beginnerCode": None,
         "task": item["task"],
         "accept": item["accept"],
-        "nextHook": "通过本里程碑后，沿同一个 Ledger Agent 进入下一条企业边界。",
-        "volume": chapter_volume(source, 16),
-        "learning": {"level": 4, "label": "项目", "required": True, "readingMinutes": 8, "practiceMinutes": 12, "estimatedMinutes": 20, "prerequisite": "先完成第 9-16 章主线"},
+        "nextHook": "通过本里程碑后，沿同一个小店订单 Agent 进入下一条边界。",
+        "volume": {"title": "第三部分：构建订单 AI Agent", "description": "沿同一个小店订单 Agent，逐步加入模型、工具、恢复与证据边界。"},
+        "learning": {"level": 4, "label": "项目", "required": True, "readingMinutes": 8, "practiceMinutes": 12, "estimatedMinutes": 20, "prerequisite": prerequisites[milestone_number]},
         "projectExercise": {key: practice[key] for key in ("title", "prompt", "code", "testIntent", "hints", "failureHint", "seam", "buildTag")},
-        "projectLab": {"id": f"ledger-agent-lab/{lab_case}", "title": "Ledger Agent 企业实验", "testCommand": f"go test -race -tags learner{milestone_number} -v -run '^TestMilestone{milestone_number}' ./...", "path": "labs/ledger-agent/"},
+        "projectLab": {"id": f"ledger-agent-lab/{lab_case}", "title": "小店订单 Agent 实验", "testCommand": f"go test -race -tags learner{milestone_number} -v -run '^TestMilestone{milestone_number}' ./...", "path": "labs/ledger-agent/"},
         **code_meta(item["code"], item["id"]),
     }
+
+
+def apply_foundation_contracts(payload: dict, briefs: dict) -> None:
+    """Restore the executable beginner contract after display-copy overlays."""
+    chapter_titles = {
+        1: "第一章  从奶茶结账读懂函数",
+        2: "第二章  把奶茶订单变成 JSON",
+        3: "第三章  复制订单编号而不改原数据",
+        4: "第四章  用小接口读取订单",
+        5: "第五章  把订单代码分成 package",
+        6: "第六章  查询失败时保留错误原因",
+        7: "第七章  并发备餐计数不能丢",
+        8: "第八章  取消后停止订单状态流",
+    }
+    chapter_short_titles = {
+        1: "从奶茶结账读懂函数",
+        2: "把奶茶订单变成 JSON",
+        3: "复制订单编号而不改原数据",
+        4: "用小接口读取订单",
+        5: "把订单代码分成 package",
+        6: "查询失败时保留错误原因",
+        7: "并发备餐计数不能丢",
+        8: "取消后停止订单状态流",
+    }
+    for index, chapter in enumerate(payload["chapters"][:8], 1):
+        lesson = FOUNDATION_LESSONS[index]
+        exercise = GO_PRACTICES[index]
+        chapter["title"] = chapter_titles[index]
+        chapter["shortTitle"] = chapter_short_titles[index]
+        check = dict(lesson["transferCheck"])
+        check["feedback"] = [
+            ("选对了。" if choice_index == check["correctIndex"] else "还差一步。") + check["answer"]
+            for choice_index, _choice in enumerate(check["choices"])
+        ]
+        chapter["goal"] = lesson["purpose"]
+        chapter["task"] = "先预测结果，原样运行一次；只改指定的一处再运行；最后独立补完 TODO。"
+        chapter["accept"] = "原例和改动后代码都运行成功，两次代码不同；固定测试通过；迁移题答对。"
+        chapter["selfCheck"] = [check]
+        chapter["foundationLesson"] = lesson
+        if index == 1:
+            chapter["learning"]["prerequisite"] = "先完成首页 Go 起步 6 步，或已熟悉函数、多返回值与 error 检查。"
+        if index in WAILS_GO_SYNTAX_PATH:
+            chapter["wailsPractice"] = {
+                **WAILS_GO_SYNTAX_PATH[index],
+                "path": "labs/wails-go-syntax/",
+                "reactExample": "labs/wails-go-syntax/react/App.tsx",
+            }
+        test_intent, hints = practice_coaching(index, exercise)
+        chapter["workshop"] = {
+            "title": "独立练习",
+            "prompt": "不照抄上面的完整示例，补完 TODO 并让固定测试通过。",
+            "fields": [],
+            "codeExercise": {
+                "title": exercise["title"],
+                "prompt": exercise["prompt"],
+                "code": exercise["code"],
+                "testIntent": test_intent,
+                "hints": hints,
+                "failureHint": "先看错误类型和第一条失败信息，一次只改 TODO 所在函数。",
+            },
+        }
+        if index == 5:
+            chapter["dialogue"][-2:] = [
+                {"speaker": "陈平安", "text": "外部 package 怎样知道哪些名字可以用？"},
+                {"speaker": "宁姚", "text": "看首字母。Order、ID 和 Label 大写开头，外部可以引用；helper 小写开头，只留在 orders 包内。"},
+            ]
+            chapter["closing"] = "对外只暴露 Order、ID 和 Label，helper 保持包内可见；固定测试从另一个 package 验证这条边界。"
+            chapter["codeGuides"] = [
+                "先看 package 和 Order 的大写首字母。",
+                "再看小写 label，它只能在当前 package 使用。",
+                "最后从 main 跟到 Order{ID: \"001\"} 和 label 的输出。",
+            ]
+        if index == 6:
+            chapter["principles"] = [
+                "用 fmt.Errorf 加入订单 ID 等上下文。",
+                "底层错误用 %w 包装，errors.Is 才能继续识别。",
+                "本课只验证错误链；HTTP 映射、取消和 Wails 错误展示放到完成后的迁移支线。",
+            ]
+        if chapter["id"] in briefs:
+            briefs[chapter["id"]]["task"] = chapter["task"]
 
 
 def main() -> None:
@@ -2986,13 +3549,40 @@ def main() -> None:
     supplements_by_chapter = {index: [] for index in range(1, 25)}
     for index, item in enumerate(source.SUPPLEMENTS, 1):
         supplements_by_chapter[item["chapter"]].append(supplement_payload(module, source, stories, item, index))
-    supplements_by_chapter[16].extend(go_ai_project_payload(source, item) for item in GO_AI_PROJECT_MILESTONES)
+    milestone_chapters = (17, 17, 18, 18, 19, 19, 22, 23)
+    for chapter_number, item in zip(milestone_chapters, GO_AI_PROJECT_MILESTONES):
+        supplements_by_chapter[chapter_number].append(go_ai_project_payload(source, item))
 
     chapters = []
     for index, chapter in enumerate(source.CHAPTERS, 1):
         current = chapter_payload(module, source, stories, index, chapter)
         current["supplements"] = supplements_by_chapter[index]
         chapters.append(current)
+    chapters[16]["quickstartLab"] = {
+        "id": "ledger-agent-quickstart",
+        "title": "第一步只看 Agent 跑一圈",
+        "description": "先预测订单列表是否变化。不需要 API Key；运行输出必须能逐项指出四阶段状态：输入已接收 -> 草稿已生成 -> 校验已通过 -> 等待确认。",
+        "buttonLabel": "运行最小 Agent",
+        "successGuide": "运行成功。请按输出确认四阶段：输入已接收、草稿已生成、校验已通过、等待确认；此时订单列表仍应为 0 条。",
+        "path": "labs/ledger-agent/",
+    }
+    chapters[16]["goal"] = "看懂模型只负责生成订单草稿；Go 必须校验并等待确认，确认前订单列表保持不变。"
+    chapters[16]["task"] = "先预测订单列表是否变化，运行最小 Agent；再实现 CommitDraft，证明坏草稿和未确认草稿都不能保存。"
+    chapters[16]["accept"] = "最小闭环可运行；未确认时订单列表为 0；坏草稿被拒绝；确认后只新增一笔。"
+    chapters[16]["principles"] = [
+        "模型输出只是候选草稿，不是已授权的订单保存。",
+        "字段校验和人工确认都通过后，Go 才能保存订单。",
+        "拒绝路径不得改变订单列表；测试必须直接断言这一点。",
+    ]
+    chapters[15]["goal"] = "只学习灰度发布的停止条件：回滚指令、迁移未就绪或错误率超标时立即停止。"
+    chapters[15]["task"] = "实现并运行 EvaluateCanary；镜像追溯、探针和恢复指标放到按需补充，不计入本课过关。"
+    chapters[15]["accept"] = "四组固定测试分别证明 healthy、rollback、pending-migration 与 high-error-rate。"
+    chapters[23]["projectLab"] = {
+        "id": "ledger-agent-lab/capstone",
+        "title": "结业扩展 · 最终总装实验",
+        "testCommand": "go test -race -v ./...",
+        "path": "labs/ledger-agent/",
+    }
     code_units = chapters + [item for chapter in chapters for item in chapter["supplements"]]
     syntax_failures = [item["id"] for item in code_units if item["code"] and not item["syntaxVerified"]]
     if syntax_failures:
@@ -3008,6 +3598,11 @@ def main() -> None:
         shutil.rmtree(INTERACTIVE_LEDGER_LAB_DIR)
     shutil.copytree(LEDGER_LAB_DIR, INTERACTIVE_LEDGER_LAB_DIR)
     verification.append({"unit": "ledger-agent-lab", "command": "go test -race ./...", "status": "pass"})
+    subprocess.run(["go", "test", "-race", "./..."], cwd=WAILS_GO_LAB_DIR, check=True, capture_output=True, text=True, timeout=60)
+    if INTERACTIVE_WAILS_GO_LAB_DIR.exists():
+        shutil.rmtree(INTERACTIVE_WAILS_GO_LAB_DIR)
+    shutil.copytree(WAILS_GO_LAB_DIR, INTERACTIVE_WAILS_GO_LAB_DIR)
+    verification.append({"unit": "wails-go-syntax", "command": "go test -race ./...", "status": "pass"})
     payload = normalize_identity_terms({
         "version": VERSION,
         "title": "漫画Go学习",
@@ -3031,13 +3626,59 @@ def main() -> None:
             "covers": ["approval", "binding", "unknown reconcile", "duplicate call", "receipt digest"],
         }, {
             "id": "ledger-agent-lab",
-            "title": "Ledger Agent 企业实验",
+            "title": "小店订单 Agent 实验",
             "path": "labs/ledger-agent/",
             "covers": ["tenant", "idempotency", "provider", "strict JSON", "tool policy", "lease", "fencing", "events", "audit", "eval"],
+        }, {
+            "id": "wails-go-syntax",
+            "title": "Wails + React Go 语法观察台",
+            "path": "labs/wails-go-syntax/",
+            "covers": ["struct", "method", "interface", "export", "errors", "concurrency", "context"],
         }],
     })
     from plain_language import apply_plain_language
     briefs = apply_plain_language(payload)
+    apply_foundation_contracts(payload, briefs)
+    for chapter in payload["chapters"]:
+        for supplement in chapter["supplements"]:
+            if not supplement.get("projectLab"):
+                continue
+            supplement["volume"] = {"title": "第三部分：构建订单 AI Agent", "description": "沿同一个小店订单 Agent，逐步加入模型、工具、恢复与证据边界。"}
+            if supplement["id"] == "supplement-go-ai-01":
+                supplement["codeGuides"] = [
+                    "Provider 接口声明 Decide，业务可以替换模型实现或测试替身。",
+                    "Decide 接收 context 和请求；派生的超时 context 必须传给它。",
+                    "Provider 返回后再次检查 ctx.Err，避免把超时后的迟到结果当成功。",
+                ]
+    capstone = payload["chapters"][23]
+    capstone.update({
+        "title": "重复点击，也只生成同一笔订单",
+        "goal": "让同一个奶茶订单请求可以安全重试：第一次创建记录，重复请求返回原记录和原回执，改了输入则明确冲突。",
+        "task": "补全 StartOrResume，再运行最终总装测试，亲眼验证输入 -> 草稿 -> 确认 -> 订单 -> 回执，以及重复请求恢复。",
+        "accept": "首次请求 created=true；同租户、同编号、同输入的重试 created=false 且返回原回执；同编号改输入返回 ErrIdempotencyConflict；最终总装测试全部通过。",
+        "principles": [
+            "把 TenantID 和 RunID 一起作为请求身份，避免不同小店的相同编号撞在一起。",
+            "只保存输入摘要；同身份同摘要返回原记录，同身份不同摘要立即报冲突。",
+            "最终测试继续验证：身份非法时不生成草稿，确认后才保存订单，成功回执带内容摘要，失败回执不能伪装成功。",
+        ],
+        "selfCheck": [{
+            "question": "顾客重复提交 order-001，输入完全相同，程序应该怎么做？",
+            "answer": "返回第一次创建的记录和回执，created=false，不再保存第二笔订单。",
+            "choices": [
+                "返回原记录和原回执，created=false",
+                "创建一个新的订单编号",
+                "不检查输入，直接覆盖原记录",
+            ],
+            "correctIndex": 0,
+            "feedback": [
+                "对。同一身份与同一输入是重试，应复用原结果。",
+                "这会把一次重试变成第二次副作用，违背幂等目标。",
+                "输入变化必须报冲突，不能覆盖已完成记录。",
+            ],
+        }],
+    })
+    payload = normalize_learning_story_terms(payload)
+    briefs = normalize_learning_story_terms(briefs)
     (PROJECT / 'interactive' / 'lesson-briefs.js').write_text('export const lessonBriefs = ' + json.dumps(briefs, ensure_ascii=False, indent=2) + ';\n', encoding='utf-8')
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     DATA_OUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -3051,6 +3692,7 @@ def main() -> None:
     })
     RUNNER_EXERCISES_OUT.write_text(json.dumps(runner_exercises, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     RUNNER_RUBRICS_OUT.write_text(json.dumps({f"chapter-{index}": [[field[1]] for field in value[:3]] for index, value in STRUCTURED_PRACTICES.items()}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    write_database_curriculum()
     build_starter_zip()
     print(json.dumps({"status": "pass", "output": str(DATA_OUT), "stats": payload["stats"]}, ensure_ascii=False))
 
