@@ -2,10 +2,18 @@
   "name": "manga-go-learning-acceptance",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "audit:browser": "node browser_audit.mjs",
+    "audit:enterprise": "node enterprise_learning_audit.mjs",
+    "audit:learning": "node learning_flow_audit.mjs",
+    "audit:navigation": "node navigation_flow_audit.mjs",
     "build:editor": "esbuild editor-src/editor.js --bundle --format=esm --minify --outfile=interactive/vendor/editor.js",
-    "build:diagrams": "esbuild diagram-src/renderer.js --bundle --format=esm --minify --outfile=interactive/vendor/diagram-renderer.js"
+    "build:diagrams": "esbuild diagram-src/renderer.js --bundle --format=esm --minify --outfile=interactive/vendor/diagram-renderer.js",
+    "test:runner": "cd runner && go test ./...",
+    "verify:course": "npm run test:runner && npm run audit:learning && npm run audit:navigation && npm run audit:enterprise && npm run audit:browser"
   },
   "devDependencies": {
     "axe-core": "4.10.3",

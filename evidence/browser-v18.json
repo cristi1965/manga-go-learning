@@ -1,18 +1,18 @@
 {
   "status": "pass",
   "version": "19.0.0",
-  "generatedAt": "2026-10-23T07:04:52.935Z",
+  "generatedAt": "2026-10-26T07:24:03.029Z",
   "url": "http://127.0.0.1:4173",
   "units": 79,
   "artifactSha256": {
     "VERSION": "a8a00744aade5d590bb835aca14a22b45b389d086f9e8689536517614951f249",
-    "interactive/index.html": "12076e6a321fe5c6ce6235a578ed6adaeba4cef3edaaa909e6349c06b016b3aa",
+    "interactive/index.html": "76830bd8f78d6e5f2ec58773d95d06845abc7edceb9000d7e4dad491c65dac66",
     "interactive/app.js": "91cdb5d3cbf909981833b17ed4e2a897a43f1913cf88250865d7d7d0d954423e",
     "interactive/styles.css": "59e75587c5d9996bb9cbfbc576dc4b9baa81fbc5ea025eeb78cd6ef9c7fc6587",
     "interactive/data/book.json": "1f2fbb6995de89fb15e6dc23b3fda8bf6b51a0daf2beaf8e43fc4c14e9363e3b",
     "runner/main.go": "f7974d35ecff7292c77c2d0a9bea08369ba1a0f23f6feb974c9050dc8e6705a6",
     "browser_audit.mjs": "4252cd9ab14bbadd4b5ea5794b7901c1b7c60ad06ccd66a6224693ceaa99f111",
-    "package.json": "baa42ecd8873caf0f4dc8dce3047ec902b32a243109f0a1d5191b37db5125c51",
+    "package.json": "29a57f903d7cc43ae45b8218d54579aed4fc807b2d2e20d88b0f522abfe18b8d",
     "package-lock.json": "64ec56362f2539b47698ad4b2c59b7cf833ce1ed78f7d21c76694c574a583179"
   },
   "desktop": {
@@ -6297,7 +6297,7 @@
     },
     "mobile": {
       "path": "evidence/browser-v18-mobile.png",
-      "sha256": "f261ab9d28c23617506c33baedf7dc4c8c94742e0f9e6e83d6314a8bda1a7333"
+      "sha256": "3eb244e4bfa38453e280a40e67667805dc74a0b7ab6ea656f0b044e943e34fff"
     }
   }
 }
